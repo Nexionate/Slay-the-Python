@@ -1,40 +1,16 @@
 from colorama import Fore, Back, Style, init
 init(autoreset=True)
 import random
+import time
+import relics
 
-#print(Fore.RED + "This text is red")
-def col(colour, word):
-    colour_dict = {
-        "black": Fore.BLACK,
-        "red": Fore.RED,
-        "green": Fore.GREEN,
-        "yellow": Fore.YELLOW,
-        "blue": Fore.BLUE,
-        "magenta": Fore.MAGENTA,
-        "cyan": Fore.CYAN,
-        "white": Fore.WHITE,
+import text
+import enemy
+from relics import get_relic
+from relics import create_relics
+from cards import card_list
+from text import col
 
-        "!black": Fore.LIGHTBLACK_EX,
-        "!red": Fore.LIGHTRED_EX,
-        "!green": Fore.LIGHTGREEN_EX,
-        "!yellow": Fore.LIGHTYELLOW_EX,
-        "!blue": Fore.LIGHTBLUE_EX,
-        "!white": Fore.LIGHTWHITE_EX,
-        "!magenta": Fore.LIGHTMAGENTA_EX,
-        "!cyan": Fore.LIGHTCYAN_EX,
-        "reset": Style.RESET_ALL
-    }
-    colour_code = colour_dict.get(colour.lower(), Style.RESET_ALL)
-    return (colour_code + word + Style.RESET_ALL)
-
-help_text = \
-    "- To play a card, input its number order or full name. The yellow squares " + col("!yellow", "\u25A1") +" indicate your current energy." \
-    "\n- You cannot play a card if you don't have sufficient energy. " \
-    "\n- You will gain your Max Energy upon the end of the enemies turn." \
-    "" \
-    "\n- If you do not have enough energy to play your remaining cards, type" + col("magenta", " \"end\" ") + "to finish your turn" \
-    "\n- The " + col("!cyan", chr(10683)) + " icon indicates how much damage will be blocked. " \
-    "\n- Cards that " + col("!black", "exhaust") + " can only be used once per battle, and will return to your deck when complete. " \
 
 def card_details(hand):
     for counter in range(len(hand)):
@@ -53,7 +29,6 @@ def show_cards(hand):
         yellow_square = col("!yellow", "\u25A1")
         print(str(card["name"]) + " " + str(card["energy"] * yellow_square)  + " - " + str(card["description"]) + " " + exhaust_print)
         # print(str(card["name"]))
-
 
 
 def print_player_stats(entity):
@@ -79,53 +54,6 @@ def print_player_stats(entity):
 
 
 
-
-relic_pool = [
-    {"name": 'strike dummy',
-    "description": 'adds +3 DMG to all cards with the (strike) keyword',
-    "effect": 3},
-
-    {"name": 'oddly smooth stone',
-    "description": 'adds +1 to all block',
-    "effect": 1},
-
-    {"name": 'black belt',
-    "description": '15% change to dodge incoming attacks',
-    "effect": 0.85},
-
-    {"name": 'blood vial',
-    "description": 'heal 4HP after every battle',
-    "effect": 3},
-
-    {"name": 'old coin',
-    "description": 'immediately gain 200 gold',
-    "effect": 200},
-
-    {"name": 'strawberry',
-    "description": 'gain 8 Max HP',
-    "effect": 8},
-
-    {"name": 'prepared slug',
-    "description": 'gain 8 block the first turn of combat',
-    "effect": 8},
-]
-
-enemies_easy = ({"name": "mugger", "current HP": 1, "max HP": 30, "current block": 0, "attack": [{"damage": 7, "block": 0}, {"damage": 13, "block": 0}, {"damage": 5, "block": 10}, {"damage": 0, "block": 10}]},
-                {"name": "slime", "current HP": 1, "max HP": 21, "current block": 0, "attack": [{"damage": 4, "block": 0}, {"damage": 6, "block": 6}, {"damage": 5, "block": 0}]}
-                )
-
-
-
-def create_relics():
-    random.shuffle(relic_pool)
-
-
-def get_relic():
-    x = relic_pool.pop(0)
-    print(x)
-
-
-
 def draw_hand(draw_pile, hand, discard_pile):
     for count in range(3):
         if not draw_pile:
@@ -144,11 +72,7 @@ def get_player_input(hand, player, currentEnemy, discard_pile):
     move = ""
     action_index = 0
 
-    #print(ord(action) - 49)
-    #print(len(hand) -1)
-
     if len(action) == 1 and ord(action) in range(49, len(hand) + 49):
-
         action = int(action)
         move = hand[action - 1]
         action_index = action - 1
@@ -156,7 +80,7 @@ def get_player_input(hand, player, currentEnemy, discard_pile):
 
     if not move_found:
         if action == "help":
-            print(help_text)
+            print(text.CONST_HELP_TEXT)
         elif action == "end":
             end_player_turn(player, hand, discard_pile)
             player["Current Energy"] = 0
@@ -179,7 +103,6 @@ def apply_player_action(player, currentEnemy, enemyIntent ,action, hand, discard
     action_type = action["type"]
     enemyBLCK = currentEnemy["current block"]
     damage = action["amount"]
-
 
     if action_type == "block":
         player["Block"] += action["amount"]
@@ -216,8 +139,6 @@ def apply_enemy_action(enemyIntent, currentEnemy, player):
         currentEnemy["current block"] += block
 
 
-
-
 def check_energy(energy, card):
     energy_needed = card["energy"]
     requirement = energy >= energy_needed
@@ -230,6 +151,7 @@ def end_player_turn(player, hand, discard_pile):
     for counter in range(len(hand)):
         discard_pile.append(hand[0])
         hand.remove(hand[0])
+
 
 def spawn_shop():
     pass
@@ -262,29 +184,33 @@ def print_enemy_intent(currentEnemy, enemyIntent):
     print("The " + currentEnemy["name"] + enemyIntentHP + block_icon + " intends to " + message + "\n")
 
 
-def start_combat(player, enemy, deck):
-    """
-    Drive the combat
-
-    """
+def initialize_combat(enemy, deck):
     player_turn = 0
     currentEnemy = enemy
     random.shuffle(deck)
     discard_pile = []
     hand = []
     draw_pile = deck
+    return player_turn, hand, discard_pile, draw_pile, currentEnemy
+
+
+def start_combat(player, enemy, deck):
+    """
+    Drive the combat
+    """
+    player_turn, hand, discard_pile, draw_pile, currentEnemy = initialize_combat(enemy, deck)
 
     while currentEnemy["current HP"] > 0:
         player["Block"] = 0
         player["Current Energy"] = player["Max Energy"]
 
         enemyIntent = random.choice(currentEnemy["attack"])
-        #print_enemy_intent(currentEnemy, enemyIntent)  # prints intent
 
         draw_hand(draw_pile, hand, discard_pile)
         print(col("!black", "Your turn begins.. "))
 
         while player["Current Energy"] > 0 and currentEnemy["current HP"] > 0:     # begin players turn
+            # checks for enemy HP again to immediatley end players turn
             print_enemy_intent(currentEnemy, enemyIntent)
             show_cards(hand)
             print_player_stats(player)
@@ -305,38 +231,49 @@ def start_combat(player, enemy, deck):
 
 def reward_player(player, reward):
     print ( "\n" + col("magenta", chr(10870) * 3 + "LOOT" + chr(10870) * 3))
+
     gold_reward = random.randint(15, 25) * reward
     player["Gold"] += gold_reward
     print("Got " + col("yellow", str(player["Gold"] )+ " Gold") +  " " + col("!black", "+" + str(gold_reward)))
 
+    loot_relic = get_relic()
+    #print(loot_relic)
+    print("Got " + col("!magenta", (loot_relic['name']) + "!"))
+    print(col("magenta", "- " + (loot_relic['description'])))
 
+def create_deck():
+    deck = []
+    card_strike = card_list("strike")
+    card_defend = card_list("defend")
+    card_bash = card_list("bash")
+    for i in range(3):
 
+        deck.append(card_strike)
+        deck.append(card_defend)
+    deck.append(card_bash)
+    deck.append(card_list("bludgeon"))
+    return deck
 
 
 
 
 def main():
-    strike = {"name": "strike", "type": "attack", "amount": 6, "energy": 1, "description": "6 DMG", "exhaust": False}
-    defend = {"name": "defend", "type": "block", "amount": 5, "energy": 1, "description": "5 BLCK", "exhaust": False}
-    bash = {"name": "bash", "type": "attack", "amount": 9, "energy": 2, "description": "9 DMG", "exhaust": False}
-    bludgeon = {"name": "bludgeon", "type": "attack", "amount": 18, "energy": 2, "description": "18 DMG", "exhaust": True}
-    deck = [bash, bludgeon]
+
+    # deck = [bash, bludgeon]
+    deck = create_deck()
     rooms = 0
+    create_relics()
 
 
-    for i in range(2):
-        deck.append(strike)
-        deck.append(defend)
 
     #deck = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     random.shuffle(deck)
 
     player = {"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 50, "Max HP": 50, "Max Energy": 3, \
-              "Current Energy": 3, "Block": 0, "Gold": 0}
+              "Current Energy": 3, "Block": 0, "Gold": 50, "Relics": []}
     #hand = shuffle(deck) UNCOMMENT LATER
     if rooms < 3:
-
-        enemyDiffuculty = random.choice(enemies_easy)
+        enemyDiffuculty = random.choice(enemy.enemies_easy)
         reward = 1
 
     start_combat(player, enemyDiffuculty, deck)
