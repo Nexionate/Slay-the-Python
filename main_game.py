@@ -110,7 +110,9 @@ relic_pool = [
     "effect": 8},
 ]
 
-enemies_easy = ({"name": "mugger", "current HP": 30, "max HP": 30, "current block": 0, "attack": [{"damage": 7, "block": 0}, {"damage": 13, "block": 0}, {"damage": 5, "block": 10}, {"damage": 0, "block": 10}]})
+enemies_easy = ({"name": "mugger", "current HP": 1, "max HP": 30, "current block": 0, "attack": [{"damage": 7, "block": 0}, {"damage": 13, "block": 0}, {"damage": 5, "block": 10}, {"damage": 0, "block": 10}]},
+                {"name": "slime", "current HP": 1, "max HP": 21, "current block": 0, "attack": [{"damage": 4, "block": 0}, {"damage": 6, "block": 6}, {"damage": 5, "block": 0}]}
+                )
 
 
 
@@ -234,7 +236,6 @@ def spawn_shop():
 
 
 
-
 def print_enemy_intent(currentEnemy, enemyIntent):
     message = ""
     between = 0
@@ -298,11 +299,15 @@ def start_combat(player, enemy, deck):
         if currentEnemy["current HP"] > 0:
             currentEnemy["current block"] = 0
             apply_enemy_action(enemyIntent, currentEnemy, player)
-    print("player wins")
+
 
             #player["Current Energy"] = 0
 
-
+def reward_player(player, reward):
+    print ( "\n" + col("magenta", chr(10870) * 3 + "LOOT" + chr(10870) * 3))
+    gold_reward = random.randint(15, 25) * reward
+    player["Gold"] += gold_reward
+    print("Got " + col("yellow", str(player["Gold"] )+ " Gold") +  " " + col("!black", "+" + str(gold_reward)))
 
 
 
@@ -316,6 +321,8 @@ def main():
     bash = {"name": "bash", "type": "attack", "amount": 9, "energy": 2, "description": "9 DMG", "exhaust": False}
     bludgeon = {"name": "bludgeon", "type": "attack", "amount": 18, "energy": 2, "description": "18 DMG", "exhaust": True}
     deck = [bash, bludgeon]
+    rooms = 0
+
 
     for i in range(2):
         deck.append(strike)
@@ -324,9 +331,16 @@ def main():
     #deck = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     random.shuffle(deck)
 
-    player = {"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 37, "Max HP": 50, "Max Energy": 3, "Current Energy": 3, "Block": 0}
+    player = {"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 50, "Max HP": 50, "Max Energy": 3, \
+              "Current Energy": 3, "Block": 0, "Gold": 0}
     #hand = shuffle(deck) UNCOMMENT LATER
-    start_combat(player, enemies_easy, deck)
+    if rooms < 3:
+
+        enemyDiffuculty = random.choice(enemies_easy)
+        reward = 1
+
+    start_combat(player, enemyDiffuculty, deck)
+    reward_player(player, reward)
     '''
     get_input(hand)
     create_relics()
