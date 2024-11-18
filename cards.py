@@ -11,8 +11,12 @@ def card_list(wanted):
     return card
 
 
-def present_card_reward():
+def random_card_reward():
     card_reward_random = ["strike", "defend", "bash", "bludgeon"]
 
     option = card_list(random.choice(card_reward_random))
     return option
+
+
+def add_new_card(deck, option):
+    deck.append(option)

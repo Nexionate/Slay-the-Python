@@ -9,16 +9,16 @@ import enemy
 from relics import get_relic
 from relics import create_relics
 from cards import card_list
-from cards import present_card_reward
+from cards import add_new_card
+from cards import random_card_reward
 from text import col
 
 
-def card_details(hand):
-    for counter in range(len(hand)):
-        card = hand[counter]
-        for key in card.keys():
-            print(str(key) + ": " + str(card[key]))
-        print("\n")
+def card_details(card):
+
+    for key in card.keys():
+        print(str(key) + ": " + str(card[key]))
+    print("\n")
 
 
 def show_cards(hand):
@@ -237,7 +237,17 @@ def start_combat(player, enemy, deck):
 
 
 
-def reward_player(player, reward):
+def valid_input_reward():
+    action = input("Take card? ")
+    action = action.lower()
+    accepted = ["take", "yes"]
+    not_accepted = ["skip", "no"]
+    if action in accepted:
+        return True
+    else:
+        return False
+
+def reward_player(player, reward, deck):
     print ( "\n" + col("magenta", chr(10870) * 3 + "LOOT" + chr(10870) * 3))
 
     gold_reward = random.randint(15, 25) * reward
@@ -248,9 +258,14 @@ def reward_player(player, reward):
     #print(loot_relic)
     print("Got " + col("!magenta", (loot_relic['name']) + "!"))
     print(col("magenta", "- " + (loot_relic['description'])))
-    card_option = present_card_reward()
-    print(col("magenta", card_option))
+    print(col("green", "Card reward: "))
 
+    card_option = random_card_reward()
+    card_details(card_option)
+    #print(card_option)
+    valid_input = valid_input_reward()
+    if valid_input:
+        add_new_card(deck, card_option)
 
 
 
@@ -287,7 +302,7 @@ def main():
         reward = 1
 
     start_combat(player, enemyDiffuculty, deck)
-    reward_player(player, reward)
+    reward_player(player, reward, deck)
 
 
 
