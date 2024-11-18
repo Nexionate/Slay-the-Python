@@ -9,6 +9,7 @@ import enemy
 from relics import get_relic
 from relics import create_relics
 from cards import card_list
+from cards import present_card_reward
 from text import col
 
 
@@ -54,8 +55,8 @@ def print_player_stats(entity):
 
 
 
-def draw_hand(draw_pile, hand, discard_pile):
-    for count in range(3):
+def draw_hand(draw_pile, hand, discard_pile, amount):
+    for count in range(amount):
         if not draw_pile:
             draw_pile.extend(discard_pile)
             discard_pile = []
@@ -135,8 +136,14 @@ def apply_enemy_action(enemyIntent, currentEnemy, player):
             player["Block"] = 0
             player["Current HP"] -= calculated_damage
             print("The " + currentEnemy["name"] + " hits you for " + col("!red", str(calculated_damage) + " DMG"))
+        time.sleep(1)
     if block > 0:
         currentEnemy["current block"] += block
+        print("The " + currentEnemy["name"] + " defends for " + col("cyan", " " + chr(10683) + str(block) + " BLCK"))
+        time.sleep(1)
+    print(col("!black", "The enemy's turn ends.. \n"))
+    time.sleep(1)
+
 
 
 def check_energy(energy, card):
@@ -206,8 +213,10 @@ def start_combat(player, enemy, deck):
 
         enemyIntent = random.choice(currentEnemy["attack"])
 
-        draw_hand(draw_pile, hand, discard_pile)
+
+        draw_hand(draw_pile, hand, discard_pile, 3)     # change 3 to edit cards drawn
         print(col("!black", "Your turn begins.. "))
+        time.sleep(0.75)
 
         while player["Current Energy"] > 0 and currentEnemy["current HP"] > 0:     # begin players turn
             # checks for enemy HP again to immediatley end players turn
@@ -227,7 +236,6 @@ def start_combat(player, enemy, deck):
             apply_enemy_action(enemyIntent, currentEnemy, player)
 
 
-            #player["Current Energy"] = 0
 
 def reward_player(player, reward):
     print ( "\n" + col("magenta", chr(10870) * 3 + "LOOT" + chr(10870) * 3))
@@ -240,17 +248,23 @@ def reward_player(player, reward):
     #print(loot_relic)
     print("Got " + col("!magenta", (loot_relic['name']) + "!"))
     print(col("magenta", "- " + (loot_relic['description'])))
+    card_option = present_card_reward()
+    print(col("magenta", card_option))
+
+
+
 
 def create_deck():
     deck = []
     card_strike = card_list("strike")
     card_defend = card_list("defend")
-    card_bash = card_list("bash")
-    for i in range(3):
 
+
+    for i in range(3):
         deck.append(card_strike)
         deck.append(card_defend)
-    deck.append(card_bash)
+
+    deck.append(card_list("bash"))
     deck.append(card_list("bludgeon"))
     return deck
 
@@ -264,25 +278,17 @@ def main():
     rooms = 0
     create_relics()
 
-
-
-    #deck = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     random.shuffle(deck)
 
     player = {"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 50, "Max HP": 50, "Max Energy": 3, \
               "Current Energy": 3, "Block": 0, "Gold": 50, "Relics": []}
-    #hand = shuffle(deck) UNCOMMENT LATER
     if rooms < 3:
         enemyDiffuculty = random.choice(enemy.enemies_easy)
         reward = 1
 
     start_combat(player, enemyDiffuculty, deck)
     reward_player(player, reward)
-    '''
-    get_input(hand)
-    create_relics()
-    get_relic()
-    '''
+
 
 
 if __name__ == '__main__':

@@ -1,3 +1,4 @@
+import random
 def card_list(wanted):
     card_dict = {
     "strike" : {"name": "strike", "type": "attack", "amount": 6, "energy": 1, "description": "6 DMG", "exhaust": False},
@@ -8,3 +9,10 @@ def card_list(wanted):
     }
     card = card_dict.get(wanted)
     return card
+
+
+def present_card_reward():
+    card_reward_random = ["strike", "defend", "bash", "bludgeon"]
+
+    option = card_list(random.choice(card_reward_random))
+    return option
