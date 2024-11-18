@@ -18,9 +18,9 @@ def show_cards(hand):
         card = hand[counter]
         exhaust_print = ""
         if card["exhaust"] == True:
-            exhaust_print = Fore.DIM + "exhausts" + Style.RESET_ALL
-        yellow_square = Fore.LIGHTYELLOW_EX + ("\u25A1") + Style.RESET_ALL
-        print(str(card["name"]) + " " + str(card["energy"] * yellow_square)  + " - " + str(card["utility"]))
+            exhaust_print =  col("!black", "exhausts")
+        yellow_square = col("!yellow", "\u25A1")
+        print(str(card["name"]) + " " + str(card["energy"] * yellow_square)  + " - " + str(card["description"]) + " " + exhaust_print)
         # print(str(card["name"]))
 
 
@@ -30,10 +30,12 @@ def print_player_stats(entity):
     max_health = entity["Max HP"]
     energy = entity["Current Energy"]
     max_energy = entity["Max Energy"]
+
     squares = health // (max_health // 10)
-    green_square = Fore.GREEN + ("\u25A0") + Style.RESET_ALL
-    red_square = Fore.RED + ("\u25A0") + Style.RESET_ALL
-    yellow_square = Fore.LIGHTYELLOW_EX + ("\u25A1") + Style.RESET_ALL
+
+    green_square = col("green", "\u25A0")
+    red_square = col("red", "\u25A0")
+    yellow_square = col("!yellow", "\u25A1")
 
     print((green_square * squares) + (red_square * (10 - squares)) + "  " + (str(health) + "/" + str(max_health) + \
        "  " + (energy  * yellow_square ) + " " + (str(energy) + "/" + str(max_energy))))
@@ -123,7 +125,8 @@ def get_player_input(hand, player, currentEnemy):
     return move, move_found
 
 
-def apply_card():
+def apply_player_action(player, currentEnemy, action):
+    player["Current Energy"] -= action["energy"]
     pass
 
 def check_energy(energy, card):
@@ -135,44 +138,67 @@ def check_energy(energy, card):
 def spawn_shop():
     pass
 
+def col(colour, word):
+
+    colour_dict = {
+        "black": Fore.BLACK,
+        "red": Fore.RED,
+        "green": Fore.GREEN,
+        "yellow": Fore.YELLOW,
+        "blue": Fore.BLUE,
+        "magenta": Fore.MAGENTA,
+        "cyan": Fore.CYAN,
+        "white": Fore.WHITE,
+
+        "!black": Fore.LIGHTBLACK_EX,
+        "!red": Fore.LIGHTRED_EX,
+        "!green": Fore.LIGHTGREEN_EX,
+        "!yellow": Fore.LIGHTYELLOW_EX,
+        "!blue": Fore.LIGHTBLUE_EX,
+        "!white": Fore.LIGHTWHITE_EX,
+        "!magenta": Fore.LIGHTMAGENTA_EX,
+        "!cyan": Fore.LIGHTCYAN_EX,
+        "reset": Style.RESET_ALL
+    }
+    colour_code = colour_dict.get(colour.lower(), Style.RESET_ALL)
+
+    return (colour_code + word + Style.RESET_ALL)
+
 
 def print_enemy_intent(currentEnemy, enemyIntent):
-    enemyIntentDMG = Fore.RED + str(enemyIntent["damage"]) + " DMG" + Style.RESET_ALL
-    enemyIntentBLCK = Fore.LIGHTBLUE_EX + str(enemyIntent["block"]) + " BLCK" + Style.RESET_ALL
+    enemyIntentDMG = col("red", str(enemyIntent["damage"]) + " DMG" )
+    enemyIntentBLCK = col("!blue", str(enemyIntent["damage"]) + " DMG" )
     print("The " + currentEnemy[
-        "name"] + " intends to attack for " + enemyIntentDMG + " and block for " + enemyIntentBLCK)
+        "name"] + " intends to attack for " + enemyIntentDMG + " and defend for " + enemyIntentBLCK)
 
 
 def start_combat(player, enemy, deck):
     player_turn = 0
     currentEnemy = enemy
-    enemyIntent = random.choice(currentEnemy["attack"])
-    print_enemy_intent(currentEnemy, enemyIntent)                # prints intent
+    random.shuffle(deck)
+    discard_pile = []
+    hand = []
+    draw_pile = deck
 
-    #begin player turn
-    if player_turn == 0:
-        random.shuffle(deck)
-        discard_pile = []
-        hand = []
-        draw_pile = deck
-        player_turn += 1
-
-    while currentEnemy["Current HP"] > 0 and player["Current Energy"] > 0:
+    while currentEnemy["Current HP"] > 0:
+        enemyIntent = random.choice(currentEnemy["attack"])
+        print_enemy_intent(currentEnemy, enemyIntent)  # prints intent
         draw_hand(draw_pile, hand, discard_pile)
 
-        print("Your turn begins.. ")
-        show_cards(hand)
-        print_player_stats(player)
+        while player["Current Energy"] > 0:     # begin players turn
+            print(col("!black",  "Your turn begins.. " ))
+            show_cards(hand)
+            print_player_stats(player)
 
-        action, valid_input = get_player_input(hand, player, currentEnemy)
-        valid_energy = check_energy(player["Current Energy"], action)
+            action, valid_input = get_player_input(hand, player, currentEnemy)
+            valid_energy = check_energy(player["Current Energy"], action)
 
-        if valid_input and valid_energy:
+            if valid_input and valid_energy:
+                apply_player_action(player, currentEnemy, action)
+                print(action)
+                print("preform card")
 
-            print(action)
-            print("preform card")
-
-        player["Current Energy"] = 0
+            player["Current Energy"] = 0
 
 
 
@@ -183,12 +209,13 @@ def start_combat(player, enemy, deck):
 
 
 def main():
-    strike = {"name": "strike", "energy": 1, "utility": "6 DMG", "exhaust": False}
-    defend = {"name": "defend", "energy": 1, "utility": "5 Block", "exhaust": False}
-    bash = {"name": "bash", "energy": 2, "utility": "9 DMG", "exhaust": False}
-    deck = [strike, defend, bash]
+    strike = {"name": "strike", "type": "attack", "amount": 6, "energy": 1, "description": "6 DMG", "exhaust": False}
+    defend = {"name": "defend", "type": "block", "amount": 5, "energy": 1, "description": "5 BLCK", "exhaust": False}
+    bash = {"name": "bash", "type": "attack", "amount": 9, "energy": 2, "description": "9 DMG", "exhaust": False}
+    bludgeon = {"name": "bludgeon", "type": "attack", "amount": 18, "energy": 2, "description": "18 DMG", "exhaust": True}
+    deck = [bash, bludgeon]
 
-    for i in range(4):
+    for i in range(2):
         deck.append(strike)
         deck.append(defend)
 
