@@ -20,7 +20,7 @@ def show_cards(hand):
         if card["exhaust"] == True:
             exhaust_print = Fore.DIM + "exhausts" + Style.RESET_ALL
         yellow_square = Fore.LIGHTYELLOW_EX + ("\u25A1") + Style.RESET_ALL
-        print(str(card["name"]) + " " + str(card["cost"] * yellow_square)  + " - " + str(card["utility"]))
+        print(str(card["name"]) + " " + str(card["energy"] * yellow_square)  + " - " + str(card["utility"]))
         # print(str(card["name"]))
 
 
@@ -92,14 +92,6 @@ def draw_hand(draw_pile, hand, discard_pile):
             discard_pile = []
             random.shuffle(draw_pile)
         hand.append(draw_pile.pop(0))
-    #print("draw pile: " + str(draw_pile))
-    #print("discard pile: " + str(discard_pile))
-    #print("hand:" + str(hand))
-
-    #for removing cards
-    # for counter in range(len(hand)):
-    #     discard_pile.append(hand[0])
-    #     hand.remove(hand[0])
 
     return draw_pile, hand, discard_pile
 
@@ -107,26 +99,37 @@ def get_player_input(hand, player, currentEnemy):
     action = input("Enter your action: ")
     action = action.lower()
     move_found = False
-
+    move = ""
 
     if len(action) == 1 and ord(action) in range(49, 59):
         action = int(action)
-        print("now an int")
         move = hand[action - 1]
-        print(move)
-    else:
-        for index, item in enumerate(hand):
-            if item["name"] == action:
-                print("yes")
-                break
+        move_found = True
 
-        print("exit early")
-        print(action)
+    if not move_found:
+        if action == "help":
+            print("- To play a card, input its number or full name. The yellow squares indicate your current energy.\n"
+                  "- You cannot play a card if you don't have sufficient energy. You will gain your Max Energy upon the "
+                  "end of the enemies turn.\n")
+        else:
+            for index, item in enumerate(hand):
+                if item["name"] == action:
+                    move = item
+                    move_found = True
+                    break
+    if not move_found:
+        print("Action not found")
 
-    if action == "help":
-        print("- To play a card, input its number or full name. The yellow squares indicate your current energy.\n"
-              "- You cannot play a card if you don't have sufficient energy. You will gain your Max Energy upon the "
-              "end of the enemies turn.\n")
+    return move, move_found
+
+
+def apply_card():
+    pass
+
+def check_energy(energy, card):
+    energy_needed = card["energy"]
+    #print(energy_needed)
+    return energy >= energy_needed
 
 
 def spawn_shop():
@@ -157,12 +160,18 @@ def start_combat(player, enemy, deck):
     while currentEnemy["Current HP"] > 0 and player["Current Energy"] > 0:
         draw_hand(draw_pile, hand, discard_pile)
 
-        #get player input
         print("Your turn begins.. ")
         show_cards(hand)
         print_player_stats(player)
 
-        action = get_player_input(hand, player, currentEnemy)
+        action, valid_input = get_player_input(hand, player, currentEnemy)
+        valid_energy = check_energy(player["Current Energy"], action)
+
+        if valid_input and valid_energy:
+
+            print(action)
+            print("preform card")
+
         player["Current Energy"] = 0
 
 
@@ -174,9 +183,9 @@ def start_combat(player, enemy, deck):
 
 
 def main():
-    strike = {"name": "strike", "cost": 1, "utility": "6 DMG", "exhaust": False}
-    defend = {"name": "defend", "cost": 1, "utility": "5 Block", "exhaust": False}
-    bash = {"name": "bash", "cost": 2, "utility": "9 DMG", "exhaust": False}
+    strike = {"name": "strike", "energy": 1, "utility": "6 DMG", "exhaust": False}
+    defend = {"name": "defend", "energy": 1, "utility": "5 Block", "exhaust": False}
+    bash = {"name": "bash", "energy": 2, "utility": "9 DMG", "exhaust": False}
     deck = [strike, defend, bash]
 
     for i in range(4):
