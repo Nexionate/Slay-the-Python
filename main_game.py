@@ -12,13 +12,15 @@ from cards import card_list
 from cards import add_new_card
 from cards import random_card_reward
 from text import col
+from initialize_game import initialize_game_start
+from initialize_game import print_board
 
 
 def card_details(card):
 
     for key in card.keys():
         print(str(key) + ": " + str(card[key]))
-    print("\n")
+    print("")
 
 
 def show_cards(hand):
@@ -145,7 +147,6 @@ def apply_enemy_action(enemyIntent, currentEnemy, player):
     time.sleep(1)
 
 
-
 def check_energy(energy, card):
     energy_needed = card["energy"]
     requirement = energy >= energy_needed
@@ -194,6 +195,7 @@ def print_enemy_intent(currentEnemy, enemyIntent):
 def initialize_combat(enemy, deck):
     player_turn = 0
     currentEnemy = enemy
+    enemy["current HP"] = enemy["max HP"]
     random.shuffle(deck)
     discard_pile = []
     hand = []
@@ -212,7 +214,6 @@ def start_combat(player, enemy, deck):
         player["Current Energy"] = player["Max Energy"]
 
         enemyIntent = random.choice(currentEnemy["attack"])
-
 
         draw_hand(draw_pile, hand, discard_pile, 3)     # change 3 to edit cards drawn
         print(col("!black", "Your turn begins.. "))
@@ -236,7 +237,6 @@ def start_combat(player, enemy, deck):
             apply_enemy_action(enemyIntent, currentEnemy, player)
 
 
-
 def valid_input_reward():
     action = input("Take card? ")
     action = action.lower()
@@ -247,6 +247,7 @@ def valid_input_reward():
     else:
         return False
 
+
 def reward_player(player, reward, deck):
     print ( "\n" + col("magenta", chr(10870) * 3 + "LOOT" + chr(10870) * 3))
 
@@ -255,54 +256,181 @@ def reward_player(player, reward, deck):
     print("Got " + col("yellow", str(player["Gold"] )+ " Gold") +  " " + col("!black", "+" + str(gold_reward)))
 
     loot_relic = get_relic()
-    #print(loot_relic)
     print("Got " + col("!magenta", (loot_relic['name']) + "!"))
     print(col("magenta", "- " + (loot_relic['description'])))
     print(col("green", "Card reward: "))
 
     card_option = random_card_reward()
     card_details(card_option)
-    #print(card_option)
     valid_input = valid_input_reward()
     if valid_input:
         add_new_card(deck, card_option)
+        print(col("magenta", "- " + (card_option['name']) + " added to deck!"))
 
 
-
-def create_deck():
-    deck = []
-    card_strike = card_list("strike")
-    card_defend = card_list("defend")
-
-
-    for i in range(3):
-        deck.append(card_strike)
-        deck.append(card_defend)
-
-    deck.append(card_list("bash"))
-    deck.append(card_list("bludgeon"))
-    return deck
+def check_board_location(board, player, update):
+    player_cords = (player["X-coordinate"], player["Y-coordinate"])
+    if update:
+        board[player_cords] = col("!black", "empty")
+    else:
+        if player_cords in board:
+            print("You are now in: " + board[player_cords] + " at co-ords" + str(player_cords) + "\n")
+        return board[player_cords]
 
 
+def get_user_choice():
+    """
+    Print the player movement options
 
+    Asks the player to input one of 4 options: W A S D
+    :postcondition: prints a warning if the player input is invalid
+    :return: a non-empty string containing "A" or "S" or "W" or "D"
+
+    #>>> choice = "W"    # doctest: +SKIP
+    #>>> get_user_choice()   # doctest: +SKIP
+    W
+    #>>> choice = "D"    # doctest: +SKIP
+    #>>> get_user_choice()   # doctest: +SKIP
+    D
+    #>>> choice = "F"    # doctest: +SKIP
+    #>>> get_user_choice()   # doctest: +SKIP
+    "INVALID MOVEMENT INPUT"
+    """
+    movements_print = ["W - Move up", "A - Move left", "S - Move down", "D - Move right"]
+    movements_valid = ("W", "A", "S", "D")
+    print("MOVEMENT OPTIONS")
+
+    for move in movements_print:
+        print(move)
+
+    wanted_movement = ""
+
+    while wanted_movement not in movements_valid:
+        wanted_movement = input("Enter your movement here: ")
+
+        if wanted_movement in movements_valid:
+            return wanted_movement
+        else:
+            print("\nINVALID MOVEMENT INPUT")
+
+
+def projected_movement(player, movement):
+    """
+    Calculate the projected movement
+
+    :param character: a dictionary of the character
+    :param movement: a one letter string of the movement
+    :precondition: character is a well-formed dictionary containing the character stats
+    :precondition: movement is a non-empty string containing "A" or "S" or "W" or "D"
+    :postcondition: the correct vector of the players movement
+    :return: dictionary of character's projected coordinates
+
+    #>>> projected_movement({"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 5}, "D")
+    (1, 0)
+    #player>>> projected_movement({"X-coordinate": 2, "Y-coordinate": 2, "Current HP": 5}, "W")
+    (2, 1)
+    """
+
+    if movement == "W":
+        projected_cords = (player["X-coordinate"], player["Y-coordinate"] - 1)
+    elif movement == "A":
+        projected_cords = (player["X-coordinate"] - 1, player["Y-coordinate"])
+    elif movement == "S":
+        projected_cords = (player["X-coordinate"], player["Y-coordinate"] + 1)
+    elif movement == "D":
+        projected_cords = (player["X-coordinate"] + 1, player["Y-coordinate"])
+    else:
+        print("something has gone very wrong here")
+        return "Error"
+    return projected_cords
+
+
+def validate_move(board, player, movement):
+    """
+    Determine the validity of the player's wanted movement
+
+    :param board: a dictionary of the board
+    :param character: a dictionary of the character
+    :param movement: a non-empty string
+    :precondition: character is a well-formed dictionary containing the character stats
+    :precondition: movement is a non-empty string containing "A" or "S" or "W" or "D"
+    :return: True if move is valid, else False
+
+    #>>> validate_move({(0, 0): 'coast-side', (0, 1): 'hills', (1, 0): 'hills', (1, 1): 'dark forest'},\
+{"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 5}, "W") # doctest: +SKIP
+     <BLANKLINE> INVALID MOVEMENT False
+     #>>> validate_move({(0, 0): 'coast-side', (0, 1): 'hills', (1, 0): 'hills', (1, 1): 'dark forest'},\
+{"X-coordinate": 1, "Y-coordinate": 1, "Current HP": 5}, "N") # doctest: +SKIP
+     True
+    """
+    valid_cords = projected_movement(player, movement)
+
+    if valid_cords not in board:
+        print("\nINVALID MOVEMENT")
+        return False
+    else:
+        return True
+
+
+def move_character(player, movement):
+    """
+    Update the characters position
+
+    :param character: a dictionary of the character
+    :param movement: a non-empty string
+    :precondition: character is a well-formed dictionary containing the character stats
+    :precondition: movement is a non-empty string containing "A" or "S" or "W" or "D"
+    :postcondition: update character location in its dictionary
+
+    #>>> move_character({"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 5}, 'S')
+    {'X-coordinate': 0, 'Y-coordinate': 1, 'Current HP': 5}
+    #>>> move_character({"X-coordinate": 2, "Y-coordinate": 2, "Current HP": 5}, 'D')
+    {'X-coordinate': 3, 'Y-coordinate': 2, 'Current HP': 5}
+    """
+    move_cords = projected_movement(player, movement)
+    player["X-coordinate"] = move_cords[0]
+    player["Y-coordinate"] = move_cords[1]
+    return player
+
+def check_if_goal_attained(player, rows, columns):
+    """
+    Determine if the character has reached the goal
+
+    :param character: a dictionary of the character
+    :param rows: a positive integer
+    :param columns: a positive integer
+    :precondition: character is a well-formed dictionary containing the character stats
+    :return: True if goal is attained, else False
+
+    #>>> check_if_goal_attained({"X-coordinate": 3, "Y-coordinate": 3, "Current HP": 5}, 4, 4)
+    True
+    #>>> check_if_goal_attained({"X-coordinate": 2, "Y-coordinate": 1, "Current HP": 5}, 4, 4)
+    False
+    """
+    return player["X-coordinate"] == (rows - 1) and player["Y-coordinate"] == (columns - 1)
 
 def main():
+    rooms, deck, player, board = initialize_game_start()
 
-    # deck = [bash, bludgeon]
-    deck = create_deck()
-    rooms = 0
-    create_relics()
+    while not check_if_goal_attained(player, 5, 5):
+        if rooms < 3:
+            enemyDiffuculty = random.choice(enemy.enemies_easy)
+            reward = 1
+        print_board(board, 5, 5)
+        movement = get_user_choice()
+        valid_move = validate_move(board, player, movement)
 
-    random.shuffle(deck)
+        if valid_move:
+            move_character(player, movement)
+            event = check_board_location(board, player, False)
 
-    player = {"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 50, "Max HP": 50, "Max Energy": 3, \
-              "Current Energy": 3, "Block": 0, "Gold": 50, "Relics": []}
-    if rooms < 3:
-        enemyDiffuculty = random.choice(enemy.enemies_easy)
-        reward = 1
+            if event == "fight":
+                start_combat(player, enemyDiffuculty, deck)
+                reward_player(player, reward, deck)
+                check_board_location(board, player, True)
 
-    start_combat(player, enemyDiffuculty, deck)
-    reward_player(player, reward, deck)
+
+
 
 
 
