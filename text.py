@@ -40,3 +40,16 @@ CONST_HELP_TEXT = \
     "\n- The " + col("!cyan", chr(10683)) + " icon indicates how much damage will be blocked. " \
     "\n- " + col("!cyan", chr(10683) + " Block") + " wears off at the start of your next turn. " \
     "\n- Cards that " + col("!black", "exhaust") + " can only be used once per battle, and will return to your deck when complete. "
+
+CONST_MAP_HELP = \
+    "Welcome to this land. I will explain the map. Your goal is to reach the bottom-right tile of the board."\
+    "\nEvery board tile will contain an event. "\
+    "\n" + col("!white", "- fights:") + " normal enemy battle with" + col("!yellow", " gold ") + "and card rewards"\
+    "\n" + col("red", "- elites:") + " extra tough enemies that will drop powerful " + col("!magenta", "relics ") + " and more gold"\
+    "\n" + col("blue", "- events:") + " a special event will play, who knows what will happen?"\
+    "\n" + col("magenta", "- shop:") + " spend your gold on relics and upgrades! Can only be visited once, so plan around it!"\
+    "\n" + col("yellow", "- fires:") + " allow the player to heal" + col("!white", " *OR*") + " permanently upgrade a card from your deck, making it more powerful"\
+    "\nElites are completely optional, but will be very helpful in defeating the boss! \n"\
+
+
+
