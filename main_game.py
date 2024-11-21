@@ -52,8 +52,8 @@ def print_player_stats(entity):
 
 
     print((green_square * squares) + (red_square * (10 - squares)) + "  " + (str(health) + "/" + str(max_health) + \
-       "  " + block_icon +
-       "  " + (energy  * yellow_square ) + " " + (str(energy) + "/" + str(max_energy))))
+       col("!green", " HP  ")  + block_icon +
+       "  " + (energy  * yellow_square ) + " " + (str(energy) + "/" + str(max_energy)) + col("!yellow", " energy")))
 
 
 

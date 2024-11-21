@@ -82,25 +82,31 @@ def populate_board(cord_list, cord_dic, rows, cols):
 
 def print_board(cord_dic, rows, cols):
     print_counter = 0
+    print("\n" + col("magenta", chr(10870) * 6 + "MAP" + chr(10870) * 5))
     message = ""
     for counter in cord_dic:
         if cord_dic[counter] == "elite":
             message += col("red", cord_dic[counter] + " ")
         elif cord_dic[counter] == "fire":
-            message += col("yellow", cord_dic[counter] + " ")
+            message += col("yellow", cord_dic[counter] + "  ")
         elif cord_dic[counter] == "start":
             message += col("green", cord_dic[counter] + " ")
         elif cord_dic[counter] == "event":
             message += col("blue", cord_dic[counter] + " ")
         elif cord_dic[counter] == "shop":
-            message += col("magenta", cord_dic[counter] + " ")
+            message += col("magenta", cord_dic[counter] + "  ")
         else:
             message += cord_dic[counter] + " "
         print_counter += 1
 
-        if print_counter % cols == 0:
-            print(message + "\n")
+        if print_counter % 5 == 0:
+            if print_counter == 25:
+                print(message)
+            else:
+
+                print(message + "\n")
             message = ""
+    print(col("magenta", chr(10870) * 6 + "MAP" + chr(10870) * 5))
 
 
 def initialize_game_start():
