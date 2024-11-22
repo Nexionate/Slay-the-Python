@@ -3,9 +3,13 @@ init(autoreset=True)
 import random
 import time
 import relics
+import copy
 
 import text
 import enemy
+from relics import print_relic_description
+from relics import return_relic
+from relics import shop_relic
 from relics import get_relic
 from relics import create_relics
 from cards import card_list
@@ -14,6 +18,7 @@ from cards import random_card_reward
 from text import col
 from initialize_game import initialize_game_start
 from initialize_game import print_board
+from text import print_shop
 
 
 def card_details(card):
@@ -30,7 +35,7 @@ def show_cards(hand):
         if card["exhaust"] == True:
             exhaust_print =  col("!black", "exhausts")
         yellow_square = col("!yellow", "\u25A1")
-        print(str(card["name"]) + " " + str(card["energy"] * yellow_square)  + " - " + str(card["description"]) + " " + exhaust_print)
+        print( str(counter + 1) + ") "+ str(card["name"]) + " " + str(card["energy"] * yellow_square)  + " - " + str(card["description"]) + " " + exhaust_print)
         # print(str(card["name"]))
 
 
@@ -161,7 +166,15 @@ def end_player_turn(player, hand, discard_pile):
         hand.remove(hand[0])
 
 
-def spawn_shop():
+def spawn_shop(player, deck):
+    print(col("!black", "You approach a small shop \n"))
+    time.sleep(1.5)
+    print_shop()
+
+
+    pass
+
+def spawn_fire(player, deck):
     pass
 
 
@@ -194,12 +207,12 @@ def print_enemy_intent(currentEnemy, enemyIntent):
 
 def initialize_combat(enemy, deck):
     player_turn = 0
-    currentEnemy = enemy
-    enemy["current HP"] = enemy["max HP"]
+    currentEnemy = copy.deepcopy(enemy)
+    #enemy["current HP"] = enemy["max HP"]
     random.shuffle(deck)
     discard_pile = []
     hand = []
-    draw_pile = deck
+    draw_pile = copy.deepcopy(deck)
     return player_turn, hand, discard_pile, draw_pile, currentEnemy
 
 
@@ -255,9 +268,8 @@ def reward_player(player, reward, deck):
     player["Gold"] += gold_reward
     print("Got " + col("yellow", str(player["Gold"] )+ " Gold") +  " " + col("!black", "+" + str(gold_reward)))
 
-    loot_relic = get_relic()
-    print("Got " + col("!magenta", (loot_relic['name']) + "!"))
-    print(col("magenta", "- " + (loot_relic['description'])))
+    print(print_relic_description(get_relic()))
+
     print(col("green", "Card reward: "))
 
     card_option = random_card_reward()
@@ -266,12 +278,19 @@ def reward_player(player, reward, deck):
     if valid_input:
         add_new_card(deck, card_option)
         print(col("magenta", "- " + (card_option['name']) + " added to deck!"))
+    #print(deck)
+    time.sleep(1)
+    print(col("!black", "Time to get moving... "))
+    time.sleep(2)
 
 
 def check_board_location(board, player, update):
     player_cords = (player["X-coordinate"], player["Y-coordinate"])
     if update:
+        pass
+        # board[player_cords] = col("@blue", col("!white","player"))
         board[player_cords] = col("!black", "empty")
+
     else:
         if player_cords in board:
             print("You are now in: " + board[player_cords] + " at co-ords" + str(player_cords) + "\n")
@@ -307,6 +326,7 @@ def get_user_choice():
 
     while wanted_movement not in movements_valid:
         wanted_movement = input("Enter your movement here: ")
+        wanted_movement = wanted_movement.upper()
 
         if wanted_movement in movements_valid:
             return wanted_movement
@@ -409,14 +429,23 @@ def check_if_goal_attained(player, rows, columns):
     """
     return player["X-coordinate"] == (rows - 1) and player["Y-coordinate"] == (columns - 1)
 
+
+def calculate_enemy_diffuculty(event):
+    if event == "fight":
+        enemy_chosen = random.choice(enemy.enemies_easy)
+        reward = 1
+    elif event == "elite":
+        enemy_chosen = random.choice(enemy.enemies_hard)
+        reward = 1.5
+    #print(enemy_chosen)
+    return enemy_chosen, reward
+
+
 def main():
     rooms, deck, player, board = initialize_game_start()
 
     while not check_if_goal_attained(player, 5, 5):
-        if rooms < 3:
-            enemyDiffuculty = random.choice(enemy.enemies_easy)
-            reward = 1
-        print_board(board, 5, 5)
+        print_board(board, player)
         movement = get_user_choice()
         valid_move = validate_move(board, player, movement)
 
@@ -424,10 +453,16 @@ def main():
             move_character(player, movement)
             event = check_board_location(board, player, False)
 
-            if event == "fight":
-                start_combat(player, enemyDiffuculty, deck)
+            if event == "fight" or event == "elite":
+                enemy, reward = calculate_enemy_diffuculty(event)
+                start_combat(player, enemy, deck)
                 reward_player(player, reward, deck)
-                check_board_location(board, player, True)
+            elif event == "shop":
+                spawn_shop(player, deck)
+            elif event == "fire":
+                spawn_fire(player, deck)
+            check_board_location(board, player, True)
+
 
 
 
