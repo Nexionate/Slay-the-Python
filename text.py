@@ -1,5 +1,9 @@
+from time import sleep
+
 from colorama import Fore, Back, Style, init
 init(autoreset=True)
+import sys
+import time
 
 
 def col(colour, word):
@@ -17,6 +21,15 @@ def col(colour, word):
         "cyan": Fore.CYAN,
         "white": Fore.WHITE,
 
+        "@black": Back.BLACK,
+        "@r8ed": Back.RED,
+        "@green": Back.GREEN,
+        "@yellow": Back.YELLOW,
+        "@blue": Back.BLUE,
+        "@magenta": Back.MAGENTA,
+        "@cyan": Back.CYAN,
+        "@white": Back.WHITE,
+
         "!black": Fore.LIGHTBLACK_EX,
         "!red": Fore.LIGHTRED_EX,
         "!green": Fore.LIGHTGREEN_EX,
@@ -27,8 +40,25 @@ def col(colour, word):
         "!cyan": Fore.LIGHTCYAN_EX,
         "reset": Style.RESET_ALL
     }
-    colour_code = colour_dict.get(colour.lower(), Style.RESET_ALL)
+    try:
+        colour_code = colour_dict.get(colour.lower(), Style.RESET_ALL)
+    except KeyError:
+        colour_code = Style.RESET_ALL
+
     return colour_code + word + Style.RESET_ALL
+
+
+def lbl(sentence, delay=1, colour=""):
+    """
+    Prints a sentence letter by letter with a delay between each character.
+
+    :param sentence: The sentence to be printed.
+    :param delay: The delay (in seconds) between printing each letter.
+    """
+    for char in sentence:
+        sys.stdout.write(col(colour, char))  # Print the character without a newline
+        sys.stdout.flush()  # Ensure it's immediately written to the terminal
+        time.sleep(delay)  # Wait for the specified delay
 
 
 CONST_HELP_TEXT = \
@@ -52,4 +82,18 @@ CONST_MAP_HELP = \
     "\nElites are completely optional, but will be very helpful in defeating the boss! \n"\
 
 
+
+def print_shop():
+    print(" " * 4 + col("magenta", chr(10870) * 6 + "SHOP" + chr(10870) * 6))
+    lbl("hellllooooooOOooOOooo", 0.08, "!cyan")
+    time.sleep(0.25)
+    sys.stdout.write(col("!black", " a shopkeeper greets your rather obvious entrance"))
+    time.sleep(1.5)
+    sys.stdout.write("\r")
+    lbl("I HAVE LOTS OF WARES FOR SURE", 0.08, "!cyan")
+    time.sleep(0.5)
+    sys.stdout.write("\r")
+    lbl("PLEASE TAKE A LOOK", 0.08, "!cyan")
+    time.sleep(0.75)
+    sys.stdout.write(col("!black", " he seems harmless"))
 
