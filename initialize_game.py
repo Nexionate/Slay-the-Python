@@ -46,9 +46,13 @@ def make_board(rows, cols):
 
     cord_list = []
     cord_dic = {}
+    # for row_counter in range(rows):
+    #     for col_counter in range(cols):
+    #         conv_to_tuple = (row_counter, col_counter)
+    #         cord_list.append(conv_to_tuple)
     for row_counter in range(rows):
         for col_counter in range(cols):
-            conv_to_tuple = (row_counter, col_counter)
+            conv_to_tuple = (col_counter, row_counter)          # swap to make board draw correctly
             cord_list.append(conv_to_tuple)
     populated_board = populate_board(cord_list, cord_dic, rows, cols)
     return populated_board
@@ -80,12 +84,17 @@ def populate_board(cord_list, cord_dic, rows, cols):
     return cord_dic
 
 
-def print_board(cord_dic, rows, cols):
+def print_board(cord_dic, player):
+    player_cords = (player["X-coordinate"], player["Y-coordinate"])
+
     print_counter = 0
-    print("\n" + col("magenta", chr(10870) * 6 + "MAP" + chr(10870) * 5))
+    print(col("magenta", chr(10870) * 6 + "MAP" + chr(10870) * 5))
     message = ""
     for counter in cord_dic:
-        if cord_dic[counter] == "elite":
+        if counter == player_cords:
+            #print("yes")
+            message += col("@blue", col("!white", "player"))
+        elif cord_dic[counter] == "elite":
             message += col("red", cord_dic[counter] + " ")
         elif cord_dic[counter] == "fire":
             message += col("yellow", cord_dic[counter] + "  ")
@@ -110,11 +119,12 @@ def print_board(cord_dic, rows, cols):
 
 
 def initialize_game_start():
+    player = make_character()
     deck = create_deck()
     rooms = 0
     create_relics()
     random.shuffle(deck)
-    player = make_character()
+
     board = make_board(5, 5)
     #print_board(board, 5, 5)
     print(text.CONST_MAP_HELP)
