@@ -1,4 +1,5 @@
 import random
+from text import col
 
 CONST_RELIC_POOL = [
     {"name": 'strike dummy',
@@ -35,5 +36,24 @@ def get_relic():
     return CONST_RELIC_POOL.pop(0)
 
 
+def return_relic(relic):
+    CONST_RELIC_POOL.append(relic)
+
+
 def create_relics():
     random.shuffle(CONST_RELIC_POOL)
+
+
+def shop_relic():
+    # shop_list = []
+    #for counter in range(3):
+        #shop_list.append(get_relic())
+    #return shop_list
+    pass
+
+
+def print_relic_description(relic):
+    print("Relic: " + col("!magenta", (relic['name'])))
+    print(col("magenta", "- " + (relic['description'])))
+
+
