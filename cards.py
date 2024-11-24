@@ -5,6 +5,10 @@ def card_list(wanted):
     "defend" : {"name": "defend", "type": "block", "amount": 5, "energy": 1, "description": "5 BLCK", "exhaust": False},
     "bash" : {"name": "bash", "type": "attack", "amount": 9, "energy": 2, "description": "9 DMG", "exhaust": False},
     "bludgeon" : {"name": "bludgeon", "type": "attack", "amount": 18, "energy": 2, "description": "18 DMG", "exhaust": True},
+    "iron wave": {"name": "iron wave", "type": "hybrid", "amount": 5, "energy": 2, "description": "5 DMG, 5 BLCK",
+                     "exhaust": False},
+    "anger": {"name": "anger", "type": "attack", "amount": 8, "energy": 0, "description": "6 DMG",
+                      "exhaust": True},
 
     }
     card = card_dict.get(wanted)
@@ -12,7 +16,7 @@ def card_list(wanted):
 
 
 def random_card_reward():
-    card_reward_random = ["strike", "defend", "bash", "bludgeon"]
+    card_reward_random = ["strike", "defend", "bash", "bludgeon", "iron wave", "anger"]
 
     option = card_list(random.choice(card_reward_random))
     return option
