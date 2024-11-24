@@ -7,6 +7,7 @@ import copy
 
 import text
 import enemy
+from relics import relic_one_time_buff
 from relics import print_relic_description
 from relics import return_relic
 from relics import shop_relic
@@ -174,8 +175,30 @@ def spawn_shop(player, deck):
 
     pass
 
+def valid_input_fire():
+    player_input = input("Enter your action: ")
+    action = action.lower()
+    accepted = ["heal", "rest"]
+    not_accepted = ["upgrade", "smith"]
+    if action in accepted or action in not_accepted:
+        return True, action
+    else:
+        return False
+
 def spawn_fire(player, deck):
-    pass
+    print(col("!black", "You approach a small campfire, you know you are safe \n"))
+    print("The " + col("!black", "warmth of the fire") + " welcomes you")
+    print("You have the option to " + col("!green", "rest (recover 20HP)") + "or " + col("!blue", "smith (upgrade a card)"))
+    valid, action = valid_input_fire()
+    if valid:
+        if action == "heal" or action == "rest":
+            player["Current HP"] += 20
+            if player["Current HP"] > player["Max HP"]:
+                player["Current HP"] = player["Max HP"]
+                print("You rest deeply and wake up at" + col("!green", player["Current HP"] + "HP"))
+        elif action == "upgrade" or action == "smith":
+            pass
+
 
 
 
@@ -192,7 +215,7 @@ def print_enemy_intent(currentEnemy, enemyIntent):
     enemyIntentHP = col("green", ("(" + str(currentEnemy["current HP"]) + "/" + str(currentEnemy["max HP"])) + ")")
 
     if enemyIntent["block"] == 0 and enemyIntent["damage"] == 0:
-        message += col("magenta", "UNKNOWN")
+        message += col("magenta", "UNKNOWN") + col("!black", " (not attack)")
     else:
         if enemyIntent["damage"] != 0:
             message += "attack for " + enemyIntentDMG
@@ -221,12 +244,15 @@ def start_combat(player, enemy, deck):
     Drive the combat
     """
     player_turn, hand, discard_pile, draw_pile, currentEnemy = initialize_combat(enemy, deck)
-
-    while currentEnemy["current HP"] > 0:
+    enemy_attacks = iter(currentEnemy["attack"])
+    while currentEnemy["current HP"] > 0 and player["Current HP"] > 0:
         player["Block"] = 0
         player["Current Energy"] = player["Max Energy"]
 
-        enemyIntent = random.choice(currentEnemy["attack"])
+        if currentEnemy["attack pattern"] == True:
+            enemyIntent = next(enemy_attacks)
+        else:
+           enemyIntent = random.choice(currentEnemy["attack"])
 
         draw_hand(draw_pile, hand, discard_pile, 3)     # change 3 to edit cards drawn
         print(col("!black", "Your turn begins.. "))
@@ -268,7 +294,9 @@ def reward_player(player, reward, deck):
     player["Gold"] += gold_reward
     print("Got " + col("yellow", str(player["Gold"] )+ " Gold") +  " " + col("!black", "+" + str(gold_reward)))
 
-    print(print_relic_description(get_relic()))
+    loot_relic = get_relic()
+    print(print_relic_description(loot_relic))
+    relic_one_time_buff(loot_relic, player)
 
     print(col("green", "Card reward: "))
 
@@ -278,7 +306,6 @@ def reward_player(player, reward, deck):
     if valid_input:
         add_new_card(deck, card_option)
         print(col("magenta", "- " + (card_option['name']) + " added to deck!"))
-    #print(deck)
     time.sleep(1)
     print(col("!black", "Time to get moving... "))
     time.sleep(2)
@@ -437,14 +464,13 @@ def calculate_enemy_diffuculty(event):
     elif event == "elite":
         enemy_chosen = random.choice(enemy.enemies_hard)
         reward = 1.5
-    #print(enemy_chosen)
     return enemy_chosen, reward
 
 
 def main():
     rooms, deck, player, board = initialize_game_start()
 
-    while not check_if_goal_attained(player, 5, 5):
+    while not check_if_goal_attained(player, 5, 5) and player["Current HP"] > 0:
         print_board(board, player)
         movement = get_user_choice()
         valid_move = validate_move(board, player, movement)
@@ -456,13 +482,15 @@ def main():
             if event == "fight" or event == "elite":
                 enemy, reward = calculate_enemy_diffuculty(event)
                 start_combat(player, enemy, deck)
-                reward_player(player, reward, deck)
+                if player["Current HP"] > 0:
+                    reward_player(player, reward, deck)
             elif event == "shop":
                 spawn_shop(player, deck)
             elif event == "fire":
                 spawn_fire(player, deck)
             check_board_location(board, player, True)
-
+    if not player["Current HP"] > 0:
+        print("\n" + col("!red", "GAME OVER"))
 
 
 
