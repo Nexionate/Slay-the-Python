@@ -4,27 +4,27 @@ from text import col
 CONST_RELIC_POOL = [
     {"name": 'strike dummy',
     "description": 'adds +3 DMG to all cards with the (strike) keyword',
-    "effect": 3},
+    "effect": 3, "one-time": False},
 
     {"name": 'oddly smooth stone',
     "description": 'adds +1 to all block',
-    "effect": 1},
+    "effect": 1, "one-time": False},
 
     {"name": 'black belt',
     "description": '15% change to dodge incoming attacks',
-    "effect": 0.85},
+    "effect": 0.85, "one-time": False},
 
     {"name": 'blood vial',
     "description": 'heal 4HP after every battle',
-    "effect": 3},
+    "effect": 3, "one-time": False},
 
     {"name": 'old coin',
     "description": 'immediately gain 200 gold',
-    "effect": 200},
+    "effect": 200, "one-time": True},
 
     {"name": 'strawberry',
-    "description": 'gain 8 Max HP',
-    "effect": 8},
+    "description": 'gain 10 Max HP',
+    "effect": 10, "one-time": True},
 
     {"name": 'prepared slug',
     "description": 'gain 8 block the first turn of combat',
@@ -55,5 +55,6 @@ def shop_relic():
 def print_relic_description(relic):
     print("Relic: " + col("!magenta", (relic['name'])))
     print(col("magenta", "- " + (relic['description'])))
+    return
 
 
