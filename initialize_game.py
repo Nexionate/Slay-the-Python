@@ -29,8 +29,8 @@ def make_character():
     :return: dictionary of character stats
     """
     return {"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 50, "Max HP": 50, "Max Energy": 3, "Max Draw": 3,
-            "Current Energy": 3, "Block": 0, "Gold": 400, "Relics": []}
-    # maybe change max draw later, see hwo difficult it is
+            "Current Energy": 3, "Block": 0, "Gold": 99, "Relics": []}
+    # maybe change max draw later, see how difficult it is
 
 
 def make_board(rows, cols):
@@ -94,7 +94,6 @@ def print_board(cord_dic, player):
     message = ""
     for counter in cord_dic:
         if counter == player_cords:
-            #print("yes")
             message += col("@blue", col("!white", "player"))
         elif cord_dic[counter] == "elite":
             message += col("red", cord_dic[counter] + " ")
