@@ -1,4 +1,7 @@
 from colorama import Fore, Back, Style, init
+
+import cards
+
 init(autoreset=True)
 import random
 import time
@@ -144,7 +147,7 @@ def apply_player_action(player, currentEnemy, enemyIntent ,action, hand, discard
         end_player_turn(player, hand, discard_pile)
 
 
-def apply_enemy_action(enemyIntent, currentEnemy, player):
+def apply_enemy_action(enemyIntent, currentEnemy, player, draw_pile):
     damage = enemyIntent["damage"]
     block = enemyIntent["block"]
     playerBLCK = player["Block"]
@@ -162,6 +165,12 @@ def apply_enemy_action(enemyIntent, currentEnemy, player):
         currentEnemy["current block"] += block
         print("The " + currentEnemy["name"] + " defends for " + col("cyan", " " + chr(10683) + str(block) + " BLCK"))
         time.sleep(1)
+    if "debuff" in enemyIntent:
+        debuff = enemyIntent["debuff"]
+        if debuff > 0:
+            print("The " + currentEnemy["name"] + " adds " + col("!red", str(debuff) + " burns") + " to your " + col("!green", "Draw pile"))
+            for counter in range(debuff):
+                draw_pile.append(cards.DEBUFF_CARDS)
     print(col("!black", "The enemy's turn ends.. \n"))
     time.sleep(1)
 
@@ -176,6 +185,11 @@ def check_energy(energy, card):
 
 def end_player_turn(player, hand, discard_pile):
     for counter in range(len(hand)):
+        card_debuff = hand[0]
+        if str(card_debuff["name"]) == "burn":
+            print(col("red", "The burn hurt you for 2 DMG..."))
+            player["Current HP"] -= 2
+            time.sleep(0.5)
         discard_pile.append(hand[0])
         hand.remove(hand[0])
 
@@ -252,12 +266,13 @@ def upgrade_card(deck):
 def spawn_fire(player, deck):
     print(col("!black", "You approach a small campfire, you know you are safe "))
     time.sleep(1.25)
-    print("The " + col("yellow", "warmth of the fire") + " welcomes you \n")
+    print("The " + col("yellow", "warmth of the fire") + " welcomes you ")
     time.sleep(1.25)
     if check_if_goal_attained(player, 5, 5):
         print(col("!black", "You know there's no turning back after this"))
+        time.sleep(0.5)
     time.sleep(1.25)
-    print("You have the option to " + col("!green", "rest (recover 20HP)") + " or " + col("!blue", "smith (upgrade a card)"))
+    print("\nYou have the option to " + col("!green", "rest (recover 20HP)") + " or " + col("!blue", "smith (upgrade a card)"))
     print(col("!black", "You currently have " + str(player["Current HP"]) + "/" + str(player["Max HP"]) + "HP"))
     valid = False
     action = ""
@@ -275,7 +290,7 @@ def spawn_fire(player, deck):
             elif action == "upgrade" or action == "smith":
                 upgrade_card(deck)
             if check_if_goal_attained(player, 5, 5):            #final campfire message
-                print(col("!black", "You gather your belongings one final time and march towards the boss"))
+                print(col("!black", "You gather your belongings one final time and march towards the boss... \n"))
                 time.sleep(0.5)
             else:
                 print(col("!black", "Time to get going... \n"))
@@ -289,6 +304,7 @@ def print_enemy_intent(currentEnemy, enemyIntent):
     between = 0
     block = currentEnemy["current block"]
     block_icon = ""
+
     if block > 0:
         block_icon = col("cyan", " " + chr(10683) + str(block))
 
@@ -306,6 +322,9 @@ def print_enemy_intent(currentEnemy, enemyIntent):
             if between == 1:
                 message += " and "
             message += "defend for " + enemyIntentBLCK
+        if "debuff" in enemyIntent:
+            if enemyIntent["debuff"] != 0:
+                message += " and " + col("!red", "debuff you")
 
     print("The " + currentEnemy["name"] + enemyIntentHP + block_icon + " intends to " + message + "\n")
 
@@ -355,7 +374,7 @@ def start_combat(player, enemy, deck):
 
         if currentEnemy["current HP"] > 0:
             currentEnemy["current block"] = 0
-            apply_enemy_action(enemyIntent, currentEnemy, player)
+            apply_enemy_action(enemyIntent, currentEnemy, player, draw_pile)
 
 
 def valid_input_reward():
@@ -561,6 +580,10 @@ def calculate_enemy_diffuculty(event):
     elif event == "elite":
         enemy_chosen = random.choice(enemy.enemies_hard)
         reward = 1.5
+    elif event == "boss":
+        enemy_chosen = enemy.enemies_boss
+        #print(enemy_chosen)
+        reward = 2
     return enemy_chosen, reward
 
 
@@ -585,13 +608,17 @@ def main():
                 spawn_shop(player, deck)
             elif event == "fire":
                 spawn_fire(player, deck)
+
                 if check_if_goal_attained(player, 5, 5):
-                    start_combat(player, enemies_boss, deck)
+                    enemy, reward = calculate_enemy_diffuculty("boss")
+                    start_combat(player, enemy, deck)
+
             check_board_location(board, player, True)
 
     if not player["Current HP"] > 0:
         print("\n" + col("!red", "GAME OVER"))
-
+    if check_if_goal_attained and player["Current HP"] > 0:
+        print("\n" + col("!green", "YOU WON"))
 
 if __name__ == '__main__':
     main()
