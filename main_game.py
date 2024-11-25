@@ -16,6 +16,7 @@ from relics import return_relic
 from relics import shop_relic
 from relics import get_relic
 from relics import create_relics
+from relics import purchase_relic
 from cards import add_upgrade_card
 from cards import upgrade_card_list
 from cards import card_list
@@ -178,25 +179,39 @@ def valid_input_shop(player):
 
 def spawn_shop(player, deck):
     print(col("!black", "You approach a small shop \n"))
-    time.sleep(1.5)
+    #time.sleep(1.5)
     print_shop_intro()
     relics_sale = shop_relic()
+    print_shop_relics(relics_sale)
 
     player_input = 0
     accepted = range(1, 5)          #this should never go out of bounds... chants the blissfully ignorant developer
+    print_player_stats(player)
     while player_input != "exit":
-        print_player_stats(player)
-        print("Current gold: " + col("yellow", player["Gold"]))
-        player_input = int(input(col("!cyan", "Enter the relic number you want to purchase" + col("!black", "(or type *exit* to leave): ") +": ")))
-        if player_input in accepted:
+        print("Current gold: " + col("yellow", str(player["Gold"])))
 
-            time.sleep(0.25)
-            print(col("!magenta", "Relic Purchased!"))
-            time.sleep(0.25)
-        elif player_input == "exit":
-            break
+        player_input = input(col("!cyan", "Enter the relic number you want to purchase" + col("!black", "( type *exit* to leave): ")))
+        try:
+            player_input = int(player_input)
+        except ValueError:
+            if player_input == "exit":
+                break
+            else:
+                print(col("!black", "invalid input, try again"))
         else:
-            print(col("!black", "invalid input, try again"))
+            if player_input in accepted:
+                wanted_relic = relics_sale[player_input - 1]                        #grab index
+                can_purchase = purchase_relic(wanted_relic, player)             #confirm has enough gold
+                if can_purchase:
+                    print(col("!magenta", "Relic Purchased!"))
+                    relics_sale.remove(wanted_relic)                            #remove from shop after purchasing
+                    print_shop_relics(relics_sale)                              #reprint updated shop
+
+                else:
+                    print(col("!black", "Insufficient Gold!"))
+
+            else:
+                print(col("!black", "invalid input, try again"))
     print(col("!black", "Time to leave..."))
     time.sleep(1.5)
 

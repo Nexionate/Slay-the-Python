@@ -79,7 +79,7 @@ def shop_relic():
         shop_list.append(relic_dict)
     shop_list.append((random.choice(CONST_SHOP_RELIC_POOL), 275))
 
-    print_shop_relics(shop_list)
+    #print_shop_relics(shop_list)
     return shop_list
 
 
@@ -98,3 +98,12 @@ def relic_one_time_buff(relic, player):
             player["Max HP"] += 10
         relic["effect"] = "This relic has been used up"
 
+
+def purchase_relic(relic, player):
+    cost = relic[1]
+    if player["Gold"] >= cost:
+        player["Gold"] -= cost
+        player["Relics"].append(relic[0])
+        return True
+    else:
+        return False
