@@ -80,25 +80,28 @@ CONST_MAP_HELP = \
     "\n" + col("blue", "- events:") + " a special event will play, who knows what will happen?"\
     "\n" + col("magenta", "- shop:") + " spend your gold on relics and upgrades! Can only be visited once, so plan around it!"\
     "\n" + col("yellow", "- fires:") + " allow the player to heal" + col("!white", " *OR*") + " permanently upgrade a card from your deck, making it more powerful"\
-    "\nElites are completely optional, but will be very helpful in defeating the boss! \n"\
-    "\nEvery battle, you will gain cards from your " + col("!green", "Draw pile") + " into your " + col("!yellow", "Hand") + ". After playing a card, it will go to the " + col("!red", "Discard pile") + ""\
+    "\nElites are completely optional, but will be very helpful in defeating the boss!"\
+    "\n\nType " + col("!white", "help") + " for this text to appear again"\
+    "\nType " + col("!white", "relics") + " to view your current relics"\
+    "\nType " + col("!white", "gold") + " to view your current gold"\
+    "\n\nEvery battle, you will gain cards from your " + col("!green", "Draw pile") + " into your " + col("!yellow", "Hand") + ". After playing a card, it will go to the " + col("!red", "Discard pile") + ""\
     "\nAt the end of your turn, any remaining cards in your " + col("!yellow", "Hand") + " will go to the " + col("!red", "Discard pile") + ""\
     "\nOnce the " + col("!green", "Draw pile") + " is empty, your " + col("!red", "Discard pile") + " will be shuffled back into the " + col("!green", "Draw pile") + ""\
     "\n" + col("!green", "Draw pile") + " --> " + col("!yellow", "Hand") + " --> " + col("!red", "Discard pile") + ""\
-    #"\nType " + col("!white", "help") + " for this text to appear again"\
 
 
-def print_shop():
-    print(" " * 4 + col("magenta", chr(10870) * 6 + "SHOP" + chr(10870) * 6))
+
+def print_shop_intro():
+    print(col("magenta", chr(10870) * 8 + "SHOP" + chr(10870) * 8))
     lbl("hellllooooooOOooOOooo", 0.08, "!cyan")
     time.sleep(0.25)
     sys.stdout.write(col("!black", " a shopkeeper greets your rather obvious entrance"))
     time.sleep(1.5)
     sys.stdout.write("\r")
-    lbl("I HAVE LOTS OF WARES FOR SURE", 0.08, "!cyan")
+    lbl("I HAVE LOTS OF WARES FOR SALEEEEE", 0.08, "!cyan")
     time.sleep(0.5)
     sys.stdout.write("\r")
     lbl("PLEASE TAKE A LOOK", 0.08, "!cyan")
-    time.sleep(0.75)
+    time.sleep(0.25)
     sys.stdout.write(col("!black", " he seems harmless"))
 
