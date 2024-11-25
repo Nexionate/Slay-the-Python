@@ -15,8 +15,8 @@ def create_deck():
         deck.append(card_strike)
         deck.append(card_defend)
 
-    deck.append(card_list("bash"))
-    deck.append(card_list("bludgeon"))
+    #deck.append(card_list("bash"))
+    #deck.append(card_list("bludgeon"))
     return deck
 
 
@@ -28,8 +28,9 @@ def make_character():
     :postcondition: Character has a description of their current HP
     :return: dictionary of character stats
     """
-    return {"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 2, "Max HP": 50, "Max Energy": 3,
-            "Current Energy": 3, "Block": 0, "Gold": 50, "Relics": []}
+    return {"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 50, "Max HP": 50, "Max Energy": 3, "Max Draw": 3,
+            "Current Energy": 3, "Block": 0, "Gold": 400, "Relics": []}
+    # maybe change max draw later, see hwo difficult it is
 
 
 def make_board(rows, cols):
@@ -62,7 +63,7 @@ def populate_board(cord_list, cord_dic, rows, cols):
     event_chance = ["fight", "fight", "fight", "fight", "fight", "fight", "elite", "event", "fire", "elite"]
     event_counter = {"elite counter": 0, "fire counter": 0, "elite max": 2, "fire max": 2}
 
-    board_exceptions = {(0, 0): "start", (0, 1): "fire", (1, 0): "fight", (1, 1): "fight", (rows - 1, cols - 1): "fire", (rows//2, cols//2): "shop"}
+    board_exceptions = {(0, 0): "start", (0, 1): "fight", (1, 0): "shop", (1, 1): "fight", (rows - 1, cols - 1): "fire", (rows//2, cols//2): "shop"}
     #CHANGE EXCEPTION FOR (0, 1) BACK AFTER
     # board_required = ""
     for counter in cord_list:
@@ -113,7 +114,6 @@ def print_board(cord_dic, player):
             if print_counter == 25:
                 print(message)
             else:
-
                 print(message + "\n")
             message = ""
     print(col("magenta", chr(10870) * 6 + "MAP" + chr(10870) * 5))
@@ -125,8 +125,6 @@ def initialize_game_start():
     rooms = 0
     create_relics()
     random.shuffle(deck)
-
     board = make_board(5, 5)
-    #print_board(board, 5, 5)
     print(text.CONST_MAP_HELP)
     return rooms, deck, player, board
