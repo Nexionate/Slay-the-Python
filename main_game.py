@@ -8,6 +8,7 @@ import copy
 import text
 import enemy
 from text import lbl, CONST_MAP_HELP
+from relics import print_shop_relics
 from relics import relic_one_time_buff
 from relics import print_relic_description
 from relics import return_relic
@@ -173,7 +174,7 @@ def end_player_turn(player, hand, discard_pile):
 def spawn_shop(player, deck):
     print(col("!black", "You approach a small shop \n"))
     time.sleep(1.5)
-    print_shop()
+    shop_relic()
     pass
 
 def valid_input_fire():
@@ -344,7 +345,6 @@ def reward_player(player, reward, deck):
                 print(col("magenta", "- " + (card_option['name']) + " added to deck!"))
         else:
             print(col("!black", "invalid input, try again"))
-
 
     time.sleep(1)
     print(col("!black", "Time to get moving... "))
@@ -533,12 +533,9 @@ def main():
             elif event == "fire":
                 spawn_fire(player, deck)
             check_board_location(board, player, True)
+
     if not player["Current HP"] > 0:
         print("\n" + col("!red", "GAME OVER"))
-
-
-
-
 
 
 if __name__ == '__main__':
