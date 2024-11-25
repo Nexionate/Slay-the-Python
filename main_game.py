@@ -196,7 +196,7 @@ def end_player_turn(player, hand, discard_pile):
 
 def spawn_shop(player, deck):
     print(col("!black", "You approach a small shop \n"))
-    #time.sleep(1.5)
+    time.sleep(1.5)
     print_shop_intro()
     relics_sale = shop_relic()
     print_shop_relics(relics_sale)
