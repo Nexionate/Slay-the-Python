@@ -254,6 +254,9 @@ def spawn_fire(player, deck):
     time.sleep(1.25)
     print("The " + col("yellow", "warmth of the fire") + " welcomes you \n")
     time.sleep(1.25)
+    if check_if_goal_attained(player, 5, 5):
+        print(col("!black", "You know there's no turning back after this"))
+    time.sleep(1.25)
     print("You have the option to " + col("!green", "rest (recover 20HP)") + " or " + col("!blue", "smith (upgrade a card)"))
     print(col("!black", "You currently have " + str(player["Current HP"]) + "/" + str(player["Max HP"]) + "HP"))
     valid = False
@@ -271,7 +274,11 @@ def spawn_fire(player, deck):
 
             elif action == "upgrade" or action == "smith":
                 upgrade_card(deck)
-            print(col("!black", "Time to get going... \n"))
+            if check_if_goal_attained(player, 5, 5):            #final campfire message
+                print(col("!black", "You gather your belongings one final time and march towards the boss"))
+                time.sleep(0.5)
+            else:
+                print(col("!black", "Time to get going... \n"))
             time.sleep(1.75)
         else:
             print(col("!black", "invalid input, try again"))
@@ -578,6 +585,8 @@ def main():
                 spawn_shop(player, deck)
             elif event == "fire":
                 spawn_fire(player, deck)
+                if check_if_goal_attained(player, 5, 5):
+                    start_combat(player, enemies_boss, deck)
             check_board_location(board, player, True)
 
     if not player["Current HP"] > 0:

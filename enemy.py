@@ -8,3 +8,14 @@ enemies_hard = (
     {"name": "gremlin nob", "current HP": 1, "max HP": 53, "current block": 0, "attack pattern": True, "attack": [{"damage": 0, "block": 0}, {"damage": 8, "block": 0}, {"damage": 16, "block": 0}, {"damage": 20, "block": 0}, {"damage": 20, "block": 0}, {"damage": 20, "block": 0}]},
     {"name": "ogre", "current HP": 1, "max HP": 44, "current block": 0, "attack pattern": True, "attack": [{"damage": 15, "block": 0}, {"damage": 15, "block": 0}, {"damage": 0, "block": 5}, {"damage": 15, "block": 0}, {"damage": 15, "block": 0}, {"damage": 0, "block": 5}]},
     )
+
+enemies_boss = {"name": "hexaghost", "current HP": 115, "max HP": 115, "current block": 0, "attack pattern": True,
+     "attack": [{"damage": 0, "block": 0},
+                {"damage": 8, "block": 0},
+                {"damage": 6, "block": 0, "debuff": 2},
+                {"damage": 12, "block": 0},
+                {"damage": 6, "block": 12},
+                {"damage": 12, "block": 0},
+                {"damage": 6, "block": 0, "debuff": 2}, ]}
+
+
