@@ -12,6 +12,8 @@ def card_list(wanted):
                      "exhaust": False, "upgrade": False},
     "anger": {"name": "anger", "type": "attack", "amount": 8, "energy": 0, "description": "6 DMG",
                       "exhaust": True, "upgrade": False},
+    "barricade": {"name": "barricade", "type": "block", "amount": 12, "energy": 2, "description": "12 BLCK",
+                  "exhaust": False, "upgrade": False},
     }
     card = card_dict.get(wanted)
     return card
@@ -27,9 +29,14 @@ def card_list_upgraded(wanted):
                      "exhaust": False, "upgrade": True},
     "anger": {"name": "anger+", "type": "attack", "amount": 8, "energy": 0, "description": "6 DMG",
                       "exhaust": False, "upgrade": True},
+    "barricade": {"name": "barricade+", "type": "block", "amount": 16, "energy": 2, "description": "16 BLCK",
+                      "exhaust": False, "upgrade": False},
     }
     card = card_dict_upgraded.get(wanted)
     return card
+
+
+DEBUFF_CARDS = {"name": "burn", "type": "debuff", "amount": 2, "energy": 1, "description": col("red", "2 SELF DMG") + col("!black", "( if in hand by end of turn)"), "exhaust": True}
 
 
 def random_card_reward():
