@@ -85,10 +85,10 @@ def shop_relic():
 
 def print_relic_description(relic):
     if relic["one-time"]:
-        print(col("!magenta", (relic['name'])) + " " + col("!black", (relic['effect'])))
+        print(col("!magenta", str(relic['name'])) + " " + col("!black", str(relic['effect'])))
     else:
-        print(col("!magenta", (relic['name'])))
-    print(col("magenta", "- " + (relic['description'])))
+        print(col("!magenta", str(relic['name'])))
+    print(col("magenta", "- " + str(relic['description'])))
 
 
 def relic_one_time_buff(relic, player):
