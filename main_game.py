@@ -37,8 +37,8 @@ def print_player_relics(player):
     if len(player["Relics"]) == 0:
         print(col("!black", "You have no relics, duh"))
     else:
+        print("\n" + col("magenta", chr(10870) * 6 + "RELICS" + chr(10870) * 6))
         for counter in player["Relics"]:
-            print(counter)
             print_relic_description(counter)
 
 
@@ -127,13 +127,15 @@ def apply_player_action(player, currentEnemy, enemyIntent ,action, hand, discard
     if action_type == "block":
         player["Block"] += action["amount"]
 
-    elif action_type == "attack":
+    elif action_type == "attack" or action_type == "hybrid":
         calculated_damage = damage - enemyBLCK
         if calculated_damage <= 0:
             currentEnemy["current block"] -= damage
         elif calculated_damage > 0:
             currentEnemy["current block"] = 0
             currentEnemy["current HP"] -= calculated_damage
+        if action_type == "hybrid":
+            player["Block"] += action["amount"]
     if action["exhaust"] == False:
         discard_pile.append(hand[action_index])
     hand.remove(hand[action_index])
@@ -207,15 +209,13 @@ def spawn_shop(player, deck):
                     print(col("!magenta", "Relic Purchased!"))
                     relics_sale.remove(wanted_relic)                            #remove from shop after purchasing
                     print_shop_relics(relics_sale)                              #reprint updated shop
-
                 else:
                     print(col("!black", "Insufficient Gold!"))
-
             else:
                 print(col("!black", "invalid input, try again"))
     lbl("thaaaaaaank youuuuuuuuu come againnnnnnn", 0.02, "!cyan")
     time.sleep(0.5)
-    print(col("!black", "Time to leave..."))
+    print(col("!black", "\nTime to leave..."))
     time.sleep(1.5)
 
 
@@ -275,8 +275,6 @@ def spawn_fire(player, deck):
             time.sleep(1.75)
         else:
             print(col("!black", "invalid input, try again"))
-
-
 
 
 def print_enemy_intent(currentEnemy, enemyIntent):
@@ -367,7 +365,7 @@ def valid_input_reward():
 def reward_player(player, reward, deck):
     print ( "\n" + col("magenta", chr(10870) * 3 + "LOOT" + chr(10870) * 3))
 
-    gold_reward = random.randint(15, 25) * reward
+    gold_reward = round(random.randint(15, 25) * reward)
     player["Gold"] += gold_reward
     print("Got " + col("yellow", str(player["Gold"] )+ " Gold") +  " " + col("!black", "+" + str(gold_reward)))
     if reward == 1.5:
