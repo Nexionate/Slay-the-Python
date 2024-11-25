@@ -7,12 +7,15 @@ import copy
 
 import text
 import enemy
+from text import lbl, CONST_MAP_HELP
 from relics import relic_one_time_buff
 from relics import print_relic_description
 from relics import return_relic
 from relics import shop_relic
 from relics import get_relic
 from relics import create_relics
+from cards import add_upgrade_card
+from cards import upgrade_card_list
 from cards import card_list
 from cards import add_new_card
 from cards import random_card_reward
@@ -171,33 +174,63 @@ def spawn_shop(player, deck):
     print(col("!black", "You approach a small shop \n"))
     time.sleep(1.5)
     print_shop()
-
-
     pass
 
 def valid_input_fire():
     player_input = input("Enter your action: ")
-    action = action.lower()
+    action = player_input.lower()
     accepted = ["heal", "rest"]
     not_accepted = ["upgrade", "smith"]
     if action in accepted or action in not_accepted:
         return True, action
     else:
-        return False
+        return False, action
+
+def upgrade_card(deck):
+    upgrade_card_list(deck)
+    player_input = 0
+    accepted = range(1, len(deck))
+    while player_input not in accepted:
+        player_input = int(input(col("!cyan", "Enter the card number you want to upgrade: ")))
+        #print(player_input)
+        #print(player_input in accepted)
+        if player_input in accepted:
+            card = deck[player_input - 1]
+            add_upgrade_card(deck, card)
+            lbl("*CLANG*  *CLANG*  *CLANG*", 0.05, "!black")
+            time.sleep(0.5)
+            print(col("!magenta", "\nThe card has been successfully upgraded!"))
+            time.sleep(1.75)
+        else:
+            print(col("!black", "invalid input, try again"))
+
+
 
 def spawn_fire(player, deck):
-    print(col("!black", "You approach a small campfire, you know you are safe \n"))
-    print("The " + col("!black", "warmth of the fire") + " welcomes you")
-    print("You have the option to " + col("!green", "rest (recover 20HP)") + "or " + col("!blue", "smith (upgrade a card)"))
-    valid, action = valid_input_fire()
-    if valid:
-        if action == "heal" or action == "rest":
-            player["Current HP"] += 20
-            if player["Current HP"] > player["Max HP"]:
-                player["Current HP"] = player["Max HP"]
-                print("You rest deeply and wake up at" + col("!green", player["Current HP"] + "HP"))
-        elif action == "upgrade" or action == "smith":
-            pass
+    print(col("!black", "You approach a small campfire, you know you are safe "))
+    time.sleep(1.25)
+    print("The " + col("yellow", "warmth of the fire") + " welcomes you \n")
+    time.sleep(1.25)
+    print("You have the option to " + col("!green", "rest (recover 20HP)") + " or " + col("!blue", "smith (upgrade a card)"))
+    valid = False
+    action = ""
+
+    while not valid:
+        valid, action = valid_input_fire()
+        if valid:
+            if action == "heal" or action == "rest":
+                player["Current HP"] += 20
+                if player["Current HP"] > player["Max HP"]:
+                    player["Current HP"] = player["Max HP"]
+                print("\nYou rest deeply and wake up at " + col("!green", str(player["Current HP"]) + "/" + str(player["Max HP"]) + "HP"))
+                time.sleep(2)
+
+            elif action == "upgrade" or action == "smith":
+                upgrade_card(deck)
+            print(col("!black", "Time to get going... \n"))
+            time.sleep(1.75)
+        else:
+            print(col("!black", "invalid input, try again"))
 
 
 
@@ -281,8 +314,8 @@ def valid_input_reward():
     action = action.lower()
     accepted = ["take", "yes"]
     not_accepted = ["skip", "no"]
-    if action in accepted:
-        return True
+    if action in accepted or action in not_accepted:
+        return True, action
     else:
         return False
 
@@ -299,13 +332,20 @@ def reward_player(player, reward, deck):
     relic_one_time_buff(loot_relic, player)
 
     print(col("green", "Card reward: "))
-
     card_option = random_card_reward()
     card_details(card_option)
-    valid_input = valid_input_reward()
-    if valid_input:
-        add_new_card(deck, card_option)
-        print(col("magenta", "- " + (card_option['name']) + " added to deck!"))
+    valid_input = False
+    action = ""
+    while not valid_input:
+        valid_input, action = valid_input_reward()
+        if valid_input:
+            if action == "take" or action == "yes":
+                add_new_card(deck, card_option)
+                print(col("magenta", "- " + (card_option['name']) + " added to deck!"))
+        else:
+            print(col("!black", "invalid input, try again"))
+
+
     time.sleep(1)
     print(col("!black", "Time to get moving... "))
     time.sleep(2)
@@ -357,6 +397,10 @@ def get_user_choice():
 
         if wanted_movement in movements_valid:
             return wanted_movement
+        elif wanted_movement == "HELP":
+            print("\n")
+            print(CONST_MAP_HELP)
+            time.sleep(4)
         else:
             print("\nINVALID MOVEMENT INPUT")
 

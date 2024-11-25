@@ -28,7 +28,7 @@ def make_character():
     :postcondition: Character has a description of their current HP
     :return: dictionary of character stats
     """
-    return {"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 50, "Max HP": 50, "Max Energy": 3,
+    return {"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 2, "Max HP": 50, "Max Energy": 3,
             "Current Energy": 3, "Block": 0, "Gold": 50, "Relics": []}
 
 
@@ -62,7 +62,8 @@ def populate_board(cord_list, cord_dic, rows, cols):
     event_chance = ["fight", "fight", "fight", "fight", "fight", "fight", "elite", "event", "fire", "elite"]
     event_counter = {"elite counter": 0, "fire counter": 0, "elite max": 2, "fire max": 2}
 
-    board_exceptions = {(0, 0): "start", (0, 1): "fight", (1, 0): "fight", (1, 1): "fight", (rows - 1, cols - 1): "fire", (rows//2, cols//2): "shop"}
+    board_exceptions = {(0, 0): "start", (0, 1): "fire", (1, 0): "fight", (1, 1): "fight", (rows - 1, cols - 1): "fire", (rows//2, cols//2): "shop"}
+    #CHANGE EXCEPTION FOR (0, 1) BACK AFTER
     # board_required = ""
     for counter in cord_list:
         if counter in board_exceptions:

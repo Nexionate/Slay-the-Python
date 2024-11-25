@@ -53,6 +53,7 @@ def lbl(sentence, delay=1, colour=""):
     Prints a sentence letter by letter with a delay between each character.
 
     :param sentence: The sentence to be printed.
+    :param sentence: A string
     :param delay: The delay (in seconds) between printing each letter.
     """
     for char in sentence:
@@ -62,7 +63,7 @@ def lbl(sentence, delay=1, colour=""):
 
 
 CONST_HELP_TEXT = \
-    "- To play a card, input its number order or full name. The yellow squares " + col("!yellow", "\u25A1") +" indicate your current energy." \
+    "\n- To play a card, input its number order or full name. The yellow squares " + col("!yellow", "\u25A1") +" indicate your current energy." \
     "\n- You cannot play a card if you don't have sufficient energy. " \
     "\n- You will gain your Max Energy upon the end of the enemies turn." \
     "" \
@@ -75,12 +76,16 @@ CONST_MAP_HELP = \
     "Welcome to this land. I will explain the map. Your goal is to reach the bottom-right tile of the board."\
     "\nEvery board tile will contain an event. "\
     "\n" + col("!white", "- fights:") + " normal enemy battle with" + col("!yellow", " gold ") + "and card rewards"\
-    "\n" + col("red", "- elites:") + " extra tough enemies that will drop powerful " + col("!magenta", "relics ") + " and more gold"\
+    "\n" + col("red", "- elites:") + " extra tough enemies that will drop powerful " + col("!magenta", "relics") + " and more gold"\
     "\n" + col("blue", "- events:") + " a special event will play, who knows what will happen?"\
     "\n" + col("magenta", "- shop:") + " spend your gold on relics and upgrades! Can only be visited once, so plan around it!"\
     "\n" + col("yellow", "- fires:") + " allow the player to heal" + col("!white", " *OR*") + " permanently upgrade a card from your deck, making it more powerful"\
     "\nElites are completely optional, but will be very helpful in defeating the boss! \n"\
-
+    "\nEvery battle, you will gain cards from your " + col("!green", "Draw pile") + " into your " + col("!yellow", "Hand") + ". After playing a card, it will go to the " + col("!red", "Discard pile") + ""\
+    "\nAt the end of your turn, any remaining cards in your " + col("!yellow", "Hand") + " will go to the " + col("!red", "Discard pile") + ""\
+    "\nOnce the " + col("!green", "Draw pile") + " is empty, your " + col("!red", "Discard pile") + " will be shuffled back into the " + col("!green", "Draw pile") + ""\
+    "\n" + col("!green", "Draw pile") + " --> " + col("!yellow", "Hand") + " --> " + col("!red", "Discard pile") + ""\
+    #"\nType " + col("!white", "help") + " for this text to appear again"\
 
 
 def print_shop():

@@ -1,6 +1,5 @@
 import random
 from text import col
-from main_game import show_cards
 
 
 def card_list(wanted):
@@ -19,17 +18,17 @@ def card_list(wanted):
 
 
 def card_list_upgraded(wanted):
-    card_dict = {
+    card_dict_upgraded = {
     "strike" : {"name": "strike+", "type": "attack", "amount": 9, "energy": 1, "description": "9 DMG", "exhaust": False, "upgrade": True},
     "defend" : {"name": "defend+", "type": "block", "amount": 8, "energy": 1, "description": "8 BLCK", "exhaust": False, "upgrade": True},
-    "bash" : {"name": "bash+", "type": "attack", "amount": 13, "energy": 2, "description": "13 DMG", "exhaust": False, "upgrade": True},
+    "bash" : {"name": "bash+", "type": "attack", "amount": 13, "energy": 1, "description": "13 DMG", "exhaust": False, "upgrade": True},
     "bludgeon" : {"name": "bludgeon+", "type": "attack", "amount": 25, "energy": 2, "description": "25 DMG", "exhaust": True, "upgrade": True},
     "iron wave": {"name": "iron wave+", "type": "hybrid", "amount": 7, "energy": 1, "description": "7 DMG, 7 BLCK",
                      "exhaust": False, "upgrade": True},
     "anger": {"name": "anger+", "type": "attack", "amount": 8, "energy": 0, "description": "6 DMG",
                       "exhaust": False, "upgrade": True},
     }
-    card = card_dict.get(wanted)
+    card = card_dict_upgraded.get(wanted)
     return card
 
 
@@ -53,14 +52,14 @@ def show_deck_upgrade(hand):
             exhaust_print = col("!black", "exhausts")
         yellow_square = col("!yellow", "\u25A1")
 
-        upgraded_card = card_list_upgraded(card)
+        upgraded_card = card_list_upgraded(card["name"])
         if upgraded_card["exhaust"]:
             exhaust_upgrade_print = col("!black", "exhausts")
 
         normal_card_print = str(counter + 1) + ") " + str(card["name"]) + " " + str(card["energy"] * yellow_square)  + " - " + str(card["description"]) + " " + exhaust_print
         upgraded_card_print = str(upgraded_card["name"]) + " " + str(upgraded_card["energy"] * yellow_square) + " - " + str(upgraded_card["description"]) + " " + exhaust_upgrade_print
 
-        print(normal_card_print + col("!black", "      --->     " + upgraded_card_print))
+        print(normal_card_print + col("!black", "         --->        ") + upgraded_card_print)
 
 
 def upgrade_card_list(deck):
@@ -70,3 +69,10 @@ def upgrade_card_list(deck):
             upgrade_list.append(card)
 
     show_deck_upgrade(upgrade_list)
+
+
+def add_upgrade_card(deck, card):
+    upgraded_card = card_list_upgraded(card["name"])
+    deck.remove(card)
+    deck.append(upgraded_card)
+
