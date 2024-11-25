@@ -11,6 +11,7 @@ from text import lbl, CONST_MAP_HELP
 from relics import print_shop_relics
 from relics import relic_one_time_buff
 from relics import print_relic_description
+from text import print_shop_intro
 from relics import return_relic
 from relics import shop_relic
 from relics import get_relic
@@ -23,7 +24,6 @@ from cards import random_card_reward
 from text import col
 from initialize_game import initialize_game_start
 from initialize_game import print_board
-from text import print_shop
 
 
 def card_details(card):
@@ -171,11 +171,37 @@ def end_player_turn(player, hand, discard_pile):
         hand.remove(hand[0])
 
 
+def valid_input_shop(player):
+    player_input = int(input("Enter the relic number you want to purchase" + col("!black", "(or type *exit* to leave): ")))
+
+
+
 def spawn_shop(player, deck):
     print(col("!black", "You approach a small shop \n"))
     time.sleep(1.5)
-    shop_relic()
-    pass
+    print_shop_intro()
+    relics_sale = shop_relic()
+
+    player_input = 0
+    accepted = range(1, 5)          #this should never go out of bounds... chants the blissfully ignorant developer
+    while player_input != "exit":
+        print_player_stats(player)
+        print("Current gold: " + col("yellow", player["Gold"]))
+        player_input = int(input(col("!cyan", "Enter the relic number you want to purchase" + col("!black", "(or type *exit* to leave): ") +": ")))
+        if player_input in accepted:
+
+            time.sleep(0.25)
+            print(col("!magenta", "Relic Purchased!"))
+            time.sleep(0.25)
+        elif player_input == "exit":
+            break
+        else:
+            print(col("!black", "invalid input, try again"))
+    print(col("!black", "Time to leave..."))
+    time.sleep(1.5)
+
+
+
 
 def valid_input_fire():
     player_input = input("Enter your action: ")

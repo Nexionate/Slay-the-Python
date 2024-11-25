@@ -58,6 +58,7 @@ def print_shop_relics(shop_list):
 
 
 def shop_relic():
+    print("")
     gold_price = []
     shop_list = []
     for counter in range(3):
@@ -76,9 +77,10 @@ def shop_relic():
         relic_dict = (load_relic, gold_price)
 
         shop_list.append(relic_dict)
-    #shop_list.append(random.choice(CONST_SHOP_RELIC_POOL))
+    shop_list.append((random.choice(CONST_SHOP_RELIC_POOL), 275))
 
     print_shop_relics(shop_list)
+    return shop_list
 
 
 def print_relic_description(relic):
