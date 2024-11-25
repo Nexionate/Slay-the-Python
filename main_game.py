@@ -28,10 +28,18 @@ from initialize_game import print_board
 
 
 def card_details(card):
-
     for key in card.keys():
         print(str(key) + ": " + str(card[key]))
     print("")
+
+
+def print_player_relics(player):
+    if len(player["Relics"]) == 0:
+        print(col("!black", "You have no relics, duh"))
+    else:
+        for counter in player["Relics"]:
+            print(counter)
+            print_relic_description(counter)
 
 
 def show_cards(hand):
@@ -42,7 +50,6 @@ def show_cards(hand):
             exhaust_print =  col("!black", "exhausts")
         yellow_square = col("!yellow", "\u25A1")
         print( str(counter + 1) + ") "+ str(card["name"]) + " " + str(card["energy"] * yellow_square)  + " - " + str(card["description"]) + " " + exhaust_print)
-        # print(str(card["name"]))
 
 
 def print_player_stats(entity):
@@ -65,7 +72,6 @@ def print_player_stats(entity):
     print((green_square * squares) + (red_square * (10 - squares)) + "  " + (str(health) + "/" + str(max_health) + \
        col("!green", " HP  ")  + block_icon +
        "  " + (energy  * yellow_square ) + " " + (str(energy) + "/" + str(max_energy)) + col("!yellow", " energy")))
-
 
 
 def draw_hand(draw_pile, hand, discard_pile, amount):
@@ -172,11 +178,6 @@ def end_player_turn(player, hand, discard_pile):
         hand.remove(hand[0])
 
 
-def valid_input_shop(player):
-    player_input = int(input("Enter the relic number you want to purchase" + col("!black", "(or type *exit* to leave): ")))
-
-
-
 def spawn_shop(player, deck):
     print(col("!black", "You approach a small shop \n"))
     #time.sleep(1.5)
@@ -212,10 +213,10 @@ def spawn_shop(player, deck):
 
             else:
                 print(col("!black", "invalid input, try again"))
+    lbl("thaaaaaaank youuuuuuuuu come againnnnnnn", 0.02, "!cyan")
+    time.sleep(0.5)
     print(col("!black", "Time to leave..."))
     time.sleep(1.5)
-
-
 
 
 def valid_input_fire():
@@ -231,7 +232,7 @@ def valid_input_fire():
 def upgrade_card(deck):
     upgrade_card_list(deck)
     player_input = 0
-    accepted = range(1, len(deck))
+    accepted = range(1, len(deck) + 1)
     while player_input not in accepted:
         player_input = int(input(col("!cyan", "Enter the card number you want to upgrade: ")))
         #print(player_input)
@@ -254,6 +255,7 @@ def spawn_fire(player, deck):
     print("The " + col("yellow", "warmth of the fire") + " welcomes you \n")
     time.sleep(1.25)
     print("You have the option to " + col("!green", "rest (recover 20HP)") + " or " + col("!blue", "smith (upgrade a card)"))
+    print(col("!black", "You currently have " + str(player["Current HP"]) + "/" + str(player["Max HP"]) + "HP"))
     valid = False
     action = ""
 
@@ -329,7 +331,7 @@ def start_combat(player, enemy, deck):
         else:
            enemyIntent = random.choice(currentEnemy["attack"])
 
-        draw_hand(draw_pile, hand, discard_pile, 3)     # change 3 to edit cards drawn
+        draw_hand(draw_pile, hand, discard_pile, player["Max Draw"])     # change 3 to edit cards drawn
         print(col("!black", "Your turn begins.. "))
         time.sleep(0.75)
 
@@ -368,10 +370,11 @@ def reward_player(player, reward, deck):
     gold_reward = random.randint(15, 25) * reward
     player["Gold"] += gold_reward
     print("Got " + col("yellow", str(player["Gold"] )+ " Gold") +  " " + col("!black", "+" + str(gold_reward)))
-
-    loot_relic = get_relic()
-    print(print_relic_description(loot_relic))
-    relic_one_time_buff(loot_relic, player)
+    if reward == 1.5:
+        loot_relic = get_relic()
+        print(print_relic_description(loot_relic))
+        player["Relics"].append(loot_relic)
+        relic_one_time_buff(loot_relic, player)
 
     print(col("green", "Card reward: "))
     card_option = random_card_reward()
@@ -395,17 +398,15 @@ def reward_player(player, reward, deck):
 def check_board_location(board, player, update):
     player_cords = (player["X-coordinate"], player["Y-coordinate"])
     if update:
-        pass
         # board[player_cords] = col("@blue", col("!white","player"))
         board[player_cords] = col("!black", "empty")
-
     else:
         if player_cords in board:
             print("You are now in: " + board[player_cords] + " at co-ords" + str(player_cords) + "\n")
         return board[player_cords]
 
 
-def get_user_choice():
+def get_user_choice(player):
     """
     Print the player movement options
 
@@ -433,7 +434,7 @@ def get_user_choice():
     wanted_movement = ""
 
     while wanted_movement not in movements_valid:
-        wanted_movement = input("Enter your movement here: ")
+        wanted_movement = input("Enter your movement (or other action) here: ")
         wanted_movement = wanted_movement.upper()
 
         if wanted_movement in movements_valid:
@@ -442,6 +443,12 @@ def get_user_choice():
             print("\n")
             print(CONST_MAP_HELP)
             time.sleep(4)
+        elif wanted_movement == "GOLD":
+            print("Current gold: " + col("yellow", str(player["Gold"])))
+            time.sleep(2)
+        elif wanted_movement == "RELIC" or wanted_movement == "RELICS":
+            print_player_relics(player)
+            time.sleep(2)
         else:
             print("\nINVALID MOVEMENT INPUT")
 
@@ -557,7 +564,7 @@ def main():
 
     while not check_if_goal_attained(player, 5, 5) and player["Current HP"] > 0:
         print_board(board, player)
-        movement = get_user_choice()
+        movement = get_user_choice(player)
         valid_move = validate_move(board, player, movement)
 
         if valid_move:

@@ -31,8 +31,8 @@ CONST_RELIC_POOL = [
     "effect": 8, "one-time": False, "rarity": "uncommon"},
 ]
 CONST_SHOP_RELIC_POOL = [
-    {"name": 'Coffee Dripper', "description": 'permanently gain +1 Max Energy', "effect": 1, "one-time": True, "rarity": "rare"},
-    {"name": 'Philosophers Stone', "description": 'permanently gain +1 Max Energy', "effect": 1, "one-time": True, "rarity": "rare"}
+    {"name": 'coffee dripper', "description": 'permanently gain +1 Max Energy', "effect": 1, "one-time": True, "rarity": "rare"},
+    {"name": 'philosophers stone', "description": 'permanently gain +1 Max Energy', "effect": 1, "one-time": True, "rarity": "rare"}
 ]
 
 def get_relic():
@@ -84,7 +84,10 @@ def shop_relic():
 
 
 def print_relic_description(relic):
-    print("Relic: " + col("!magenta", (relic['name'])))
+    if relic["one-time"]:
+        print(col("!magenta", (relic['name'])) + " " + col("!black", (relic['effect'])))
+    else:
+        print(col("!magenta", (relic['name'])))
     print(col("magenta", "- " + (relic['description'])))
 
 
@@ -92,11 +95,20 @@ def relic_one_time_buff(relic, player):
     if relic['one-time']:
         if relic['name'] == "old coin":
             player["Gold"] += 200
+            relic["effect"] = "This relic has been used up"
 
         elif relic['name'] == "strawberry":
             player["Current HP"] += 10
             player["Max HP"] += 10
-        relic["effect"] = "This relic has been used up"
+            relic["effect"] = "This relic has been used up"
+
+        elif relic['name'] == "coffee dripper":
+            player["Max Energy"] += 1
+            relic["effect"] = "This relic has been used up"
+
+        elif relic['name'] == "philosophers stone":
+            player["Max Draw"] += 2
+            relic["effect"] = "This relic has been used up"
 
 
 def purchase_relic(relic, player):
@@ -104,6 +116,7 @@ def purchase_relic(relic, player):
     if player["Gold"] >= cost:
         player["Gold"] -= cost
         player["Relics"].append(relic[0])
+        relic_one_time_buff(relic[0], player)           # check if relic is one time use after purchase
         return True
     else:
         return False
