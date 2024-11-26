@@ -22,7 +22,7 @@ def col(colour, word):
         "white": Fore.WHITE,
 
         "@black": Back.BLACK,
-        "@r8ed": Back.RED,
+        "@red": Back.RED,
         "@green": Back.GREEN,
         "@yellow": Back.YELLOW,
         "@blue": Back.BLUE,
