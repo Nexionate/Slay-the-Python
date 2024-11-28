@@ -314,12 +314,24 @@ def check_energy(energy, card):
 
 
 def end_player_turn(player, hand, discard_pile):
+    """
+    End the player's turn
+
+    :param player: a dictionary of the player
+    :param hand: a dictionary of the hand
+    :param discard_pile: a list of cards
+    :postcondition: hand is appended to discard_pile
+    :postcondition: hand is emptied
+
+    >>> end_player_turn({"X-coordinate": 0, "Y-coordinate": 1, "Current HP": 5}, [1, 2, 3, 4, 5], [])   # doctest: +SKIP
+    >>> end_player_turn({"X-coordinate": 0, "Y-coordinate": 1, "Current HP": 5}, [3, 7, 8], [])     # doctest: +SKIP
+    """
     for counter in range(len(hand)):
         card_debuff = hand[0]
-        if str(card_debuff["name"]) == "burn":
-            print(col("red", "The burn hurt you for 2 DMG..."))
-            player["Current HP"] -= 2
-            time.sleep(0.5)
+        #if str(card_debuff["name"]) == "burn":
+            #print(col("red", "The burn hurt you for 2 DMG..."))
+            #player["Current HP"] -= 2
+            #time.sleep(0.5)
         discard_pile.append(hand[0])
         hand.remove(hand[0])
 
@@ -349,6 +361,19 @@ def spawn_event(player, deck):
 
 
 def spawn_shop(player, deck):
+    """
+    Generate a shop
+
+    :param player: a dictionary of the player
+    :param deck: a list of cards
+    :precondition: player is a well-formed dictionary containing the player stats
+    :postcondition: shop messages are printed
+    :postcondition: relics for sale are printed
+    :postcondition: purchased relics are appended to players stats
+    :postcondition: purchased relics subtract from players gold
+    :postcondition: warns if input is invalid
+    :postcondition: shop exits if all relics are purchased
+    """
     print(col("!black", "You approach a small shop \n"))
     time.sleep(1.5)
     print_shop_intro()
@@ -378,7 +403,6 @@ def spawn_shop(player, deck):
                     break
                 wanted_relic = relics_sale[player_input - 1]                        #grab index
                 can_purchase = purchase_relic(wanted_relic, player)             #confirm has enough gold
-
                 if can_purchase:
                     print(col("!magenta", "Relic Purchased!"))
                     relics_sale.remove(wanted_relic)                            #remove from shop after purchasing
@@ -408,10 +432,9 @@ def upgrade_card(deck):
     upgrade_card_list(deck)
     player_input = 0
     accepted = range(1, len(deck) + 1)
-    while player_input not in accepted:
+    while player_input not in accepted:                 # CRASHES UPON RECIEVING STR INPUT
         player_input = int(input(col("!cyan", "Enter the card number you want to upgrade: ")))
-        #print(player_input)
-        #print(player_input in accepted)
+
         if player_input in accepted:
             card = deck[player_input - 1]
             add_upgrade_card(deck, card)
@@ -424,28 +447,35 @@ def upgrade_card(deck):
 
 
 def player_sleep(player):
+    """
+    Update the player's HP
+
+    :param player: a dictionary of player
+    :precondition: player is a well-formed dictionary containing the player stats
+    :postcondition: player's current health is increased
+    :postcondition: player's current health cannot succeed player's max health
+    """
     if apply_player_relic(player, "regal pillow"):
         player["Current HP"] += 40
     player["Current HP"] += 20
+
     if player["Current HP"] > player["Max HP"]:
         player["Current HP"] = player["Max HP"]
+
     print("\nYou rest deeply and wake up at " + col("!green",str(player["Current HP"]) + "/" + str(player["Max HP"]) \
         + "HP"))
     time.sleep(2)
 
 
 def spawn_fire(player, deck):
+    """
+    Generate a campsite
+
+    :param player: a dictionary of the player
+    :param deck: a list of cards
+    :precondition: player is a well-formed dictionary containing the player stats
+    """
     print_campfire(player)
-    # print(col("!black", "You approach a small campfire, you know you are safe "))
-    # time.sleep(1.25)
-    # print("The " + col("yellow", "warmth of the fire") + " welcomes you ")
-    # time.sleep(1.25)
-    # if check_if_goal_attained(player, 5, 5):
-    #     print(col("!black", "You know there's no turning back after this"))
-    #     time.sleep(0.5)
-    # time.sleep(1.25)
-    # print("\nYou have the option to " + col("!green", "rest (recover 20HP)") + " or " + col("!blue", "smith (upgrade a card)"))
-    # print(col("!black", "You currently have " + str(player["Current HP"]) + "/" + str(player["Max HP"]) + "HP"))
     valid = False
     action = ""
 
@@ -492,7 +522,7 @@ def print_enemy_intent(currentEnemy, enemyIntent):
     block_icon = ""
 
     if block > 0:
-        block_icon = col("cyan", " " + chr(10683) + str(block))
+        block_icon = col("cyan", "" + chr(10683) + str(block))
 
     enemyIntentDMG = col("red", str(enemyIntent["damage"]) + " DMG" )
     enemyIntentBLCK = col("!blue", str(enemyIntent["block"]) + " BLCK")
