@@ -8,8 +8,9 @@ import time
 
 def col(colour, word):
     """
-   Use !colour for the lighter version
-   This makes anythign in word that colour and resets it to normal after
+    Use !colour for the lighter version
+    This makes anythign in word that colour and resets it to normal after
+    example: "hello" + col("red", "world")
     """
     colour_dict = {
         "black": Fore.BLACK,
@@ -50,11 +51,12 @@ def col(colour, word):
 
 def lbl(sentence, delay=1, colour=""):
     """
-    Prints a sentence letter by letter with a delay between each character.
+    Print a sentence letter by letter with a delay between each character.
 
     :param sentence: The sentence to be printed.
-    :param sentence: A string
-    :param delay: The delay (in seconds) between printing each letter.
+    :param sentence: A non-empty string
+    :param delay: a non-zero positive integer
+    :postcondition: Print each letter with a delay between each character.
     """
     for char in sentence:
         sys.stdout.write(col(colour, char))  # Print the character without a newline
@@ -89,9 +91,16 @@ CONST_MAP_HELP = \
     "\nOnce the " + col("!green", "Draw pile") + " is empty, your " + col("!red", "Discard pile") + " will be shuffled back into the " + col("!green", "Draw pile") + ""\
     "\n" + col("!green", "Draw pile") + " --> " + col("!yellow", "Hand") + " --> " + col("!red", "Discard pile") + ""\
 
+CONST_TUTORIAL_COMBAT = \
+    "\n "
 
 
 def print_shop_intro():
+    """
+    Print the intro of the shop
+
+    :postcondition: Prints the intro of the shop for the player
+    """
     print(col("magenta", chr(10870) * 8 + "SHOP" + chr(10870) * 8))
     lbl("hellllooooooOOooOOooo", 0.08, "!cyan")
     time.sleep(0.25)
@@ -105,3 +114,23 @@ def print_shop_intro():
     time.sleep(0.25)
     sys.stdout.write(col("!black", " he seems harmless"))
 
+
+def print_campfire(player):
+    """
+    Print the intro of the campfire
+
+    :postcondition: Prints the intro of the campfire for the player
+    :postcondition: if player is about to fight boss, print special message
+    """
+    from main_game import check_if_goal_attained
+    print(col("!black", "You approach a small campfire, you know you are safe "))
+    time.sleep(1.25)
+    print("The " + col("yellow", "warmth of the fire") + " welcomes you ")
+    time.sleep(1.25)
+    if check_if_goal_attained(player, 5, 5):
+        print(col("!black", "You know there's no turning back after this"))
+        time.sleep(0.5)
+    time.sleep(1.25)
+    print("\nYou have the option to " + col("!green", "rest (recover 20HP)") + " or " + col("!blue",
+                                                                                            "smith (upgrade a card)"))
+    print(col("!black", "You currently have " + str(player["Current HP"]) + "/" + str(player["Max HP"]) + "HP"))
