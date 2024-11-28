@@ -8,9 +8,17 @@ import time
 
 def col(colour, word):
     """
-    Use !colour for the lighter version
-    This makes anythign in word that colour and resets it to normal after
-    example: "hello" + col("red", "world")
+    Generate coloured text
+
+    :param colour: a non-empty string
+    :param word: a non-empty string
+    :precondition: colour is a string of a colour
+    :precondition: word is a string
+    :postcondition: the selected colour is applied to the word
+    :postcondition: !colour applies the lighter selected colour to the word
+    :postcondition: !colour applies the lighter selected colour to the word
+
+    return a coloured word
     """
     colour_dict = {
         "black": Fore.BLACK,
