@@ -7,6 +7,13 @@ import random
 
 
 def create_deck():
+    """
+    Generate a deck of cards
+
+    :postcondition: Starter cards are added to the deck
+    :postcondition: Each deck index is a card
+    :return: a list of cards
+    """
     deck = []
     card_strike = card_list("strike")
     card_defend = card_list("defend")
@@ -28,8 +35,8 @@ def make_character():
     :postcondition: Character has a description of their current HP
     :return: dictionary of character stats
     """
-    return {"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 40, "Max HP": 50, "Max Energy": 3, "Max Draw": 4,
-            "Current Energy": 3, "Block": 0, "Gold": 999, "Relics": []}
+    return {"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 50, "Max HP": 50, "Max Energy": 3, "Max Draw": 4,
+            "Current Energy": 3, "Block": 0, "Gold": 99, "Relics": []}
     # maybe change max draw later, see how difficult it is
 
 
@@ -60,10 +67,26 @@ def make_board(rows, cols):
 
 
 def populate_board(cord_list, cord_dic, rows, cols):
+    """
+    Populate the board with events
+
+    :param cord_list: a list of tuples of coordinates
+    :param cord_dic: a dictionary of the coordinates
+    :param rows: a positive integer
+    :param cols: a positive integer
+    :precondition: rows >= 0
+    :precondition: cols >= 0
+    :precondition: cord_list is a list of tuples
+    :precondition: cord_dic is a dictionary
+    :postcondition: each tuple is a key in cord_dic
+    :postcondition: each coordinate is assigned an event name
+    :postcondition: board cannot have more than two elite and fire events
+    :return: a dictionary of the coordinates and events
+    """
     event_chance = ["fight", "fight", "fight", "fight", "fight", "fight", "elite", "event", "fire", "elite"]
     event_counter = {"elite counter": 0, "fire counter": 0, "elite max": 2, "fire max": 2}
 
-    board_exceptions = {(0, 0): "start", (0, 1): "fight", (1, 0): "shop", (1, 1): "fight", (rows - 1, cols - 1): "fire", (rows//2, cols//2): "shop"}
+    board_exceptions = {(0, 0): "start", (0, 1): "fight", (1, 0): "fight", (1, 1): "fight", (rows - 1, cols - 1): col("@red", col("!yellow", "fire")), (rows//2, cols//2): "shop"}
     #CHANGE EXCEPTION FOR (0, 1) BACK AFTER
     # board_required = ""
     for counter in cord_list:
@@ -87,13 +110,20 @@ def populate_board(cord_list, cord_dic, rows, cols):
 
 
 def print_board(cord_dic, player):
+    """
+    Print the board events
+    :param cord_dic: a dictionary of tuples of coordinates
+    :param player: a dictionary of the player
+    :precondition: player is a well-formed dictionary containing the player stats
+    :postcondition: board is printed
+    :postcondition: each event has its own colour
+    """
     player_cords = (player["X-coordinate"], player["Y-coordinate"])
-
     print_counter = 0
     print(col("magenta", chr(10870) * 6 + "MAP" + chr(10870) * 5))
     message = ""
     for counter in cord_dic:
-        if counter == player_cords:
+        if counter == player_cords:             # overwrites board location with player, does not change actual event
             message += col("@blue", col("!white", "player"))
         elif cord_dic[counter] == "elite":
             message += col("red", cord_dic[counter] + " ")
@@ -119,6 +149,17 @@ def print_board(cord_dic, player):
 
 
 def initialize_game_start():
+    """
+    Initialize the game
+
+    Shortens the main function and initializes all necessary variables
+    :postcondition: game is initialized
+    :postcondition: the relic pool is shuffled
+    :postcondition: board is generated
+    :postcondition: player is created
+    :postcondition: deck is created
+    :postcondition: help text is printed
+    """
     player = make_character()
     deck = create_deck()
     rooms = 0
