@@ -38,7 +38,6 @@ class Test(TestCase):
         given = (f"1) strike dummy - 175 gold\n- adds +3 DMG to all strikes\n\n"
                  f"2) oddly smooth stone - 165 gold\n- adds +1 to all block\n\n")
 
-
         print_shop_relics(shop_list)
         expected = re.sub(r'\x1b\[.*?m', '', mock_output.getvalue())
 
