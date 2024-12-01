@@ -83,9 +83,9 @@ def make_board(rows, cols):
     #     for col_counter in range(cols):
     #         conv_to_tuple = (col_counter, row_counter)          # swap to make board draw correctly
     #         cord_list.append(conv_to_tuple)
-    populated_board = populate_board(cord_list, cord_dic, rows, cols)
-    #print(populated_board)
-    return populated_board
+    #populated_board = populate_board(cord_list, cord_dic, rows, cols)
+
+    return cord_list, cord_dic
 
 
 def populate_board(cord_list, cord_dic, rows, cols):
@@ -142,7 +142,7 @@ def print_board(cord_dic, player):
     :postcondition: all board events are printed
     :postcondition: each event has its own designated colour
 
-    >>> print_board(cord_dic, {"X-Coordinate": 0, "Y-Coordinate": 0})        # doctest: +SKIP
+    #>>> print_board(cord_dic, {"X-Coordinate": 0, "Y-Coordinate": 0})        # doctest: +SKIP
     ⩶⩶⩶⩶⩶⩶MAP⩶⩶⩶⩶⩶
     playerfight event fight fight
 
@@ -154,7 +154,7 @@ def print_board(cord_dic, player):
 
     fight fight fight fight fire
     ⩶⩶⩶⩶⩶⩶MAP⩶⩶⩶⩶⩶
-     >>> print_board(cord_dic, {"X-Coordinate": 3, "Y-Coordinate": 2})        # doctest: +SKIP
+     #>>> print_board(cord_dic, {"X-Coordinate": 3, "Y-Coordinate": 2})        # doctest: +SKIP
     ⩶⩶⩶⩶⩶⩶MAP⩶⩶⩶⩶⩶
     start fight event fight fight
 
@@ -167,6 +167,7 @@ def print_board(cord_dic, player):
     fight fight fight fight fire
     ⩶⩶⩶⩶⩶⩶MAP⩶⩶⩶⩶⩶
     """
+
     player_cords = (player["X-coordinate"], player["Y-coordinate"])
     print_counter = 0
     print(col("magenta", chr(10870) * 6 + "MAP" + chr(10870) * 5))
@@ -205,15 +206,17 @@ def initialize_game_start():
     :postcondition: game is initialized
     :postcondition: the relic pool is shuffled
     :postcondition: board is generated
-    :postcondition: player is created
-    :postcondition: deck is created
-    :postcondition: help text is printed
+    :postcondition: player and deck are created
+    :postcondition: help text string gets printed
     """
     player = make_character()
     deck = create_deck()
     rooms = 0
     create_relics()
     random.shuffle(deck)
-    board = make_board(5, 5)
+
+    cord_list, cord_dic = make_board(5, 5)
+    board = populate_board(cord_list, cord_dic, 5, 5)
+
     print(text.CONST_MAP_HELP)
     return rooms, deck, player, board
