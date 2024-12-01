@@ -15,8 +15,12 @@ def card_list(wanted):
     "barricade": {"name": "barricade", "type": "block", "amount": 12, "energy": 2, "description": "12 BLCK",
                   "exhaust": False, "upgrade": False},
     }
-    card = card_dict.get(wanted)
-    return card
+    try:
+        card = card_dict.get(wanted)
+    except KeyError:
+        print("card not found")
+    else:
+        return card
 
 
 def card_list_upgraded(wanted):
@@ -32,14 +36,30 @@ def card_list_upgraded(wanted):
     "barricade": {"name": "barricade+", "type": "block", "amount": 16, "energy": 2, "description": "16 BLCK",
                       "exhaust": False, "upgrade": False},
     }
-    card = card_dict_upgraded.get(wanted)
-    return card
+    try:
+        card = card_dict_upgraded.get(wanted)
+    except KeyError:
+        print("card not found")
+    else:
+        return card
 
 
 DEBUFF_CARDS = {"name": "burn", "type": "debuff", "amount": 2, "energy": 1, "description": col("red", "2 SELF DMG") + col("!black", "( if in hand by end of turn)"), "exhaust": True}
 
 
 def random_card_reward():
+    """
+    Generate a random card reward
+
+    :postcondition: a random card is selected
+    :return: a dictionary of a card
+
+    #>>> random_card_reward()    # doctest: +SKIP
+    {"name": "strike", "type": "attack", "amount": 6, "energy": 1, "description": "6 DMG", "exhaust": False, "upgrade": False}
+    #>>> random_card_reward()    # doctest: +SKIP
+    {"name": "anger", "type": "attack", "amount": 7, "energy": 0, "description": "7 DMG",
+                      "exhaust": True, "upgrade": False}
+    """
     card_reward_random = ["strike", "defend", "bash", "bludgeon", "iron wave", "anger", "barricade"]
 
     option = card_list(random.choice(card_reward_random))
@@ -47,10 +67,27 @@ def random_card_reward():
 
 
 def add_new_card(deck, option):
+    """
+    Append a card to the deck
+
+    :param deck: a list of cards
+    :param option: a dictionary of a card
+    :postcondition: the card option is appended to the deck
+    """
     deck.append(option)
 
 
 def show_deck_upgrade(hand):
+    """
+    Display all available card upgrades in the deck
+
+    :param hand: a list of cards
+    :precondition: hand is a list containing dictionaries of cards stats
+    :postcondition: all cards and their upgraded stats are displayed to the player
+
+    #>>> show_deck_upgrade([{"name": "strike", "type": "attack", "amount": 6, "energy": 1, "description": "6 DMG", "exhaust": False, "upgrade": False}]) # doctest: +SKIP
+    1) strike □ - 6 DMG          --->        strike+ □ - 9 DMG
+    """
     for counter in range(len(hand)):
         card = hand[counter]
         exhaust_print = ""
@@ -70,15 +107,39 @@ def show_deck_upgrade(hand):
 
 
 def upgrade_card_list(deck):
+    """
+    Determine all cards in the deck that are not upgraded
+
+    :param deck: a list of cards
+    :postcondition: all non-upgraded cards in the deck are printed
+
+    #>>> upgrade_card_list([{'name': 'strike', 'upgrade': False}])
+    [{'name': 'strike', 'upgrade': False}]
+    #>>> upgrade_card_list([{'name': 'strike', 'upgrade': True}, {'name': 'defend', 'upgrade': False}])
+    [{'name': 'defend', 'upgrade': False}]
+    """
     upgrade_list = []
     for card in deck:
         if not card["upgrade"]:
             upgrade_list.append(card)
 
-    show_deck_upgrade(upgrade_list)
+    # show_deck_upgrade(upgrade_list)
+    return upgrade_list
+
 
 
 def add_upgrade_card(deck, card):
+    """
+    Add an upgraded card to the deck
+
+    :param deck: a list of cards
+    :param card: a dictionary of a cards stats
+    :postcondition: the old card is removed from the deck
+    :postcondition: the new upgraded card is added to the deck
+
+    #>>> add_upgrade_card([{"name": "strike"}], {"name": "defend"}) # doctest: +SKIP
+    #>>> add_upgrade_card([], {"name": "bash"}) # doctest: +SKIP
+    """
     upgraded_card = card_list_upgraded(card["name"])
     deck.remove(card)
     deck.append(upgraded_card)
