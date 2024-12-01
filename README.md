@@ -20,16 +20,24 @@ If you get stuck, type help at most available input areas.
 
 See term project requirements below
 
-map - python terminal cant do vertical overwriting
-doctests and unit tests for all functions
-unit testing with colours, not same
 
+CHANGES TO MAKE BEFORE LAUNCH
+- check all input in fires, card rewards and shops
+- LN145 in initialize game, doctest spacing
+- cycle for boss attacks
+- remove events
+- update flowchart
+- doctests 714 main (include?)
 
+Funny quirk about colorama, the function I wrote to display text compactly has an unintended side-effect. 
+Since it is necessary to wrap a word with COLOUR and STYLE.RESET, this changes the underlying string. The reason for
+creating the col() function has to do with colorama. If you want to colour one word in a sentence, you would need to
+add STYLE.RESET after every word. If you don't, the rest of the sentence also becomes that colour. The function 
+automatically resets the colour after. However, this produced another side-effect. STYLE.RESET also changes
+the original string.
+This causes me to have to import colorama in unit tests and use the old method to make unit tests pass correctly.
+If you want to see an example, go to test_initialize_game_print_board
 
-cycle for
-
-
-f-string use everywhere
 
 | Required element                                                    |               File               |              Line number |
 |:--------------------------------------------------------------------|:--------------------------------:|-------------------------:|
