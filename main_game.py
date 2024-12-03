@@ -1,4 +1,5 @@
 from colorama import Fore, Back, Style, init
+
 init(autoreset=True)
 # init(strip=True)
 import random
@@ -32,18 +33,18 @@ from initialize_game import print_board
 
 def card_details(card):
     """
+    Print a card's stats
 
-    :param card:
-    :return:
+    :param card: a dictionary
+    :precondition: card is a dictionary of the card's stats
+    :postcondition: the cards stats are printed
     """
-    # for key in card.keys():
-    #     print(str(key) + ": " + str(card[key]))
-    # print("")
     exhaust_print = ""
     if card["exhaust"] == True:
-        exhaust_print =  col("!black", " exhausts")
+        exhaust_print = col("!black", " exhausts")
     yellow_square = col("!yellow", "\u25A1")
-    print("1) "+ str(card["name"]) + " " + str(card["energy"] * yellow_square)  + " - " + str(card["description"]) + exhaust_print)
+    print("1) " + str(card["name"]) + " " + str(card["energy"] * yellow_square) + " - " + str(
+        card["description"]) + exhaust_print)
 
 
 def print_player_relics(player):
@@ -106,9 +107,10 @@ def show_cards(hand):
         card = hand[counter]
         exhaust_print = ""
         if card["exhaust"] == True:
-            exhaust_print =  col("!black", " exhausts")
+            exhaust_print = col("!black", " exhausts")
         yellow_square = col("!yellow", "\u25A1")
-        print( str(counter + 1) + ") "+ str(card["name"]) + " " + str(card["energy"] * yellow_square)  + " - " + str(card["description"]) + exhaust_print)
+        print(str(counter + 1) + ") " + str(card["name"]) + " " + str(card["energy"] * yellow_square) + " - " + str(
+            card["description"]) + exhaust_print)
 
 
 def print_player_stats(entity):
@@ -118,6 +120,7 @@ def print_player_stats(entity):
     :param entity: a dictionary of the player
     :precondition: player is a well-defined dictionary containing the player's stats
     :postcondition: player's stats are printed
+
     #>>> init(strip=True)
     #>>> player = {"Current HP": 40, "Max HP": 50, "Max Energy": 3, "Current Energy": 3, "Block": 0}
     #>>> print_player_stats(player)
@@ -144,7 +147,7 @@ def print_player_stats(entity):
         block_icon = col("!cyan", chr(10683) + str(block))
 
     print(f"{green_square * squares}{red_square * (10 - squares)}  {str(health)}/{str(max_health)}"
-          f"{col("!green", " HP ")} {block_icon} {energy  * yellow_square} {str(energy)}/{str(max_energy)}"
+          f"{col("!green", " HP ")}{block_icon} {energy * yellow_square} {str(energy)}/{str(max_energy)}"
           f"{col("!yellow", " energy")}")
 
 
@@ -178,14 +181,30 @@ def draw_hand(draw_pile, hand, discard_pile, amount):
     return draw_pile, hand, discard_pile
 
 
-def get_player_input(hand, player, currentEnemy, discard_pile):
+def get_player_input(hand, player, discard_pile):
     """
+    Get the player for input in combat
 
-    :param hand:
-    :param player:
-    :param currentEnemy:
-    :param discard_pile:
-    :return:
+    Prompts the user to enter the number or word of the card they wish to play
+    :param hand: a list of cards
+    :param player: a dictionary of the player
+    :param discard_pile: a list of cards
+    :precondition: hand is a list that contains cards
+    :precondition: player is a well-defined dictionary containing the player's stats
+    :precondition: discard_pile is a list that may contain cards
+    :postcondition: prints the help text if "help" is typed
+    :postcondition: prints a warning if the player input is invalid
+    :postcondition: the player's wanted card is enumerated with the index of the hand
+    :return: a tuple containing a dictionary of the action, a boolean and the index of the action
+
+    #>>> choice = "1"                                                            # doctest: +SKIP
+    #>>> get_player_input([{"name": "strike", "name": "defend"}], player, [])    # doctest: +SKIP
+    #>>> choice = "strike"                                                       # doctest: +SKIP
+    #>>> get_player_input([{"name": "strike", "name": "defend"}], player, [])    # doctest: +SKIP
+    #>>> choice = "crying developer"                                             # doctest: +SKIP
+    #>>> get_player_input([{"name": "strike", "name": "defend"}], player, [])    # doctest: +SKIP
+    Action not found
+
     """
     action = input("Enter your action: ")
     action = action.lower()
@@ -220,7 +239,7 @@ def get_player_input(hand, player, currentEnemy, discard_pile):
     return move, move_found, action_index
 
 
-def apply_player_action(player, currentEnemy, enemyIntent, action, hand, discard_pile, action_index):
+def apply_player_action(player, currentEnemy, action, hand, discard_pile, action_index):
     """
     Apply the players action
 
@@ -249,30 +268,30 @@ def apply_player_action(player, currentEnemy, enemyIntent, action, hand, discard
     damage = action["amount"]
 
     if action_type == "block":
-        if apply_player_relic(player, "smooth stone"):
+        if apply_player_relic(player, "oddly smooth stone"):  # add relic bonus
             player["Block"] += 1
         player["Block"] += action["amount"]
 
     elif action_type == "attack" or action_type == "hybrid":
-        if apply_player_relic(player, "strike dummy")  and action["name"] == ("strike" or "strike+"):
+        if apply_player_relic(player, "strike dummy") and action["name"] == ("strike" or "strike+"):  # add relic bonus
             damage += 3
-        calculated_damage = damage - enemyBLCK
+        calculated_damage = damage - enemyBLCK  # damage must be spillover
         if calculated_damage <= 0:
             currentEnemy["current block"] -= damage
         elif calculated_damage > 0:
             currentEnemy["current block"] = 0
             currentEnemy["current HP"] -= calculated_damage
         if action_type == "hybrid":
-            if apply_player_relic(player, "smooth stone"):
+            if apply_player_relic(player, "oddly smooth stone"):
                 player["Block"] += 1
             player["Block"] += action["amount"]
-    if action["exhaust"] == False:
+
+    if action["exhaust"] == False:  # dont add to discard pile if exhausts
         discard_pile.append(hand[action_index])
     hand.remove(hand[action_index])
 
     if player["Current Energy"] == 0:
         end_player_turn(player, hand, discard_pile)
-
 
 
 def apply_enemy_action(enemyIntent, currentEnemy, player, draw_pile):
@@ -295,10 +314,11 @@ def apply_enemy_action(enemyIntent, currentEnemy, player, draw_pile):
     playerBLCK = player["Block"]
 
     if damage > 0:
-        calculated_damage = damage - playerBLCK                 #calculate the damage after blocking
+        calculated_damage = damage - playerBLCK  # calculate the damage after blocking
         if calculated_damage <= 0:
             player["Block"] -= damage
-        elif calculated_damage > 0:                             #if block is less than incoming damage, remove all block
+            print(f"You {col("blue", "block")} the incoming attack")
+        elif calculated_damage > 0:  # if block is less than incoming damage, remove all block
             player["Block"] = 0
             player["Current HP"] -= calculated_damage
             print("The " + currentEnemy["name"] + " hits you for " + col("!red", str(calculated_damage) + " DMG"))
@@ -307,10 +327,11 @@ def apply_enemy_action(enemyIntent, currentEnemy, player, draw_pile):
         currentEnemy["current block"] += block
         print("The " + currentEnemy["name"] + " defends for " + col("cyan", " " + chr(10683) + str(block) + " BLCK"))
         time.sleep(1)
-    if "debuff" in enemyIntent:                                 # the only enemy that debuffs is the boss!
+    if "debuff" in enemyIntent:  # the only enemy that debuffs is the boss!
         debuff = enemyIntent["debuff"]
         if debuff > 0:
-            print("The " + currentEnemy["name"] + " adds " + col("!red", str(debuff) + " burns") + " to your " + col("!green", "Draw pile"))
+            print("The " + currentEnemy["name"] + " adds " + col("!red", str(debuff) + " burns") + " to your " + col(
+                "!green", "Draw pile"))
             for counter in range(debuff):
                 draw_pile.append(cards.DEBUFF_CARDS)
     print(col("!black", "The enemy's turn ends.. \n"))
@@ -346,6 +367,7 @@ def end_player_turn(player, hand, discard_pile):
     """
     End the player's turn
 
+    This function empties the players hand into the discard pile and begins the enemies turn
     :param player: a dictionary of the player
     :param hand: a dictionary of the hand
     :param discard_pile: a list of cards
@@ -366,30 +388,63 @@ def end_player_turn(player, hand, discard_pile):
 
 
 def apply_player_relic(player, relic_name):
-    for relic in player["Relics"]:              #check if player has any relics and apply buffs accordingly
+    """
+    Apply a relic buff to the player
+
+    :param player: a dictionary of the players stats
+    :param player:
+    :param relic_name: a non-empty string
+    :precondition: player is a well-formed dictionary of the players stats
+    :precondition: player's "relics" is a list of relics
+    :postcondition: the relics buff is applied to the player
+
+    #>>> apply_player_relic({"Block": 0, "Relics": [{"name": "prepared slug", "effect": 8}]}, "prepared slug")
+    #>>> apply_player_relic({"Block": 0, "Relics": [{"name": "regal pillow", "effect": 60}]}, "regal pillow")
+    True
+    """
+    for relic in player["Relics"]:  # check if player has any relics and apply buffs accordingly
         if relic["name"] in relic_name:
-            if relic_name == "blood vial":                  #blood vial
+            if relic_name == "blood vial":  # blood vial
                 player["Current HP"] += int(relic["effect"])
                 if player["Current HP"] > player["Max HP"]:
                     player["Current HP"] = player["Max HP"]
-            elif relic_name == "smooth stone":                 #smooth stone
+            elif relic_name == "oddly smooth stone":  # smooth stone
                 player["Block"] += int(relic["effect"])
-            elif relic_name == "strike dummy":              #strike dummy
+            elif relic_name == "strike dummy":  # strike dummy
                 return True
-            elif relic_name == "regal pillow":           #regal pillow
+            elif relic_name == "regal pillow":  # regal pillow
                 return True
-            elif relic_name == "prepared slug":           #prepared slug
+            elif relic_name == "prepared slug":  # prepared slug
                 player["Block"] = 0
                 player["Block"] += int(relic["effect"])
             else:
                 print(f"player does not have {relic_name}")
 
 
-def spawn_event(player, deck):          # remove
+def spawn_event(player, deck):  # remove
     decide_event(player, deck)
 
 
 def valid_purchase_shop(player, relics_sale, player_input):
+    """
+    Validate a shop purchase from the player
+
+    This function finds the wanted relic and checks if the player can afford it. If the player has enough
+    gold, the gold is subtracted. The relic is appended to the player and removed from the shop
+    :param player: a dictionary of the player
+    :param relics_sale: a list of relics
+    :param player_input: a non-empy string of a number
+    :precondition: player is a well-formed dictionary containing the player stats
+    :precondition: relics_sale is a list of dictionaries
+    :postcondition: warning is printed if player doesn't have enough gold
+    :postcondition: purchased relics are appended to players stats
+    :postcondition: purchased relics subtract from players gold
+
+    #>>> valid_purchase_shop({"gold": 160}, [{"name": "blood vial"}], 1)         # doctest: +SKIP
+    Relic purchased!
+    #>>> valid_purchase_shop({"gold": 160}, [{"name": "coffee dripper"}], 1)     # doctest: +SKIP
+    Insufficient gold!
+    """
     wanted_relic = relics_sale[player_input - 1]  # grab index
     can_purchase = purchase_relic(wanted_relic, player)  # confirm has enough gold
     if can_purchase:
@@ -404,13 +459,13 @@ def spawn_shop(player, deck):
     """
     Generate a shop
 
+    Displays an intro to the shop, then gives the player 4 relics to purchase and asks the user which one they want
+    to purchase. 4 Relics are popped from the relic pool and are returned back if not bought
     :param player: a dictionary of the player
     :param deck: a list of cards
     :precondition: player is a well-formed dictionary containing the player stats
     :postcondition: shop messages are printed
     :postcondition: relics for sale are printed
-    :postcondition: purchased relics are appended to players stats
-    :postcondition: purchased relics subtract from players gold
     :postcondition: warns if input is invalid
     :postcondition: shop exits if all relics are purchased
     """
@@ -421,11 +476,12 @@ def spawn_shop(player, deck):
     print_shop_relics(relics_sale)
 
     player_input = 0
-    accepted = range(1, 5)          #this should never go out of bounds... chants the blissfully ignorant developer
+    accepted = range(1, 5)  # this could never go out of bounds... chants the blissfully ignorant developer
     print_player_stats(player)
     while player_input != "exit":
         print("Current gold: " + col("yellow", str(player["Gold"])))
-        player_input = input(col("!cyan", "Enter the relic number you want to purchase" + col("!black", "( type *exit* to leave): ")))
+        player_input = input(
+            col("!cyan", "Enter the relic number you want to purchase" + col("!black", "( type *exit* to leave): ")))
         try:
             player_input = int(player_input)
 
@@ -436,13 +492,13 @@ def spawn_shop(player, deck):
                 print(col("!black", "invalid input, try again"))
         else:
             if player_input in accepted:
-                if (len(relics_sale) - 1) == 0:                               # kicks player out of shop if nothing left
+                if (len(relics_sale) - 1) == 0:  # kicks player out of shop if nothing left
                     time.sleep(0.5)
                     print("\n" + col("!black", "You seem to have bought everything in the shop, impressive"))
                     time.sleep(2.5)
                     break
 
-                    valid_purchase_shop(player, relics_sale)
+                valid_purchase_shop(player, relics_sale, player_input)
             else:
                 print(col("!black", "invalid input, try again"))
     lbl("thaaaaaaank youuuuuuuuu come againnnnnnn", 0.02, "!cyan")
@@ -476,31 +532,50 @@ def valid_input_fire():
 
 
 def upgrade_card(deck):
-    upgrade_card_list(deck)
+    """
+    Upgrade a card in your deck
+
+    A function that creates a list of all non-upgraded cards in the players current deck and asks the user to
+    select one to be upgraded.
+    :param deck: a list of cards
+    :postcondition: a list of all upgrade options for cards are printed
+    :postcondition: warns the player if invalid input
+    :postcondition: removes the old card and appends the new upgraded card to the deck
+    """
+    upgrade_list = upgrade_card_list(deck)
+    show_deck_upgrade(upgrade_list)
     player_input = 0
     accepted = range(1, len(deck) + 1)
-    while player_input not in accepted:                 # CRASHES UPON RECIEVING STR INPUT
-        player_input = int(input(col("!cyan", "Enter the card number you want to upgrade: ")))
-
-        if player_input in accepted:
-            card = deck[player_input - 1]
-            add_upgrade_card(deck, card)
-            lbl("*CLANG*  *CLANG*  *CLANG*", 0.05, "!black")
-            time.sleep(0.5)
-            print(col("!magenta", "\nThe card has been successfully upgraded!"))
-            time.sleep(1.75)
-        else:
+    while player_input not in accepted:  # CRASHES UPON RECIEVING STR INPUT
+        try:
+            player_input = int(input(col("!cyan", "Enter the card number you want to upgrade: ")))
+        except ValueError:
             print(col("!black", "invalid input, try again"))
+        else:
+            if player_input in accepted:
+                card = deck[player_input - 1]
+                add_upgrade_card(deck, card)
+                lbl("*CLANG*  *CLANG*  *CLANG*", 0.05, "!black")
+                time.sleep(0.5)
+                print(col("!magenta", "\nThe card has been successfully upgraded!"))
+                time.sleep(1.75)
+            else:
+                print(col("!black", "invalid input, try again"))
 
 
 def player_sleep(player):
     """
-    Update the player's HP
+    Update the player's Current HP and return the new value
 
     :param player: a dictionary of player
     :precondition: player is a well-formed dictionary containing the player stats
     :postcondition: player's current health is increased
     :postcondition: player's current health cannot succeed player's max health
+
+    #>>> player_sleep({"Current HP": 25, "Max HP": 50})      # doctest: +SKIP
+    ["Current HP"] = 45
+    #>>> player_sleep({"Current HP": 5, "Max HP": 50, "Relics": [{"name": "regal pillow"}]})     # doctest: +SKIP
+    ["Current HP"] = 50
     """
     if apply_player_relic(player, "regal pillow"):
         player["Current HP"] += 40
@@ -509,18 +584,20 @@ def player_sleep(player):
     if player["Current HP"] > player["Max HP"]:
         player["Current HP"] = player["Max HP"]
 
-    print("\nYou rest deeply and wake up at " + col("!green",str(player["Current HP"]) + "/" + str(player["Max HP"]) \
-        + "HP"))
+    print("\nYou rest deeply and wake up at " + col("!green", str(player["Current HP"]) + "/" + str(player["Max HP"]) \
+                                                    + "HP"))
     time.sleep(2)
 
 
 def spawn_fire(player, deck):
     """
-    Generate a campsite
+    Generate a campsite event for the player
 
+    Prompts the user to either rest or upgrade a card.
     :param player: a dictionary of the player
     :param deck: a list of cards
     :precondition: player is a well-formed dictionary containing the player stats
+    :postcondition: warns the player if invalid input
     """
     print_campfire(player)
     valid = False
@@ -533,7 +610,7 @@ def spawn_fire(player, deck):
                 player_sleep(player)
             elif action == "upgrade" or action == "smith":
                 upgrade_card(deck)
-            if check_if_goal_attained(player, 5, 5):            #final campfire message
+            if check_if_goal_attained(player, 5, 5):  # final campfire message
                 print(col("!black", "You gather your belongings one final time and march towards the boss... \n"))
                 time.sleep(0.5)
             else:
@@ -571,7 +648,7 @@ def print_enemy_intent(currentEnemy, enemyIntent):
     if block > 0:
         block_icon = col("cyan", "" + chr(10683) + str(block))
 
-    enemyIntentDMG = col("red", str(enemyIntent["damage"]) + " DMG" )
+    enemyIntentDMG = col("red", str(enemyIntent["damage"]) + " DMG")
     enemyIntentBLCK = col("!blue", str(enemyIntent["block"]) + " BLCK")
     enemyIntentHP = col("green", ("(" + str(currentEnemy["current HP"]) + "/" + str(currentEnemy["max HP"])) + ")")
 
@@ -580,7 +657,7 @@ def print_enemy_intent(currentEnemy, enemyIntent):
     else:
         if enemyIntent["damage"] != 0:
             message += "attack for " + enemyIntentDMG
-            between = 1         # adds "and" inbetween
+            between = 1  # adds "and" inbetween
         if enemyIntent["block"] != 0:
             if between == 1:
                 message += " and "
@@ -606,7 +683,6 @@ def initialize_combat(enemy, deck):
     """
     player_turn = 1
     currentEnemy = copy.deepcopy(enemy)
-    #enemy["current HP"] = enemy["max HP"]
     random.shuffle(deck)
     discard_pile = []
     hand = []
@@ -618,37 +694,37 @@ def start_combat(player, enemy, deck):
     """
     Drive the combat
     """
-    apply_player_relic(player, "blood vial")            #check if player has specific relic
+    apply_player_relic(player, "blood vial")  # check if player has specific relic
     player_turn, hand, discard_pile, draw_pile, currentEnemy = initialize_combat(enemy, deck)
     enemy_attacks = iter(currentEnemy["attack"])
     while currentEnemy["current HP"] > 0 and player["Current HP"] > 0:
-        if player_turn == 1:                                    #apply turn 1 block buff
+        if player_turn == 1:  # apply turn 1 block buff from relic
             apply_player_relic(player, "prepared slug")
         else:
             player["Block"] = 0
         player["Current Energy"] = player["Max Energy"]
 
-        if currentEnemy["attack pattern"] == True:
+        if currentEnemy["attack pattern"] == True:  # check if enemy has fixed pattern
             enemyIntent = next(enemy_attacks)
         else:
-           enemyIntent = random.choice(currentEnemy["attack"])
+            enemyIntent = random.choice(currentEnemy["attack"])
 
-        draw_hand(draw_pile, hand, discard_pile, player["Max Draw"])     # change 3 to edit cards drawn
+        draw_hand(draw_pile, hand, discard_pile, player["Max Draw"])
         print(col("!black", "Your turn begins.. "))
         time.sleep(0.75)
 
-        while player["Current Energy"] > 0 and currentEnemy["current HP"] > 0:     # begin players turn
+        while player["Current Energy"] > 0 and currentEnemy["current HP"] > 0:  # begin players turn
             # checks for enemy HP again to immediatley end players turn
             print_enemy_intent(currentEnemy, enemyIntent)
             show_cards(hand)
             print_player_stats(player)
 
-            action, valid_input, action_index = get_player_input(hand, player, currentEnemy, discard_pile)
+            action, valid_input, action_index = get_player_input(hand, player, discard_pile)
 
             if valid_input:
                 valid_energy = check_energy(player["Current Energy"], action)
                 if valid_energy:
-                    apply_player_action(player, currentEnemy, enemyIntent, action, hand, discard_pile, action_index)
+                    apply_player_action(player, currentEnemy, action, hand, discard_pile, action_index)
 
         if currentEnemy["current HP"] > 0:
             currentEnemy["current block"] = 0
@@ -658,6 +734,7 @@ def start_combat(player, enemy, deck):
 
 def valid_input_reward():
     """
+    Get i
     Asks the player to input either "yes", "take", "no" or "skip"
 
     :postcondition: prints a warning if player input is invalid
@@ -678,7 +755,7 @@ def valid_input_reward():
     if action in accepted or action in not_accepted:
         return True, action
     else:
-        return False
+        return False, action
 
 
 def reward_player(player, reward, deck):
@@ -693,13 +770,29 @@ def reward_player(player, reward, deck):
     :postcondition: the reward is printed to the player
     :postcondition: the player is offered a card reward
     :postcondition: the player can add a card to the deck
-    #>>>
+
+    #>>> choice = yes                           # doctest: +SKIP
+    #>>> reward_player(player, reward, deck)    # doctest: +SKIP
+    ⩶⩶⩶LOOT⩶⩶⩶
+    Got 122 Gold +23
+    Card reward:
+    1) strike □ - 6 DMG
+    Take card? yes
+    Card added to deck!
+
+    #>>> choice = no                           # doctest: +SKIP
+    #>>> reward_player(player, reward, deck)    # doctest: +SKIP
+    ⩶⩶⩶LOOT⩶⩶⩶
+    Got 115 Gold +16
+    Card reward:
+    1) anger  - 7 DMG exhausts
+    Take card? no
     """
-    print ( "\n" + col("magenta", chr(10870) * 3 + "LOOT" + chr(10870) * 3))
+    print("\n" + col("magenta", chr(10870) * 3 + "LOOT" + chr(10870) * 3))
 
     gold_reward = round(random.randint(15, 25) * reward)
     player["Gold"] += gold_reward
-    print("Got " + col("yellow", str(player["Gold"] )+ " Gold") +  " " + col("!black", "+" + str(gold_reward)))
+    print("Got " + col("yellow", str(player["Gold"]) + " Gold") + " " + col("!black", "+" + str(gold_reward)))
     if reward == 1.5:
         loot_relic = get_relic()
         print(print_relic_description(loot_relic))
@@ -709,7 +802,6 @@ def reward_player(player, reward, deck):
     print(col("green", "Card reward: "))
     card_option = random_card_reward()
     card_details(card_option)
-    #show_cards(card_option)
     valid_input = False
     action = ""
     while not valid_input:
@@ -750,7 +842,7 @@ def check_board_location(board, player, update):
     'fire'
     """
     player_cords = (player["X-coordinate"], player["Y-coordinate"])
-    if update:                                  # overwrites old locations to let player know
+    if update:  # overwrites old locations to let player know
         board[player_cords] = col("!black", "empty")
     else:
         if player_cords in board:
@@ -883,6 +975,7 @@ def move_character(player, movement):
     player["Y-coordinate"] = move_cords[1]
     return player
 
+
 def check_if_goal_attained(player, rows, columns):
     """
     Determine if the character has reached the goal
@@ -928,7 +1021,6 @@ def calculate_enemy_diffuculty(event):
         reward = 1.5
     elif event == "boss":
         enemy_chosen = enemy.enemies_boss
-        #print(enemy_chosen)
         reward = 2
     return enemy_chosen, reward
 
@@ -957,7 +1049,7 @@ def main():
                 spawn_event(player, deck)
             elif event == "fire":
                 spawn_fire(player, deck)
-                if check_if_goal_attained(player, 5, 5):        #final boss after fire
+                if check_if_goal_attained(player, 5, 5):  # final boss after fire
                     enemy, reward = calculate_enemy_diffuculty("boss")
                     start_combat(player, enemy, deck)
 
@@ -967,6 +1059,7 @@ def main():
         print("\n" + col("!red", "GAME OVER"))
     if check_if_goal_attained and player["Current HP"] > 0:
         print("\n" + col("!green", "YOU WON"))
+
 
 if __name__ == '__main__':
     main()
