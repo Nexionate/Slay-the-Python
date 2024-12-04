@@ -170,13 +170,7 @@ def upgrade_card_list(deck):
     >>> upgrade_card_list([{'name': 'strike', 'upgrade': True}, {'name': 'defend', 'upgrade': False}])
     [{'name': 'defend', 'upgrade': False}]
     """
-    upgrade_list = []
-    for card in deck:
-        if not card["upgrade"]:
-            upgrade_list.append(card)
-
-    # show_deck_upgrade(upgrade_list)
-    return upgrade_list
+    return [card for card in deck if not card["upgrade"]]
 
 
 def add_upgrade_card(deck, card):

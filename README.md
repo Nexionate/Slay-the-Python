@@ -47,7 +47,7 @@ See term project requirements below
 | d) minimized scope and lifetime of all variables and objects        |                     [main_game](./main_game.py)                      |        #381 |
 | e) decomposition of your idea into small functions                  |                     [main_game](./main_game.py)                      |        #173 |
 | f) simple flat code that is easy to understand                      |                     [main_game](./main_game.py)                      |  #184, #588 |
-| g) comprehensions work though correct use of one or more list/dicts |                         [cards](./cards.py)                          |         #44 |
+| g) comprehensions work though correct use of one or more list/dicts |                         [cards](./cards.py)                          |         #173|
 | h) selection using if-statements                                    |          [relics](./relics.py), [main_game](./main_game.py)          |  #147, #619 |
 | i) repetition using the for-loop                                    |           [main_game](./main_game.py), [cards](./cards.py)           |  #106, #135 |
 | j) use of the membership operator where it makes sense              | [initialize_game](./initialize_game.py), [main_game](./main_game.py) |  #110, #551 |
