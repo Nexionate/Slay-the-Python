@@ -56,19 +56,19 @@ def print_player_relics(player: dict):
     :postcondition: player's current relics are printed
 
     >>> init(strip=True)
-    >>> player = {"Relics": [{"name": 'blood vial', "description": 'heal 3HP before every battle', "effect": 3, \
+    >>> a_player = {"Relics": [{"name": 'blood vial', "description": 'heal 3HP before every battle', "effect": 3, \
     "one-time": False, "rarity": "common"}]}
-    >>> print_player_relics(player)
+    >>> print_player_relics(a_player)
     <BLANKLINE>
     ⩶⩶⩶⩶⩶⩶RELICS⩶⩶⩶⩶⩶⩶
     blood vial
     - heal 3HP before every battle
 
     >>> init(strip=True)
-    >>> player = {"Relics": [{"name": 'blood vial', "description": 'heal 3HP before every battle', "effect": 3, \
+    >>> a_player = {"Relics": [{"name": 'blood vial', "description": 'heal 3HP before every battle', "effect": 3, \
     "one-time": False, "rarity": "common"}, {"name": 'strawberry', "description": 'gain 10 Max HP',"effect": 10, \
     "one-time": True, "rarity": "common"}]}
-    >>> print_player_relics(player)
+    >>> print_player_relics(a_player)
     <BLANKLINE>
     ⩶⩶⩶⩶⩶⩶RELICS⩶⩶⩶⩶⩶⩶
     blood vial
@@ -198,11 +198,11 @@ def get_player_input(hand: list, player: dict, discard_pile: list) -> tuple:
     :return: a tuple containing a dictionary of the action, a boolean and the index of the action
 
     >>> choice = "1"                                                            # doctest: +SKIP
-    >>> get_player_input([{"name": "strike", "name": "defend"}], player, [])    # doctest: +SKIP
-    >>> choice = "strike"                                                       # doctest: +SKIP
-    >>> get_player_input([{"name": "strike", "name": "defend"}], player, [])    # doctest: +SKIP
-    >>> choice = "crying developer"                                             # doctest: +SKIP
-    >>> get_player_input([{"name": "strike", "name": "defend"}], player, [])    # doctest: +SKIP
+    >>> get_player_input([{"name": "strike"}, {"name": "defend"}], player, [])    # doctest: +SKIP
+    >>> a_choice = "strike"                                                       # doctest: +SKIP
+    >>> get_player_input([{"name": "strike"}, {"name": "defend"}], player, [])    # doctest: +SKIP
+    >>> b_choice = "crying developer"                                             # doctest: +SKIP
+    >>> get_player_input([{"name": "strike"}, {"name": "defend"}], player, [])    # doctest: +SKIP
     Action not found
 
     """
@@ -627,13 +627,13 @@ def print_enemy_intent(current_enemy: dict, enemy_intent: dict):
     :postcondition: the enemy's intended action is printed
     :postcondition: the enemy's stats are printed
 
-    >>> current_enemy = {"name": "mugger", "current HP": 6, "max HP": 36, "current block": 0, "attack pattern": False,\
+    >>> a_current_enemy = {"name": "mugger", "current HP": 6, "max HP": 36, "current block": 0, "attack pattern": False,\
     "attack": [{"damage": 7, "block": 0}]} # doctest: +SKIP
-    >>> print_enemy_intent (current_enemy, {'damage': 7, 'block': 0})    # doctest: +SKIP
+    >>> print_enemy_intent (a_current_enemy, {'damage': 7, 'block': 0})    # doctest: +SKIP
     The mugger(6/36) intends to attack for 7 DMG
-    >>> current_enemy = {"name": "mugger", "current HP": 27, "max HP": 36, "current block": 0, "attack pattern": False,\
+    >>> a_current_enemy = {"name": "mugger", "current HP": 27, "max HP": 36, "current block": 0, "attack pattern": False,\
     "attack": [{"damage": 5, "block": 10}]} # doctest: +SKIP
-    >>> print_enemy_intent (current_enemy, {'damage': 7, 'block': 0})    # doctest: +SKIP
+    >>> print_enemy_intent (a_current_enemy, {'damage': 7, 'block': 0})    # doctest: +SKIP
     The mugger(27/36) intends to attack for 5 DMG and defend for 10 BLCK
     """
     message = ""
