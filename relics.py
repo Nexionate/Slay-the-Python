@@ -22,7 +22,7 @@ CONST_RELIC_POOL = [
     {"name": 'blood vial', "description": 'heal 3HP before every battle', "effect": 3, "one-time": False,
      "rarity": "common"},
 
-    {"name": 'old coin', "description": 'immediately gain 200 gold', "effect": 200, "one-time": True,
+    {"name": 'old coin', "description": 'immediately gain 300 gold', "effect": 300, "one-time": True,
      "rarity": "uncommon"},
 
     {"name": 'strawberry', "description": 'gain 10 Max HP', "effect": 10, "one-time": True, "rarity": "common"},
