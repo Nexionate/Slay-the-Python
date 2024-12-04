@@ -1,10 +1,12 @@
-from time import sleep
-
-from colorama import Fore, Back, Style, init
-
-init(autoreset=True)
 import sys
 import time
+from colorama import Fore, Back, Style, init
+init(autoreset=True)
+"""
+Ethan O'Connor
+A01435041
+Set E
+"""
 
 
 def col(colour, word):
@@ -18,6 +20,8 @@ def col(colour, word):
     :postcondition: the selected colour is applied to the word
     :postcondition: !colour applies the lighter selected colour to the word
 
+    >>> col("!red", "a light red message")      # doctest: +SKIP
+    >>> col("blue", "a blue message")      # doctest: +SKIP
     """
     colour_dict = {
         "black": Fore.BLACK,
@@ -56,7 +60,7 @@ def col(colour, word):
     return colour_code + word + Style.RESET_ALL
 
 
-def lbl(sentence, delay=1, colour=""):
+def lbl(sentence, delay=.1, colour=""):
     """
     Print a sentence letter by letter with a delay between each character.
 
@@ -73,58 +77,36 @@ def lbl(sentence, delay=1, colour=""):
 
 
 CONST_HELP_TEXT = \
-    "\n- To play a card, input its number order or full name. The yellow squares " + col("!yellow",
-                                                                                         "\u25A1") + " indicate your current energy." \
-                                                                                                     "\n- You cannot play a card if you don't have sufficient energy. " \
-                                                                                                     "\n- You will gain your Max Energy upon the end of the enemies turn." \
-                                                                                                     "" \
-                                                                                                     "\n- If you do not have enough energy to play your remaining cards, type" + col(
-        "magenta", " \"end\" ") + "to finish your turn" \
-                                  "\n- The " + col("!cyan",
-                                                   chr(10683)) + " icon indicates how much damage will be blocked. " \
-                                                                 "\n- " + col("!cyan",
-                                                                              chr(10683) + " Block") + " wears off at the start of your next turn. " \
-                                                                                                       "\n- Cards that " + col(
-        "!black", "exhaust") + " can only be used once per battle, and will return to your deck when complete. " \
-                               "\n- Example: a player with " + col("!cyan", "15 BLCK") + "\n" \
-                                                                                         f"{(col("green", "■") * 10)}  50/50{col("!green", " HP ")} {col("!cyan", chr(10683) + str(15))} {(col("!yellow", "□") * 3)} 3/3{col("!yellow", " energy")}\n"
+    "\n- To play a card, input its number order or full name. The yellow squares " + col("!yellow", "\u25A1") +" indicate your current energy." \
+    "\n- You cannot play a card if you don't have sufficient energy. " \
+    "\n- You will gain your Max Energy upon the end of the enemies turn." \
+    "" \
+    "\n- If you do not have enough energy to play your remaining cards, type" + col("magenta", " \"end\" ") + "to finish your turn" \
+    "\n- The " + col("!cyan", chr(10683)) + " icon indicates how much damage will be blocked. " \
+    "\n- " + col("!cyan", chr(10683) + " Block") + " wears off at the start of your next turn. " \
+    "\n- Cards that " + col("!black", "exhaust") + " can only be used once per battle, and will return to your deck when complete. " \
+    "\n- Example: a player with " + col("!cyan", "15 BLCK") + "\n" \
+    f"{(col("green", "■") * 10)}  50/50{col("!green", " HP ")} {col("!cyan", chr(10683) + str(15))} {(col("!yellow", "□") * 3)} 3/3{col("!yellow", " energy")}\n"
 
 CONST_MAP_HELP = \
-    "Welcome to this land. I will explain the map. Your goal is to reach the boss at the " + col("red",
-                                                                                                 "bottom-right tile of the board.") + "" \
-                                                                                                                                      "\nEvery board tile will contain an event. " \
-                                                                                                                                      "\n" + col(
-        "!white", "- fights:") + " normal enemy battle with" + col("!yellow", " gold ") + "and card rewards" \
-                                                                                          "\n" + col("red",
-                                                                                                     "- elites:") + " extra tough enemies that will drop powerful " + col(
-        "!magenta", "relics") + \
-    " and more gold" \
-    "\n" + col("blue", "- empty:") + " an empty area" \
-                                     "\n" + col("magenta",
-                                                "- shop:") + " spend your gold on relics and upgrades! Can only be visited once, so " \
-                                                             "plan around it!" \
-                                                             "\n" + col("yellow",
-                                                                        "- fires:") + " allow the player to heal" + col(
-        "!white", " *OR*") + " permanently " \
-                             "upgrade a card from your deck, making it more powerful" \
-                             "\nElites are completely optional, but will be very helpful in defeating the boss!" \
-                             "\n\nType " + col("!white", "help") + " for this text to appear again" \
-                                                                   "\nType " + col("!white",
-                                                                                   "relics") + " to view your current relics" \
-                                                                                               "\nType " + col("!white",
-                                                                                                               "gold") + " to view your current gold" \
-                                                                                                                         "\n\nEvery battle, you will gain cards from your " + col(
-        "!green", "Draw pile") + " into your " + col("!yellow",
-                                                     "Hand") + ". After playing a card, it will go to the " + col(
-        "!red", "Discard pile") + "" \
-                                  "\nAt the end of your turn, any remaining cards in your " + col("!yellow",
-                                                                                                  "Hand") + " will go to the " + col(
-        "!red", "Discard pile") + "" \
-                                  "\nOnce the " + col("!green", "Draw pile") + " is empty, your " + col("!red",
-                                                                                                        "Discard pile") + " will be shuffled back into the " + col(
-        "!green", "Draw pile") + "" \
-                                 "\n" + col("!green", "Draw pile") + " --> " + col("!yellow", "Hand") + " --> " + col(
-        "!red", "Discard pile")
+    "Welcome to this land. I will explain the map. Your goal is to reach the boss at the " + col("red", "bottom-right tile of the board.") + ""\
+    "\nEvery board tile will contain an event. "\
+    "\n" + col("!white", "- fights:") + " normal enemy battle with" + col("!yellow", " gold ") + "and card rewards"\
+    "\n" + col("red", "- elites:") + " extra tough enemies that will drop powerful " + col("!magenta", "relics") + \
+     " and more gold"\
+    "\n" + col("blue", "- empty:") + " an empty area"\
+    "\n" + col("magenta", "- shop:") + " spend your gold on relics and upgrades! Can only be visited once, so " \
+            "plan around it!"\
+    "\n" + col("yellow", "- fires:") + " allow the player to heal" + col("!white", " *OR*") + " permanently " \
+                    "upgrade a card from your deck, making it more powerful"\
+    "\nElites are completely optional, but will be very helpful in defeating the boss!"\
+    "\n\nType " + col("!white", "help") + " for this text to appear again"\
+    "\nType " + col("!white", "relics") + " to view your current relics"\
+    "\nType " + col("!white", "gold") + " to view your current gold"\
+    "\n\nEvery battle, you will gain cards from your " + col("!green", "Draw pile") + " into your " + col("!yellow", "Hand") + ". After playing a card, it will go to the " + col("!red", "Discard pile") + ""\
+    "\nAt the end of your turn, any remaining cards in your " + col("!yellow", "Hand") + " will go to the " + col("!red", "Discard pile") + ""\
+    "\nOnce the " + col("!green", "Draw pile") + " is empty, your " + col("!red", "Discard pile") + " will be shuffled back into the " + col("!green", "Draw pile") + ""\
+    "\n" + col("!green", "Draw pile") + " --> " + col("!yellow", "Hand") + " --> " + col("!red", "Discard pile")
 
 CONST_TUTORIAL_COMBAT = \
     "\n "

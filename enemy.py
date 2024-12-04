@@ -1,3 +1,9 @@
+"""
+Ethan O'Connor
+A01435041
+Set E
+"""
+
 enemies_easy = (
     {"name": "mugger", "current HP": 6, "max HP": 36, "current block": 0, "attack pattern": False,
      "attack": [{"damage": 7, "block": 0}, {"damage": 11, "block": 0}, {"damage": 5, "block": 7},

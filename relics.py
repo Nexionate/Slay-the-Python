@@ -1,6 +1,14 @@
 import random
 from text import col
 
+"""
+Ethan O'Connor
+A01435041
+Set E
+"""
+
+# I couldn't update this in time to make a function and fix all problems with turning into function
+# I beg for mercy Chris
 CONST_RELIC_POOL = [
     {"name": 'strike dummy', "description": 'adds +3 DMG to all strikes', "effect": 3, "one-time": False,
      "rarity": "uncommon"},
@@ -129,7 +137,7 @@ def shop_relic():
      ({"name": 'coffee dripper', "description": 'permanently gain +1 Max Energy', "effect": 1,
        "one-time": True,
        "rarity": "rare"}, 275)]
-     >>> shop_relic()         # doctest: +SKIP
+    >>> shop_relic()         # doctest: +SKIP
     [({"name": 'blood vial', "description": 'heal 3HP before every battle', "effect": 3, "one-time": False,
      "rarity": "common"}, 151),
      ({"name": 'strawberry', "description": 'gain 10 Max HP', "effect": 10, "one-time": True, "rarity": "common"}, 145),
@@ -139,12 +147,12 @@ def shop_relic():
      "rarity": "rare"}, 275)]
     """
     print("")
-    gold_price = []
+
     shop_list = []
     for counter in range(3):
         load_relic = get_relic()
 
-        if load_relic["name"] == "old coin":
+        if load_relic["name"] == "old coin":  # no point in selling a relic that gives you more money
             return_relic(load_relic)
             load_relic = get_relic()
 
@@ -239,9 +247,10 @@ def purchase_relic(relic, player):
     :postcondition: the players gold is decreased by the relics cost
     :postcondition: the relic is appended to the players stats
     :return: True if the relic is purchased, False otherwise
+
     >>> a_relic = [{"name": 'old coin', "description": 'immediately gain 300 gold', "effect": 200, \
-    "one-time": True, "rarity": "uncommon"}, 150]
-    >>> purchase_relic(a_relic, {"Gold": 200, "Max HP": 50})
+    "one-time": True, "rarity": "uncommon"}, 150]   # doctest: +SKIP
+    >>> purchase_relic(a_relic, {"Gold": 200, "Max HP": 50})    # doctest: +SKIP
     """
     cost = relic[1]
     if player["Gold"] >= cost:

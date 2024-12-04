@@ -1,9 +1,12 @@
-import text
 from cards import card_list
 from relics import create_relics
 from text import col
-
 import random
+"""
+Ethan O'Connor
+A01435041
+Set E
+"""
 
 
 def create_deck():
@@ -14,7 +17,7 @@ def create_deck():
     :postcondition: Each deck index is a card
     :return: a list of cards
 
-    #>>> create_deck()       # doctest: +SKIP
+    >>> create_deck()       # doctest: +SKIP
     [{"name": "strike", "type": "attack", "amount": 6, "energy": 1, "description": "6 DMG", "exhaust": False, \
     "upgrade": False},
     {"name": "defend", "type": "block", "amount": 5, "energy": 1, "description": "5 BLCK", "exhaust": False, \
@@ -47,9 +50,9 @@ def make_character():
     :postcondition: Character has a description of their current HP
     :return: dictionary of character stats
 
-    #>>> make_character()
+    >>> make_character()        # doctest: +SKIP
     {"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 50, "Max HP": 50, "Max Energy": 3, "Max Draw": 4,
-            "Current Energy": 3, "Block": 0, "Gold": 99, "Relics": []}
+    "Current Energy": 3, "Block": 0, "Gold": 99, "Relics": []}
     """
     return {"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 50, "Max HP": 50, "Max Energy": 3, "Max Draw": 4,
             "Current Energy": 3, "Block": 0, "Gold": 99, "Relics": []}
@@ -65,9 +68,9 @@ def make_board(rows, cols):
     :precondition: cols >= 0
     :postcondition: Each coordinate is a tuple with a short description
     :return: a dictionary of the coordinates
-    #>>> make_board(2, 2) # doctest: +SKIP
+    >>> make_board(2, 2) # doctest: +SKIP
     {(0, 0): 'fight', (0, 1): 'fight', (1, 0): 'fight', (1, 1): 'fire'}
-    #>>> make_board(3, 4) # doctest: +SKIP
+    >>> make_board(3, 4) # doctest: +SKIP
     {(0, 0): 'fight', (0, 1): 'fire', (0, 2): 'fight', (0, 3): 'fight', (1, 0): 'elite', \
 (1, 1): 'elite', (1, 2): 'dark forest', (1, 3): 'fight', (2, 0): 'fire', (2, 1): 'fight', \
 (2, 2): 'fight', (2, 3): 'fight'}
@@ -79,12 +82,6 @@ def make_board(rows, cols):
         for row_counter in range(cols):
             conv_to_tuple = (row_counter, col_counter)
             cord_list.append(conv_to_tuple)
-    # for row_counter in range(rows):
-    #     for col_counter in range(cols):
-    #         conv_to_tuple = (col_counter, row_counter)          # swap to make board draw correctly
-    #         cord_list.append(conv_to_tuple)
-    # populated_board = populate_board(cord_list, cord_dic, rows, cols)
-
     return cord_list, cord_dic
 
 
@@ -108,10 +105,9 @@ def populate_board(cord_list, cord_dic, rows, cols):
     event_chance = ["fight", "fight", "fight", "fight", "fight", "fight", "elite", "empty", "fire", "elite"]
     event_counter = {"elite counter": 0, "fire counter": 0, "elite max": 2, "fire max": 2}
 
-    board_exceptions = {(0, 0): "start", (0, 1): "shop", (1, 0): "fire", (1, 1): "fight",
+    board_exceptions = {(0, 0): "start", (0, 1): "fight", (1, 0): "fight", (1, 1): "fight",
                         (rows - 1, cols - 1): col("@red", col("!yellow", "fire")), (rows // 2, cols // 2): "shop"}
-    # CHANGE EXCEPTION FOR (0, 1) BACK AFTER
-    # board_required = ""
+
     for counter in cord_list:
         if counter in board_exceptions:
             cord_dic[counter] = board_exceptions[counter]
@@ -143,7 +139,7 @@ def print_board(cord_dic, player):
     :postcondition: all board events are printed
     :postcondition: each event has its own designated colour
 
-    #>>> print_board(cord_dic, {"X-Coordinate": 0, "Y-Coordinate": 0})        # doctest: +SKIP
+    >>> print_board(cord_dic, {"X-Coordinate": 0, "Y-Coordinate": 0})        # doctest: +SKIP
     ⩶⩶⩶⩶⩶⩶MAP⩶⩶⩶⩶⩶
     playerfight event fight fight
 
@@ -155,7 +151,7 @@ def print_board(cord_dic, player):
 
     fight fight fight fight fire
     ⩶⩶⩶⩶⩶⩶MAP⩶⩶⩶⩶⩶
-     #>>> print_board(cord_dic, {"X-Coordinate": 3, "Y-Coordinate": 2})        # doctest: +SKIP
+    >>> print_board(cord_dic, {"X-Coordinate": 3, "Y-Coordinate": 2})        # doctest: +SKIP
     ⩶⩶⩶⩶⩶⩶MAP⩶⩶⩶⩶⩶
     start fight event fight fight
 

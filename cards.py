@@ -1,5 +1,10 @@
 import random
 from text import col
+"""
+Ethan O'Connor
+A01435041
+Set E
+"""
 
 
 def card_list(wanted):
@@ -98,9 +103,9 @@ def random_card_reward():
     :postcondition: a random card is selected
     :return: a dictionary of a card
 
-    #>>> random_card_reward()    # doctest: +SKIP
+    >>> random_card_reward()    # doctest: +SKIP
     {"name": "strike", "type": "attack", "amount": 6, "energy": 1, "description": "6 DMG", "exhaust": False, "upgrade": False}
-    #>>> random_card_reward()    # doctest: +SKIP
+    >>> random_card_reward()    # doctest: +SKIP
     {"name": "anger", "type": "attack", "amount": 7, "energy": 0, "description": "7 DMG",
                       "exhaust": True, "upgrade": False}
     """
@@ -129,7 +134,7 @@ def show_deck_upgrade(hand):
     :precondition: hand is a list containing dictionaries of cards stats
     :postcondition: all cards and their upgraded stats are displayed to the player
 
-    #>>> show_deck_upgrade([{"name": "strike", "type": "attack", "amount": 6, "energy": 1, "description": "6 DMG", "exhaust": False, "upgrade": False}]) # doctest: +SKIP
+    >>> show_deck_upgrade([{"name": "strike", "type": "attack", "amount": 6, "energy": 1, "description": "6 DMG", "exhaust": False, "upgrade": False}]) # doctest: +SKIP
     1) strike □ - 6 DMG          --->        strike+ □ - 9 DMG
     """
     for counter in range(len(hand)):
@@ -160,9 +165,9 @@ def upgrade_card_list(deck):
     :param deck: a list of cards
     :postcondition: all non-upgraded cards in the deck are printed
 
-    #>>> upgrade_card_list([{'name': 'strike', 'upgrade': False}])
+    >>> upgrade_card_list([{'name': 'strike', 'upgrade': False}])
     [{'name': 'strike', 'upgrade': False}]
-    #>>> upgrade_card_list([{'name': 'strike', 'upgrade': True}, {'name': 'defend', 'upgrade': False}])
+    >>> upgrade_card_list([{'name': 'strike', 'upgrade': True}, {'name': 'defend', 'upgrade': False}])
     [{'name': 'defend', 'upgrade': False}]
     """
     upgrade_list = []
@@ -183,8 +188,8 @@ def add_upgrade_card(deck, card):
     :postcondition: the old card is removed from the deck
     :postcondition: the new upgraded card is added to the deck
 
-    #>>> add_upgrade_card([{"name": "strike"}], {"name": "defend"}) # doctest: +SKIP
-    #>>> add_upgrade_card([], {"name": "bash"}) # doctest: +SKIP
+    >>> add_upgrade_card([{"name": "strike"}], {"name": "defend"}) # doctest: +SKIP
+    >>> add_upgrade_card([], {"name": "bash"}) # doctest: +SKIP
     """
     upgraded_card = card_list_upgraded(card["name"])
     deck.remove(card)

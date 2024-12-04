@@ -55,20 +55,20 @@ def print_player_relics(player: dict):
     :precondition: player is a well-defined dictionary containing the player's stats
     :postcondition: player's current relics are printed
 
-    #>>> init(strip=True)
-    #>>> player = {"Relics": [{"name": 'blood vial', "description": 'heal 3HP before every battle', "effect": 3, \
+    >>> init(strip=True)
+    >>> player = {"Relics": [{"name": 'blood vial', "description": 'heal 3HP before every battle', "effect": 3, \
     "one-time": False, "rarity": "common"}]}
-    #>>> print_player_relics(player)
+    >>> print_player_relics(player)
     <BLANKLINE>
     ⩶⩶⩶⩶⩶⩶RELICS⩶⩶⩶⩶⩶⩶
     blood vial
     - heal 3HP before every battle
 
-    #>>> init(strip=True)
-    #>>> player = {"Relics": [{"name": 'blood vial', "description": 'heal 3HP before every battle', "effect": 3, \
+    >>> init(strip=True)
+    >>> player = {"Relics": [{"name": 'blood vial', "description": 'heal 3HP before every battle', "effect": 3, \
     "one-time": False, "rarity": "common"}, {"name": 'strawberry', "description": 'gain 10 Max HP',"effect": 10, \
     "one-time": True, "rarity": "common"}]}
-    #>>> print_player_relics(player)
+    >>> print_player_relics(player)
     <BLANKLINE>
     ⩶⩶⩶⩶⩶⩶RELICS⩶⩶⩶⩶⩶⩶
     blood vial
@@ -92,12 +92,12 @@ def show_cards(hand: list):
     :precondition: hand is a list of dictionaries
     :postcondition: each card is printed
 
-    #>>> init(strip=True)
-    #>>> show_cards([{"name": "strike", "type": "attack", "amount": 6, "energy": 1, "description": "6 DMG", \
+    >>> init(strip=True)
+    >>> show_cards([{"name": "strike", "type": "attack", "amount": 6, "energy": 1, "description": "6 DMG", \
     "exhaust": False, "upgrade": False}])
     1) strike □ - 6 DMG
-    #>>> init(strip=True)
-    #>>> show_cards([{"name": "strike", "type": "attack", "amount": 6, "energy": 1, "description": "6 DMG", \
+    >>> init(strip=True)
+    >>> show_cards([{"name": "strike", "type": "attack", "amount": 6, "energy": 1, "description": "6 DMG", \
     "exhaust": False, "upgrade": False}, {"name": "defend", "type": "block", "amount": 5, "energy": 1, \
     "description": "5 BLCK", "exhaust": False, "upgrade": False}])
     1) strike □ - 6 DMG
@@ -121,14 +121,14 @@ def print_player_stats(entity: dict):
     :precondition: player is a well-defined dictionary containing the player's stats
     :postcondition: player's stats are printed
 
-    #>>> init(strip=True)
-    #>>> player = {"Current HP": 40, "Max HP": 50, "Max Energy": 3, "Current Energy": 3, "Block": 0}
-    #>>> print_player_stats(player)
-    ■■■■■■■■■■  40/50 HP   □□□ 3/3 energy
-    #>>> init(strip=True)
-    #>>> player = {"Current HP": 40, "Max HP": 50, "Max Energy": 3, "Current Energy": 1, "Block": 10}
-    #>>> print_player_stats(player)
-    ■■■■■■■■■■  40/50 HP  ⦻10 □ 1/3 energy
+    >>> init(strip=True)
+    >>> player = {"Current HP": 40, "Max HP": 50, "Max Energy": 3, "Current Energy": 3, "Block": 0}
+    >>> print_player_stats(player)
+    ■■■■■■■■■■  40/50 HP  □□□ 3/3 energy
+    >>> init(strip=True)
+    >>> player = {"Current HP": 40, "Max HP": 50, "Max Energy": 3, "Current Energy": 1, "Block": 10}
+    >>> print_player_stats(player)
+    ■■■■■■■■■■  40/50 HP ⦻10 □ 1/3 energy
     """
     health = entity["Current HP"]
     max_health = entity["Max HP"]
@@ -166,9 +166,9 @@ def draw_hand(draw_pile: list, hand: list, discard_pile: list, amount: int) -> t
     :postcondition: if the draw_pile is empty, append the discard_pile to the draw_pile and shuffle
     :return: all lists draw_pile, hand and discard_pile
 
-    #>>> draw_hand([1, 2, 3], [], [], 1)
+    >>> draw_hand([1, 2, 3], [], [], 1)
     ([2, 3], [1], [])
-    #>>> draw_hand([1], [], [2, 3], 1)
+    >>> draw_hand([1], [], [2, 3], 1)
     ([], [1], [2, 3])
     """
     for count in range(amount):
@@ -197,12 +197,12 @@ def get_player_input(hand: list, player: dict, discard_pile: list) -> tuple:
     :postcondition: the player's wanted card is enumerated with the index of the hand
     :return: a tuple containing a dictionary of the action, a boolean and the index of the action
 
-    #>>> choice = "1"                                                            # doctest: +SKIP
-    #>>> get_player_input([{"name": "strike", "name": "defend"}], player, [])    # doctest: +SKIP
-    #>>> choice = "strike"                                                       # doctest: +SKIP
-    #>>> get_player_input([{"name": "strike", "name": "defend"}], player, [])    # doctest: +SKIP
-    #>>> choice = "crying developer"                                             # doctest: +SKIP
-    #>>> get_player_input([{"name": "strike", "name": "defend"}], player, [])    # doctest: +SKIP
+    >>> choice = "1"                                                            # doctest: +SKIP
+    >>> get_player_input([{"name": "strike", "name": "defend"}], player, [])    # doctest: +SKIP
+    >>> choice = "strike"                                                       # doctest: +SKIP
+    >>> get_player_input([{"name": "strike", "name": "defend"}], player, [])    # doctest: +SKIP
+    >>> choice = "crying developer"                                             # doctest: +SKIP
+    >>> get_player_input([{"name": "strike", "name": "defend"}], player, [])    # doctest: +SKIP
     Action not found
 
     """
@@ -350,11 +350,11 @@ def check_energy(energy: int, card: dict) -> bool:
     :precondition: card is a well-defined dictionary containing the cards characteristics
     :return:True if enough energy, else False
 
-    #>>> check_energy(3, {"name": "strike", "energy": 1})
+    >>> check_energy(3, {"name": "strike", "energy": 1})
     True
-    #>>> check_energy(2, {"name": "bludgeon", "energy": 2})
+    >>> check_energy(2, {"name": "bludgeon", "energy": 2})
     True
-    #>>> check_energy(1, {"name": "bash", "energy": 2})       # doctest: +SKIP
+    >>> check_energy(1, {"name": "bash", "energy": 2})       # doctest: +SKIP
     Insufficient Energy!
     False
     """
@@ -376,8 +376,8 @@ def end_player_turn(player: dict, hand: list, discard_pile: list):
     :postcondition: hand is appended to discard_pile
     :postcondition: hand is emptied
 
-    #>>> end_player_turn({"X-coordinate": 0, "Y-coordinate": 1, "Current HP": 5}, [1, 2, 3, 4, 5], [])  # doctest: +SKIP
-    #>>> end_player_turn({"X-coordinate": 0, "Y-coordinate": 1, "Current HP": 5}, [3, 7, 8], [])     # doctest: +SKIP
+    >>> end_player_turn({"X-coordinate": 0, "Y-coordinate": 1, "Current HP": 5}, [1, 2, 3, 4, 5], [])  # doctest: +SKIP
+    >>> end_player_turn({"X-coordinate": 0, "Y-coordinate": 1, "Current HP": 5}, [3, 7, 8], [])     # doctest: +SKIP
     """
     for counter in range(len(hand)):
         card_debuff = hand[0]
@@ -399,8 +399,8 @@ def apply_player_relic(player: dict, relic_name: str):
     :precondition: player's "relics" is a list of relics
     :postcondition: the relics buff is applied to the player
 
-    #>>> apply_player_relic({"Block": 0, "Relics": [{"name": "prepared slug", "effect": 8}]}, "prepared slug")
-    #>>> apply_player_relic({"Block": 0, "Relics": [{"name": "regal pillow", "effect": 60}]}, "regal pillow")
+    >>> apply_player_relic({"Block": 0, "Relics": [{"name": "prepared slug", "effect": 8}]}, "prepared slug")
+    >>> apply_player_relic({"Block": 0, "Relics": [{"name": "regal pillow", "effect": 60}]}, "regal pillow")
     True
     """
     for relic in player["Relics"]:  # check if player has any relics and apply buffs accordingly
@@ -437,9 +437,9 @@ def valid_purchase_shop(player: dict, relics_sale: list, player_input: int):
     :postcondition: purchased relics are appended to players stats
     :postcondition: purchased relics subtract from players gold
 
-    #>>> valid_purchase_shop({"gold": 160}, [{"name": "blood vial"}], 1)         # doctest: +SKIP
+    >>> valid_purchase_shop({"gold": 160}, [{"name": "blood vial"}], 1)         # doctest: +SKIP
     Relic purchased!
-    #>>> valid_purchase_shop({"gold": 160}, [{"name": "coffee dripper"}], 1)     # doctest: +SKIP
+    >>> valid_purchase_shop({"gold": 160}, [{"name": "coffee dripper"}], 1)     # doctest: +SKIP
     Insufficient gold!
     """
     wanted_relic = relics_sale[player_input - 1]  # grab index
@@ -510,11 +510,11 @@ def valid_input_fire() -> tuple:
     :postcondition: if input is invalid, player is warned
     :return: Tuple of action and True if input is valid, else False
 
-    #>>> choice = "heal"            # doctest: +SKIP
-    #>>> valid_input_fire()         # doctest: +SKIP
+    >>> choice = "heal"            # doctest: +SKIP
+    >>> valid_input_fire()         # doctest: +SKIP
     (True, "heal")
-    #>>> choice = "smith"           # doctest: +SKIP
-    #>>> valid_input_fire()         # doctest: +SKIP
+    >>> choice = "smith"           # doctest: +SKIP
+    >>> valid_input_fire()         # doctest: +SKIP
     (True, "smith")
     """
     player_input = input("Enter your action: ")
@@ -568,9 +568,9 @@ def player_sleep(player: dict):
     :postcondition: player's current health is increased
     :postcondition: player's current health cannot succeed player's max health
 
-    #>>> player_sleep({"Current HP": 25, "Max HP": 50})      # doctest: +SKIP
+    >>> player_sleep({"Current HP": 25, "Max HP": 50})      # doctest: +SKIP
     ["Current HP"] = 45
-    #>>> player_sleep({"Current HP": 5, "Max HP": 50, "Relics": [{"name": "regal pillow"}]})     # doctest: +SKIP
+    >>> player_sleep({"Current HP": 5, "Max HP": 50, "Relics": [{"name": "regal pillow"}]})     # doctest: +SKIP
     ["Current HP"] = 50
     """
     if apply_player_relic(player, "regal pillow"):
@@ -627,13 +627,13 @@ def print_enemy_intent(current_enemy: dict, enemy_intent: dict):
     :postcondition: the enemy's intended action is printed
     :postcondition: the enemy's stats are printed
 
-    #>>> current_enemy = {"name": "mugger", "current HP": 6, "max HP": 36, "current block": 0, "attack pattern": False,\
+    >>> current_enemy = {"name": "mugger", "current HP": 6, "max HP": 36, "current block": 0, "attack pattern": False,\
     "attack": [{"damage": 7, "block": 0}]} # doctest: +SKIP
-    #>>> print_enemy_intent (current_enemy, {'damage': 7, 'block': 0})    # doctest: +SKIP
+    >>> print_enemy_intent (current_enemy, {'damage': 7, 'block': 0})    # doctest: +SKIP
     The mugger(6/36) intends to attack for 7 DMG
-    #>>> current_enemy = {"name": "mugger", "current HP": 27, "max HP": 36, "current block": 0, "attack pattern": False,\
+    >>> current_enemy = {"name": "mugger", "current HP": 27, "max HP": 36, "current block": 0, "attack pattern": False,\
     "attack": [{"damage": 5, "block": 10}]} # doctest: +SKIP
-    #>>> print_enemy_intent (current_enemy, {'damage': 7, 'block': 0})    # doctest: +SKIP
+    >>> print_enemy_intent (current_enemy, {'damage': 7, 'block': 0})    # doctest: +SKIP
     The mugger(27/36) intends to attack for 5 DMG and defend for 10 BLCK
     """
     message = ""
@@ -728,7 +728,7 @@ def start_combat(player: dict, enemy_chosen: dict, deck: list):
             player_turn += 1
 
 
-def valid_input_reward():
+def valid_input_reward() -> tuple:
     """
     Ask the player to input either "yes", "take", "no" or "skip"
 
@@ -736,11 +736,11 @@ def valid_input_reward():
     :return: True if input is valid, else False
     :return: Action if input is valid, else None
 
-    #>>> choice = "yes"     # doctest: +SKIP
-    #>>> valid_input_reward()       # doctest: +SKIP
+    >>> choice = "yes"     # doctest: +SKIP
+    >>> valid_input_reward()       # doctest: +SKIP
     True, "yes"
-    #>>> choice = "skip"     # doctest: +SKIP
-    #>>> valid_input_reward()       # doctest: +SKIP
+    >>> choice = "skip"     # doctest: +SKIP
+    >>> valid_input_reward()       # doctest: +SKIP
     False
     """
     action = input("Take card? " + col("!black", "(yes/no) "))
@@ -766,8 +766,8 @@ def reward_player(player: dict, reward: int, deck: list):
     :postcondition: the player is offered a card reward
     :postcondition: the player can add a card to the deck
 
-    #>>> choice = yes                           # doctest: +SKIP
-    #>>> reward_player(player, reward, deck)    # doctest: +SKIP
+    >>> choice = "yes"                           # doctest: +SKIP
+    >>> reward_player(player, reward, deck)    # doctest: +SKIP
     ⩶⩶⩶LOOT⩶⩶⩶
     Got 122 Gold +23
     Card reward:
@@ -775,8 +775,8 @@ def reward_player(player: dict, reward: int, deck: list):
     Take card? yes
     Card added to deck!
 
-    #>>> choice = no                           # doctest: +SKIP
-    #>>> reward_player(player, reward, deck)    # doctest: +SKIP
+    >>> choice = "no"                           # doctest: +SKIP
+    >>> reward_player(player, reward, deck)    # doctest: +SKIP
     ⩶⩶⩶LOOT⩶⩶⩶
     Got 115 Gold +16
     Card reward:
@@ -825,13 +825,13 @@ def check_board_location(board: dict, player: dict, update: bool) -> str:
     :postcondition: print previously visited locations on board
     :return: a non-empty string of the board's event at the players current location
 
-    #>>> board = {(0, 0): 'fight', (0, 1): 'fight', (1, 0): 'elite', (1, 1): 'fire'}
-    #>>> check_board_location(board, {"X-coordinate": 0, "Y-coordinate": 1, "Current HP": 5}, False)
+    >>> a_board = {(0, 0): 'fight', (0, 1): 'fight', (1, 0): 'elite', (1, 1): 'fire'}
+    >>> check_board_location(a_board, {"X-coordinate": 0, "Y-coordinate": 1, "Current HP": 5}, False)
     You are now in: fight at co-ords(0, 1)
     <BLANKLINE>
     'fight'
-    #>>> board = {(0, 0): 'fight', (0, 1): 'fight', (1, 0): 'elite', (1, 1): 'fire'}
-    #>>> check_board_location(board, {"X-coordinate": 1, "Y-coordinate": 1, "Current HP": 5}, False)
+    >>> a_board = {(0, 0): 'fight', (0, 1): 'fight', (1, 0): 'elite', (1, 1): 'fire'}
+    >>> check_board_location(a_board, {"X-coordinate": 1, "Y-coordinate": 1, "Current HP": 5}, False)
     You are now in: fire at co-ords(1, 1)
     <BLANKLINE>
     'fire'
@@ -853,14 +853,14 @@ def get_user_choice(player: dict):
     :postcondition: prints a warning if the player input is invalid
     :return: a non-empty string containing "A" or "S" or "W" or "D"
 
-    #>>> choice = "W"    # doctest: +SKIP
-    #>>> get_user_choice()   # doctest: +SKIP
+    >>> choice = "W"    # doctest: +SKIP
+    >>> get_user_choice()   # doctest: +SKIP
     W
-    #>>> choice = "D"    # doctest: +SKIP
-    #>>> get_user_choice()   # doctest: +SKIP
+    >>> choice = "D"    # doctest: +SKIP
+    >>> get_user_choice()   # doctest: +SKIP
     D
-    #>>> choice = "F"    # doctest: +SKIP
-    #>>> get_user_choice()   # doctest: +SKIP
+    >>> choice = "F"    # doctest: +SKIP
+    >>> get_user_choice()   # doctest: +SKIP
     "INVALID MOVEMENT INPUT"
     """
     movements_print = ["W - Move up", "A - Move left", "S - Move down", "D - Move right"]
@@ -903,9 +903,9 @@ def projected_movement(player: dict, movement: str) -> tuple:
     :postcondition: the correct vector of the players movement
     :return: dictionary of player's projected coordinates
 
-    #>>> projected_movement({"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 5}, "D")
+    >>> projected_movement({"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 5}, "D")
     (1, 0)
-    #player>>> projected_movement({"X-coordinate": 2, "Y-coordinate": 2, "Current HP": 5}, "W")
+    >>> projected_movement({"X-coordinate": 2, "Y-coordinate": 2, "Current HP": 5}, "W")
     (2, 1)
     """
 
@@ -919,7 +919,8 @@ def projected_movement(player: dict, movement: str) -> tuple:
         projected_cords = (player["X-coordinate"] + 1, player["Y-coordinate"])
     else:
         print("something has gone very wrong here")
-        return "Error"
+        projected_cords = ("bad", "bad")        # pycharm wanted this so it always returns tuple
+        return projected_cords
     return projected_cords
 
 
@@ -934,10 +935,10 @@ def validate_move(board: dict, player: dict, movement: str) -> bool:
     :precondition: movement is a non-empty string containing "A" or "S" or "W" or "D"
     :return: True if move is valid, else False
 
-    #>>> validate_move({(0, 0): 'coast-side', (0, 1): 'hills', (1, 0): 'hills', (1, 1): 'dark forest'},\
+    >>> validate_move({(0, 0): 'coast-side', (0, 1): 'hills', (1, 0): 'hills', (1, 1): 'dark forest'},\
 {"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 5}, "W") # doctest: +SKIP
      <BLANKLINE> INVALID MOVEMENT False
-     #>>> validate_move({(0, 0): 'coast-side', (0, 1): 'hills', (1, 0): 'hills', (1, 1): 'dark forest'},\
+     >>> validate_move({(0, 0): 'coast-side', (0, 1): 'hills', (1, 0): 'hills', (1, 1): 'dark forest'},\
 {"X-coordinate": 1, "Y-coordinate": 1, "Current HP": 5}, "N") # doctest: +SKIP
      True
     """
@@ -960,9 +961,9 @@ def move_character(player: dict, movement: str):
     :precondition: movement is a non-empty string containing "A" or "S" or "W" or "D"
     :postcondition: update player location in its dictionary
 
-    #>>> move_character({"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 5}, 'S')
+    >>> move_character({"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 5}, 'S')
     {'X-coordinate': 0, 'Y-coordinate': 1, 'Current HP': 5}
-    #>>> move_character({"X-coordinate": 2, "Y-coordinate": 2, "Current HP": 5}, 'D')
+    >>> move_character({"X-coordinate": 2, "Y-coordinate": 2, "Current HP": 5}, 'D')
     {'X-coordinate': 3, 'Y-coordinate': 2, 'Current HP': 5}
     """
     move_cords = projected_movement(player, movement)
@@ -981,9 +982,9 @@ def check_if_goal_attained(player: dict, rows: int, columns: int):
     :precondition: player is a well-formed dictionary containing the player stats
     :return: True if goal is attained, else False
 
-    #>>> check_if_goal_attained({"X-coordinate": 3, "Y-coordinate": 3, "Current HP": 5}, 4, 4)
+    >>> check_if_goal_attained({"X-coordinate": 3, "Y-coordinate": 3, "Current HP": 5}, 4, 4)
     True
-    #>>> check_if_goal_attained({"X-coordinate": 2, "Y-coordinate": 1, "Current HP": 5}, 4, 4)
+    >>> check_if_goal_attained({"X-coordinate": 2, "Y-coordinate": 1, "Current HP": 5}, 4, 4)
     False
     """
     return player["X-coordinate"] == (rows - 1) and player["Y-coordinate"] == (columns - 1)
@@ -999,11 +1000,11 @@ def calculate_enemy_difficulty(event: str):
     :postcondition: a chosen enemy is randomly selected from a list
     :return: a dictionary with the stats of the chosen enemy
 
-    #>>> calculate_enemy_difficulty("fight") # doctest: +SKIP
+    >>> calculate_enemy_difficulty("fight") # doctest: +SKIP
     ({'name': 'mugger', 'current HP': 36, 'max HP': 36, 'current block': 0, 'attack pattern': False, 'attack': \
     [{'damage': 7, 'block': 0}, {'damage': 11, 'block': 0}, {'damage': 5, 'block': 7}, {'damage': 0, 'block': 8}]}, 1)
 
-    #>>> calculate_enemy_difficulty("elite") # doctest: +SKIP
+    >>> calculate_enemy_difficulty("elite") # doctest: +SKIP
     ({"name": "gremlin nob", "current HP": 53, "max HP": 53, "current block": 0, "attack pattern": True, "attack":
     [{"damage": 0, "block": 0}, {"damage": 8, "block": 0}, {"damage": 16, "block": 0}, {"damage": 20, "block": 0},
     {"damage": 20, "block": 0}, {"damage": 20, "block": 0}]}, 1.5)
