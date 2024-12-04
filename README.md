@@ -14,13 +14,16 @@ This is the first terminally based game I have created! Some first-time features
 - Campfires where players can upgrade or rest, cultivating risk-reward gameplay
 - an upgrade system, that lets player permanently strengthen a card of their choice
 - a pool of various relics players can find to empower themselves
-- unique events that offer players rewards
 
-### *Trust me, this took some time to make*
+## *Trust me, this took some time to make*
 
 If you get stuck, type help at the map or combat input areas.
 
 See term project requirements below
+
+### For colorama to work
+- py -m pip install colorama~=0.4.6
+- or install colorama from pycharm packages
 
 Funny quirk about colorama, the function I wrote to display text compactly has an unintended side-effect.
 Since it is necessary to wrap a word with COLOUR and STYLE.RESET, this changes the underlying string. The reason for
@@ -32,6 +35,8 @@ This causes me to have to import colorama in unit tests and use the old method t
 If you want to see an example, go to test_initialize_game_print_board
 
 F-strings were used once I realized they were required
+
+
 
 | Required element                                                    |                File                | Line number |
 |:--------------------------------------------------------------------|:----------------------------------:|------------:|
