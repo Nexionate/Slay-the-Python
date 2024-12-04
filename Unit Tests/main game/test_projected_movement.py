@@ -35,5 +35,5 @@ class Test(TestCase):
         player = {"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 5}
 
         actual = projected_movement(player, "WEEEEEEEEEEEEEEEEE!")
-        expected = "Error"
+        expected = ('bad', 'bad')
         self.assertEqual(expected, actual)
