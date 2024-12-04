@@ -108,7 +108,7 @@ def populate_board(cord_list, cord_dic, rows, cols):
     event_chance = ["fight", "fight", "fight", "fight", "fight", "fight", "elite", "empty", "fire", "elite"]
     event_counter = {"elite counter": 0, "fire counter": 0, "elite max": 2, "fire max": 2}
 
-    board_exceptions = {(0, 0): "start", (0, 1): "fight", (1, 0): "fight", (1, 1): "fight",
+    board_exceptions = {(0, 0): "start", (0, 1): "shop", (1, 0): "fire", (1, 1): "fight",
                         (rows - 1, cols - 1): col("@red", col("!yellow", "fire")), (rows // 2, cols // 2): "shop"}
     # CHANGE EXCEPTION FOR (0, 1) BACK AFTER
     # board_required = ""

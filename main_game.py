@@ -1,11 +1,3 @@
-"""
-Ethan O'Connor
-A01435041
-Set E
-"""
-from colorama import Fore, Back, Style, init
-
-init(autoreset=True)
 import random
 import time
 import copy
@@ -17,10 +9,8 @@ from relics import print_shop_relics
 from relics import relic_one_time_buff
 from relics import print_relic_description
 from text import print_shop_intro
-from relics import return_relic
 from relics import shop_relic
 from relics import get_relic
-from relics import create_relics
 from relics import purchase_relic
 from cards import add_upgrade_card
 from cards import upgrade_card_list
@@ -31,6 +21,14 @@ from text import col
 from text import print_campfire
 from initialize_game import initialize_game_start
 from initialize_game import print_board
+from colorama import init
+
+init(autoreset=True)
+"""
+Ethan O'Connor
+A01435041
+Set E
+"""
 
 
 def card_details(card):
@@ -42,7 +40,7 @@ def card_details(card):
     :postcondition: the cards stats are printed
     """
     exhaust_print = ""
-    if card["exhaust"] == True:
+    if card["exhaust"]:
         exhaust_print = col("!black", " exhausts")
     yellow_square = col("!yellow", "\u25A1")
     print("1) " + str(card["name"]) + " " + str(card["energy"] * yellow_square) + " - " + str(
@@ -108,7 +106,7 @@ def show_cards(hand):
     for counter in range(len(hand)):
         card = hand[counter]
         exhaust_print = ""
-        if card["exhaust"] == True:
+        if card["exhaust"]:
             exhaust_print = col("!black", " exhausts")
         yellow_square = col("!yellow", "\u25A1")
         print(str(counter + 1) + ") " + str(card["name"]) + " " + str(card["energy"] * yellow_square) + " - " + str(
@@ -245,12 +243,11 @@ def apply_player_action(player, currentEnemy, action, hand, discard_pile, action
     """
     Apply the players action
 
-    :param enemyIntent: a dictionary of the enemies intended actions
     :param currentEnemy: a dictionary of the current enemy
     :param player: a dictionary of the player
     :param action: a dictionary of the action
-    :param hand: a list
-    :param discard_pile: a list
+    :param hand: a list of cards
+    :param discard_pile: a list of cards
     :param action_index: an integer
     :precondition: action is a well-defined dictionary containing the actions characteristics
     :precondition: currentEnemy is a well-defined dictionary containing the enemy's characteristics
@@ -265,7 +262,6 @@ def apply_player_action(player, currentEnemy, action, hand, discard_pile, action
     """
     player["Current Energy"] -= action["energy"]
     action_type = action["type"]
-    action_name = action["name"]
     enemyBLCK = currentEnemy["current block"]
     damage = action["amount"]
 
@@ -288,7 +284,7 @@ def apply_player_action(player, currentEnemy, action, hand, discard_pile, action
                 player["Block"] += 1
             player["Block"] += action["amount"]
 
-    if action["exhaust"] == False:  # dont add to discard pile if exhausts
+    if not action["exhaust"]:  # dont add to discard pile if exhausts
         discard_pile.append(hand[action_index])
     hand.remove(hand[action_index])
 
@@ -351,7 +347,7 @@ def check_energy(energy, card):
     :param card: a dictionary of the card
     :precondition: energy is a positive integer
     :precondition: card is a well-defined dictionary containing the cards characteristics
-    :return:True if adequite energy, else False
+    :return:True if enough energy, else False
 
     #>>> check_energy(3, {"name": "strike", "energy": 1})
     True
@@ -379,7 +375,7 @@ def end_player_turn(player, hand, discard_pile):
     :postcondition: hand is appended to discard_pile
     :postcondition: hand is emptied
 
-    #>>> end_player_turn({"X-coordinate": 0, "Y-coordinate": 1, "Current HP": 5}, [1, 2, 3, 4, 5], [])   # doctest: +SKIP
+    #>>> end_player_turn({"X-coordinate": 0, "Y-coordinate": 1, "Current HP": 5}, [1, 2, 3, 4, 5], [])  # doctest: +SKIP
     #>>> end_player_turn({"X-coordinate": 0, "Y-coordinate": 1, "Current HP": 5}, [3, 7, 8], [])     # doctest: +SKIP
     """
     for counter in range(len(hand)):
@@ -456,14 +452,13 @@ def valid_purchase_shop(player, relics_sale, player_input):
         print(col("!black", "Insufficient Gold!"))
 
 
-def spawn_shop(player, deck):
+def spawn_shop(player):
     """
     Generate a shop
 
     Displays an intro to the shop, then gives the player 4 relics to purchase and asks the user which one they want
     to purchase. 4 Relics are popped from the relic pool and are returned back if not bought
     :param player: a dictionary of the player
-    :param deck: a list of cards
     :precondition: player is a well-formed dictionary containing the player stats
     :postcondition: shop messages are printed
     :postcondition: relics for sale are printed
@@ -585,7 +580,7 @@ def player_sleep(player):
     if player["Current HP"] > player["Max HP"]:
         player["Current HP"] = player["Max HP"]
 
-    print("\nYou rest deeply and wake up at " + col("!green", str(player["Current HP"]) + "/" + str(player["Max HP"]) \
+    print("\nYou rest deeply and wake up at " + col("!green", str(player["Current HP"]) + "/" + str(player["Max HP"])
                                                     + "HP"))
     time.sleep(2)
 
@@ -602,7 +597,6 @@ def spawn_fire(player, deck):
     """
     print_campfire(player)
     valid = False
-    action = ""
 
     while not valid:
         valid, action = valid_input_fire()
@@ -670,11 +664,11 @@ def print_enemy_intent(currentEnemy, enemyIntent):
     print("The " + currentEnemy["name"] + enemyIntentHP + block_icon + " intends to " + message + "\n")
 
 
-def initialize_combat(enemy, deck):
+def initialize_combat(enemy_chosen, deck):
     """
     Initialize the combat
 
-    :param enemy: a dictionary of the enemy
+    :param enemy_chosen: a dictionary of the enemy
     :param deck: a list of cards
     :precondition: enemy is a well-formed dictionary containing the player stats
     :postcondition: currentEnemy is a deep copy of enemy
@@ -683,7 +677,7 @@ def initialize_combat(enemy, deck):
     :return: a tuple consisting of player_turn, hand, discard_pile, draw_pile and currentEnemy
     """
     player_turn = 1
-    currentEnemy = copy.deepcopy(enemy)
+    currentEnemy = copy.deepcopy(enemy_chosen)
     random.shuffle(deck)
     discard_pile = []
     hand = []
@@ -691,12 +685,12 @@ def initialize_combat(enemy, deck):
     return player_turn, hand, discard_pile, draw_pile, currentEnemy
 
 
-def start_combat(player, enemy, deck):
+def start_combat(player, enemy_chosen, deck):
     """
     Drive the combat
     """
     apply_player_relic(player, "blood vial")  # check if player has specific relic
-    player_turn, hand, discard_pile, draw_pile, currentEnemy = initialize_combat(enemy, deck)
+    player_turn, hand, discard_pile, draw_pile, currentEnemy = initialize_combat(enemy_chosen, deck)
     enemy_attacks = iter(currentEnemy["attack"])
     while currentEnemy["current HP"] > 0 and player["Current HP"] > 0:
         if player_turn == 1:  # apply turn 1 block buff from relic
@@ -705,7 +699,7 @@ def start_combat(player, enemy, deck):
             player["Block"] = 0
         player["Current Energy"] = player["Max Energy"]
 
-        if currentEnemy["attack pattern"] == True:  # check if enemy has fixed pattern
+        if currentEnemy["attack pattern"]:  # check if enemy has fixed pattern
             enemyIntent = next(enemy_attacks)
         else:
             enemyIntent = random.choice(currentEnemy["attack"])
@@ -715,7 +709,7 @@ def start_combat(player, enemy, deck):
         time.sleep(0.75)
 
         while player["Current Energy"] > 0 and currentEnemy["current HP"] > 0:  # begin players turn
-            # checks for enemy HP again to immediatley end players turn
+            # checks for enemy HP again to immediately end players turn
             print_enemy_intent(currentEnemy, enemyIntent)
             show_cards(hand)
             print_player_stats(player)
@@ -735,8 +729,7 @@ def start_combat(player, enemy, deck):
 
 def valid_input_reward():
     """
-    Get i
-    Asks the player to input either "yes", "take", "no" or "skip"
+    Ask the player to input either "yes", "take", "no" or "skip"
 
     :postcondition: prints a warning if player input is invalid
     :return: True if input is valid, else False
@@ -804,7 +797,7 @@ def reward_player(player, reward, deck):
     card_option = random_card_reward()
     card_details(card_option)
     valid_input = False
-    action = ""
+
     while not valid_input:
         valid_input, action = valid_input_reward()
         if valid_input:
@@ -1023,6 +1016,11 @@ def calculate_enemy_diffuculty(event):
     elif event == "boss":
         enemy_chosen = enemy.enemies_boss
         reward = 2
+    else:
+        enemy_chosen = ""
+        # this stops pycharm from being mad about possible assignment before declaration
+        reward = 2
+        print("nothing here")
     return enemy_chosen, reward
 
 
@@ -1061,17 +1059,17 @@ def main():
             event = check_board_location(board, player, False)
 
             if event == "fight" or event == "elite":
-                enemy, reward = calculate_enemy_diffuculty(event)
-                start_combat(player, enemy, deck)
+                enemy_chosen, reward = calculate_enemy_diffuculty(event)
+                start_combat(player, enemy_chosen, deck)
                 if player["Current HP"] > 0:
                     reward_player(player, reward, deck)
             elif event == "shop":
-                spawn_shop(player, deck)
+                spawn_shop(player)
             elif event == "fire":
                 spawn_fire(player, deck)
                 if check_if_goal_attained(player, 5, 5):  # final boss after fire
-                    enemy, reward = calculate_enemy_diffuculty("boss")
-                    start_combat(player, enemy, deck)
+                    enemy_chosen, reward = calculate_enemy_diffuculty("boss")
+                    start_combat(player, enemy_chosen, deck)
 
             check_board_location(board, player, True)
 
