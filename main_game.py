@@ -1,15 +1,17 @@
+"""
+Ethan O'Connor
+A01435041
+Set E
+"""
 from colorama import Fore, Back, Style, init
 
 init(autoreset=True)
-# init(strip=True)
 import random
 import time
-import relics
 import copy
 import cards
 import text
 import enemy
-from events import decide_event
 from text import lbl, CONST_MAP_HELP
 from relics import print_shop_relics
 from relics import relic_one_time_buff
@@ -22,7 +24,7 @@ from relics import create_relics
 from relics import purchase_relic
 from cards import add_upgrade_card
 from cards import upgrade_card_list
-from cards import card_list
+from cards import debuff_card_list
 from cards import add_new_card
 from cards import random_card_reward
 from text import col
@@ -323,17 +325,20 @@ def apply_enemy_action(enemyIntent, currentEnemy, player, draw_pile):
             player["Current HP"] -= calculated_damage
             print("The " + currentEnemy["name"] + " hits you for " + col("!red", str(calculated_damage) + " DMG"))
         time.sleep(1)
+
     if block > 0:
         currentEnemy["current block"] += block
         print("The " + currentEnemy["name"] + " defends for " + col("cyan", " " + chr(10683) + str(block) + " BLCK"))
         time.sleep(1)
+
     if "debuff" in enemyIntent:  # the only enemy that debuffs is the boss!
         debuff = enemyIntent["debuff"]
         if debuff > 0:
             print("The " + currentEnemy["name"] + " adds " + col("!red", str(debuff) + " burns") + " to your " + col(
                 "!green", "Draw pile"))
             for counter in range(debuff):
-                draw_pile.append(cards.DEBUFF_CARDS)
+                debuff_card = debuff_card_list()
+                draw_pile.append(debuff_card)
     print(col("!black", "The enemy's turn ends.. \n"))
     time.sleep(1)
 
@@ -419,10 +424,6 @@ def apply_player_relic(player, relic_name):
                 player["Block"] += int(relic["effect"])
             else:
                 print(f"player does not have {relic_name}")
-
-
-def spawn_event(player, deck):  # remove
-    decide_event(player, deck)
 
 
 def valid_purchase_shop(player, relics_sale, player_input):
@@ -543,10 +544,10 @@ def upgrade_card(deck):
     :postcondition: removes the old card and appends the new upgraded card to the deck
     """
     upgrade_list = upgrade_card_list(deck)
-    show_deck_upgrade(upgrade_list)
+    cards.show_deck_upgrade(upgrade_list)
     player_input = 0
     accepted = range(1, len(deck) + 1)
-    while player_input not in accepted:  # CRASHES UPON RECIEVING STR INPUT
+    while player_input not in accepted:
         try:
             player_input = int(input(col("!cyan", "Enter the card number you want to upgrade: ")))
         except ValueError:
@@ -748,7 +749,7 @@ def valid_input_reward():
     #>>> valid_input_reward()       # doctest: +SKIP
     False
     """
-    action = input("Take card? ")
+    action = input("Take card? " + col("!black", "(yes/no) "))
     action = action.lower()
     accepted = ["take", "yes"]
     not_accepted = ["skip", "no"]
@@ -906,7 +907,7 @@ def projected_movement(player, movement):
     :precondition: player is a well-formed dictionary containing the player stats
     :precondition: movement is a non-empty string containing "A" or "S" or "W" or "D"
     :postcondition: the correct vector of the players movement
-    :return: dictionary of character's projected coordinates
+    :return: dictionary of player's projected coordinates
 
     #>>> projected_movement({"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 5}, "D")
     (1, 0)
@@ -933,9 +934,9 @@ def validate_move(board, player, movement):
     Determine the validity of the player's wanted movement
 
     :param board: a dictionary of the board
-    :param character: a dictionary of the character
-    :param movement: a non-empty string
-    :precondition: character is a well-formed dictionary containing the character stats
+    :param player: a dictionary of the player
+    :param movement: a non-empty playerstring
+    :precondition: player is a well-formed dictionary containing the player stats
     :precondition: movement is a non-empty string containing "A" or "S" or "W" or "D"
     :return: True if move is valid, else False
 
@@ -959,11 +960,11 @@ def move_character(player, movement):
     """
     Update the characters position
 
-    :param character: a dictionary of the character
+    :param player: a dictionary of the player
     :param movement: a non-empty string
-    :precondition: character is a well-formed dictionary containing the character stats
+    :precondition: player is a well-formed dictionary containing the player stats
     :precondition: movement is a non-empty string containing "A" or "S" or "W" or "D"
-    :postcondition: update character location in its dictionary
+    :postcondition: update player location in its dictionary
 
     #>>> move_character({"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 5}, 'S')
     {'X-coordinate': 0, 'Y-coordinate': 1, 'Current HP': 5}
@@ -980,10 +981,10 @@ def check_if_goal_attained(player, rows, columns):
     """
     Determine if the character has reached the goal
 
-    :param character: a dictionary of the character
+    :param player: a dictionary of the playerplayer
     :param rows: a positive integer
     :param columns: a positive integer
-    :precondition: character is a well-formed dictionary containing the character stats
+    :precondition: player is a well-formed dictionary containing the player stats
     :return: True if goal is attained, else False
 
     #>>> check_if_goal_attained({"X-coordinate": 3, "Y-coordinate": 3, "Current HP": 5}, 4, 4)
@@ -996,7 +997,7 @@ def check_if_goal_attained(player, rows, columns):
 
 def calculate_enemy_diffuculty(event):
     """
-    Calculate the enemy diffuculty and reward
+    Determine the enemy difficulty and reward for the player
 
     :param event: a non-empty string
     :precondition: event is a non-empty string
@@ -1025,7 +1026,28 @@ def calculate_enemy_diffuculty(event):
     return enemy_chosen, reward
 
 
+def tutorial():
+    """
+    Print the tutorial text to the player
+
+    :postcondition: tutorial text is printed
+    :postcondition: game is initialized
+    """
+    player_input = input("Show the tutorial? (yes/no) ")
+    if player_input == "yes":
+        print(text.CONST_MAP_HELP)
+        print(text.CONST_HELP_TEXT)
+        player_input_exit = input("\nType anything to start game")
+
+    print(col("!black", "starting game.."))
+    time.sleep(0.5)
+
+
 def main():
+    """
+    Drive the game
+    """
+    tutorial()
     rooms, deck, player, board = initialize_game_start()
 
     while not check_if_goal_attained(player, 5, 5) and player["Current HP"] > 0:
@@ -1045,8 +1067,6 @@ def main():
                     reward_player(player, reward, deck)
             elif event == "shop":
                 spawn_shop(player, deck)
-            elif event == "event":
-                spawn_event(player, deck)
             elif event == "fire":
                 spawn_fire(player, deck)
                 if check_if_goal_attained(player, 5, 5):  # final boss after fire

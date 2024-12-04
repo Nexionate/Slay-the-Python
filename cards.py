@@ -3,17 +3,35 @@ from text import col
 
 
 def card_list(wanted):
+    """
+    A dictionary of all cards
+
+    :param wanted: a non-empty string
+    :precondition: wanted is a string of the wanted card
+    :return: a dictionary of the wanted card
+
+    >>> card_list("strike")
+    {'name': 'strike', 'type': 'attack', 'amount': 6, 'energy': 1, 'description': '6 DMG', \
+'exhaust': False, 'upgrade': False}
+    >>> card_list("defend")
+    {'name': 'defend', 'type': 'block', 'amount': 5, 'energy': 1, 'description': '5 BLCK', \
+'exhaust': False, 'upgrade': False}
+    """
     card_dict = {
-    "strike" : {"name": "strike", "type": "attack", "amount": 6, "energy": 1, "description": "6 DMG", "exhaust": False, "upgrade": False},
-    "defend" : {"name": "defend", "type": "block", "amount": 5, "energy": 1, "description": "5 BLCK", "exhaust": False, "upgrade": False},
-    "bash" : {"name": "bash", "type": "attack", "amount": 9, "energy": 2, "description": "9 DMG", "exhaust": False, "upgrade": False},
-    "bludgeon" : {"name": "bludgeon", "type": "attack", "amount": 18, "energy": 2, "description": "18 DMG", "exhaust": True, "upgrade": False},
-    "iron wave": {"name": "iron wave", "type": "hybrid", "amount": 5, "energy": 1, "description": "5 DMG, 5 BLCK",
-                     "exhaust": False, "upgrade": False},
-    "anger": {"name": "anger", "type": "attack", "amount": 7, "energy": 0, "description": "7 DMG",
-                      "exhaust": True, "upgrade": False},
-    "barricade": {"name": "barricade", "type": "block", "amount": 12, "energy": 2, "description": "12 BLCK",
-                  "exhaust": False, "upgrade": False},
+        "strike": {"name": "strike", "type": "attack", "amount": 6, "energy": 1, "description": "6 DMG",
+                   "exhaust": False, "upgrade": False},
+        "defend": {"name": "defend", "type": "block", "amount": 5, "energy": 1, "description": "5 BLCK",
+                   "exhaust": False, "upgrade": False},
+        "bash": {"name": "bash", "type": "attack", "amount": 9, "energy": 2, "description": "9 DMG", "exhaust": False,
+                 "upgrade": False},
+        "bludgeon": {"name": "bludgeon", "type": "attack", "amount": 18, "energy": 2, "description": "18 DMG",
+                     "exhaust": True, "upgrade": False},
+        "iron wave": {"name": "iron wave", "type": "hybrid", "amount": 5, "energy": 1, "description": "5 DMG, 5 BLCK",
+                      "exhaust": False, "upgrade": False},
+        "anger": {"name": "anger", "type": "attack", "amount": 7, "energy": 0, "description": "7 DMG",
+                  "exhaust": True, "upgrade": False},
+        "barricade": {"name": "barricade", "type": "block", "amount": 12, "energy": 2, "description": "12 BLCK",
+                      "exhaust": False, "upgrade": False},
     }
     try:
         card = card_dict.get(wanted)
@@ -24,16 +42,33 @@ def card_list(wanted):
 
 
 def card_list_upgraded(wanted):
+    """
+    A dictionary of all upgraded cards
+
+    :param wanted: a non-empty string
+    :precondition: wanted is a string of the wanted card
+    :return: a dictionary of the upgraded wanted card
+    >>> card_list_upgraded("strike")
+    {'name': 'strike+', 'type': 'attack', 'amount': 9, 'energy': 1, 'description': '9 DMG', \
+'exhaust': False, 'upgrade': True}
+    >>> card_list_upgraded("defend")
+    {'name': 'defend+', 'type': 'block', 'amount': 8, 'energy': 1, 'description': '8 BLCK', \
+'exhaust': False, 'upgrade': True}
+    """
     card_dict_upgraded = {
-    "strike" : {"name": "strike+", "type": "attack", "amount": 9, "energy": 1, "description": "9 DMG", "exhaust": False, "upgrade": True},
-    "defend" : {"name": "defend+", "type": "block", "amount": 8, "energy": 1, "description": "8 BLCK", "exhaust": False, "upgrade": True},
-    "bash" : {"name": "bash+", "type": "attack", "amount": 13, "energy": 1, "description": "13 DMG", "exhaust": False, "upgrade": True},
-    "bludgeon" : {"name": "bludgeon+", "type": "attack", "amount": 25, "energy": 2, "description": "25 DMG", "exhaust": True, "upgrade": True},
-    "iron wave": {"name": "iron wave+", "type": "hybrid", "amount": 7, "energy": 1, "description": "7 DMG, 7 BLCK",
-                     "exhaust": False, "upgrade": True},
-    "anger": {"name": "anger+", "type": "attack", "amount": 9, "energy": 0, "description": "9 DMG",
+        "strike": {"name": "strike+", "type": "attack", "amount": 9, "energy": 1, "description": "9 DMG",
+                   "exhaust": False, "upgrade": True},
+        "defend": {"name": "defend+", "type": "block", "amount": 8, "energy": 1, "description": "8 BLCK",
+                   "exhaust": False, "upgrade": True},
+        "bash": {"name": "bash+", "type": "attack", "amount": 13, "energy": 1, "description": "13 DMG",
+                 "exhaust": False, "upgrade": True},
+        "bludgeon": {"name": "bludgeon+", "type": "attack", "amount": 25, "energy": 2, "description": "25 DMG",
+                     "exhaust": True, "upgrade": True},
+        "iron wave": {"name": "iron wave+", "type": "hybrid", "amount": 7, "energy": 1, "description": "7 DMG, 7 BLCK",
                       "exhaust": False, "upgrade": True},
-    "barricade": {"name": "barricade+", "type": "block", "amount": 16, "energy": 2, "description": "16 BLCK",
+        "anger": {"name": "anger+", "type": "attack", "amount": 9, "energy": 0, "description": "9 DMG",
+                  "exhaust": False, "upgrade": True},
+        "barricade": {"name": "barricade+", "type": "block", "amount": 16, "energy": 2, "description": "16 BLCK",
                       "exhaust": False, "upgrade": False},
     }
     try:
@@ -44,7 +79,16 @@ def card_list_upgraded(wanted):
         return card
 
 
-DEBUFF_CARDS = {"name": "burn", "type": "debuff", "amount": 2, "energy": 1, "description": col("red", "2 SELF DMG") + col("!black", "( if in hand by end of turn)"), "exhaust": True}
+# only used in the final boss fight
+def debuff_card_list():
+    """
+    Return a dictionary of the debuff card
+
+    :return: a dictionary of the debuff cards stats
+    """
+    return {"name": "burn", "type": "debuff", "amount": 2, "energy": 1,
+            "description": col("red", "2 SELF DMG") + col("!black", "( if in hand by end of turn)"),
+            "exhaust": True}
 
 
 def random_card_reward():
@@ -100,8 +144,11 @@ def show_deck_upgrade(hand):
         if upgraded_card["exhaust"]:
             exhaust_upgrade_print = col("!black", "exhausts")
 
-        normal_card_print = str(counter + 1) + ") " + str(card["name"]) + " " + str(card["energy"] * yellow_square)  + " - " + str(card["description"]) + " " + exhaust_print
-        upgraded_card_print = str(upgraded_card["name"]) + " " + str(upgraded_card["energy"] * yellow_square) + " - " + str(upgraded_card["description"]) + " " + exhaust_upgrade_print
+        normal_card_print = str(counter + 1) + ") " + str(card["name"]) + " " + str(
+            card["energy"] * yellow_square) + " - " + str(card["description"]) + " " + exhaust_print
+        upgraded_card_print = str(upgraded_card["name"]) + " " + str(
+            upgraded_card["energy"] * yellow_square) + " - " + str(
+            upgraded_card["description"]) + " " + exhaust_upgrade_print
 
         print(normal_card_print + col("!black", "         --->        ") + upgraded_card_print)
 
@@ -127,7 +174,6 @@ def upgrade_card_list(deck):
     return upgrade_list
 
 
-
 def add_upgrade_card(deck, card):
     """
     Add an upgraded card to the deck
@@ -143,4 +189,3 @@ def add_upgrade_card(deck, card):
     upgraded_card = card_list_upgraded(card["name"])
     deck.remove(card)
     deck.append(upgraded_card)
-

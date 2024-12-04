@@ -83,7 +83,7 @@ def make_board(rows, cols):
     #     for col_counter in range(cols):
     #         conv_to_tuple = (col_counter, row_counter)          # swap to make board draw correctly
     #         cord_list.append(conv_to_tuple)
-    #populated_board = populate_board(cord_list, cord_dic, rows, cols)
+    # populated_board = populate_board(cord_list, cord_dic, rows, cols)
 
     return cord_list, cord_dic
 
@@ -105,7 +105,7 @@ def populate_board(cord_list, cord_dic, rows, cols):
     :postcondition: board cannot have more than two elite and fire events
     :return: a dictionary of the coordinates and events
     """
-    event_chance = ["fight", "fight", "fight", "fight", "fight", "fight", "elite", "event", "fire", "elite"]
+    event_chance = ["fight", "fight", "fight", "fight", "fight", "fight", "elite", "empty", "fire", "elite"]
     event_counter = {"elite counter": 0, "fire counter": 0, "elite max": 2, "fire max": 2}
 
     board_exceptions = {(0, 0): "start", (0, 1): "fight", (1, 0): "fight", (1, 1): "fight",
@@ -136,6 +136,7 @@ def populate_board(cord_list, cord_dic, rows, cols):
 def print_board(cord_dic, player):
     """
     Print the board events
+
     :param cord_dic: a dictionary of tuples of coordinates
     :param player: a dictionary of the player
     :precondition: player is a well-formed dictionary containing the player stats
@@ -181,8 +182,8 @@ def print_board(cord_dic, player):
             message += col("yellow", cord_dic[counter] + "  ")
         elif cord_dic[counter] == "start":
             message += col("green", cord_dic[counter] + " ")
-        elif cord_dic[counter] == "event":
-            message += col("blue", cord_dic[counter] + " ")
+        elif cord_dic[counter] == "empty":
+            message += col("!black", cord_dic[counter] + " ")
         elif cord_dic[counter] == "shop":
             message += col("magenta", cord_dic[counter] + "  ")
         else:
@@ -218,5 +219,5 @@ def initialize_game_start():
     cord_list, cord_dic = make_board(5, 5)
     board = populate_board(cord_list, cord_dic, 5, 5)
 
-    print(text.CONST_MAP_HELP)
+    # print(text.CONST_MAP_HELP)
     return rooms, deck, player, board
