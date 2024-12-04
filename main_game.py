@@ -785,10 +785,10 @@ def reward_player(player: dict, reward: int, deck: list):
     """
     print("\n" + col("magenta", chr(10870) * 3 + "LOOT" + chr(10870) * 3))
 
-    gold_reward = round(random.randint(15, 25) * reward)
+    gold_reward = round(random.randint(25, 35) * reward)
     player["Gold"] += gold_reward
     print("Got " + col("yellow", str(player["Gold"]) + " Gold") + " " + col("!black", "+" + str(gold_reward)))
-    if reward == 1.5:
+    if reward == 2:
         loot_relic = get_relic()
         print(print_relic_description(loot_relic))
         player["Relics"].append(loot_relic)
@@ -1014,10 +1014,10 @@ def calculate_enemy_difficulty(event: str):
         reward = 1
     elif event == "elite":
         enemy_chosen = random.choice(enemy.enemies_hard)
-        reward = 1.5
+        reward = 2
     elif event == "boss":
         enemy_chosen = enemy.enemies_boss
-        reward = 2
+        reward = 3
     else:
         enemy_chosen = ""
         # this stops pycharm from being mad about possible assignment before declaration
