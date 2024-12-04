@@ -31,7 +31,7 @@ the original string.
 This causes me to have to import colorama in unit tests and use the old method to make unit tests pass correctly.
 If you want to see an example, go to test_initialize_game_print_board
 
-Please ignore the text
+F-strings were used once I realized they were required
 
 | Required element                                                    |                File                | Line number |
 |:--------------------------------------------------------------------|:----------------------------------:|------------:|
@@ -51,5 +51,3 @@ Please ignore the text
 | n) function annotations                                             |            main_game.py            |        #816 |
 | o) doctests and/or unit tests for every single function             | See unit test folder, main_game.py |             |
 | p) output must be formatted using f-strings                         |            main_game.py            |        #149 |
-
-A
