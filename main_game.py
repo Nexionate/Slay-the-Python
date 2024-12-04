@@ -1067,9 +1067,11 @@ def main():
                     reward_player(player, reward, deck)
             elif event == "shop":
                 spawn_shop(player)
-            elif event == "fire":
+            elif event == "fire" or event == '\x1b[41m\x1b[93mfire\x1b[0m\x1b[0m':      # last minute fix (colorama bs)
                 spawn_fire(player, deck)
+
                 if check_if_goal_attained(player, 5, 5):  # final boss after fire
+
                     enemy_chosen, reward = calculate_enemy_difficulty("boss")
                     start_combat(player, enemy_chosen, deck)
 
