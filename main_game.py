@@ -31,7 +31,7 @@ Set E
 """
 
 
-def card_details(card):
+def card_details(card: dict):
     """
     Print a card's stats
 
@@ -47,7 +47,7 @@ def card_details(card):
         card["description"]) + exhaust_print)
 
 
-def print_player_relics(player):
+def print_player_relics(player: dict):
     """
     Print the player's current relics
 
@@ -84,7 +84,7 @@ def print_player_relics(player):
             print_relic_description(counter)
 
 
-def show_cards(hand):
+def show_cards(hand: list):
     """
     Print the player's hand
 
@@ -113,7 +113,7 @@ def show_cards(hand):
             card["description"]) + exhaust_print)
 
 
-def print_player_stats(entity):
+def print_player_stats(entity: dict):
     """
     Print the players current stats
 
@@ -151,13 +151,13 @@ def print_player_stats(entity):
           f"{col("!yellow", " energy")}")
 
 
-def draw_hand(draw_pile, hand, discard_pile, amount):
+def draw_hand(draw_pile: list, hand: list, discard_pile: list, amount: int) -> tuple:
     """
     Draw cards to the players hand
 
-    :param draw_pile: a list
-    :param hand: a list
-    :param discard_pile: a list
+    :param draw_pile: a list of cards
+    :param hand: a list of cards
+    :param discard_pile: a list of discarded cards
     :param amount: a non-zero positive integer
     :precondition: draw_pile is a list of shuffled cards
     :precondition: hand is a list of cards
@@ -181,7 +181,7 @@ def draw_hand(draw_pile, hand, discard_pile, amount):
     return draw_pile, hand, discard_pile
 
 
-def get_player_input(hand, player, discard_pile):
+def get_player_input(hand: list, player: dict, discard_pile: list) -> tuple:
     """
     Get the player for input in combat
 
@@ -239,22 +239,23 @@ def get_player_input(hand, player, discard_pile):
     return move, move_found, action_index
 
 
-def apply_player_action(player, currentEnemy, action, hand, discard_pile, action_index):
+def apply_player_action(player: dict, current_enemy: dict, action: dict, hand: list, discard_pile: list,
+                        action_index: int):
     """
     Apply the players action
 
-    :param currentEnemy: a dictionary of the current enemy
+    :param current_enemy: a dictionary of the current enemy
     :param player: a dictionary of the player
     :param action: a dictionary of the action
     :param hand: a list of cards
     :param discard_pile: a list of cards
     :param action_index: an integer
     :precondition: action is a well-defined dictionary containing the actions characteristics
-    :precondition: currentEnemy is a well-defined dictionary containing the enemy's characteristics
+    :precondition: current_enemy is a well-defined dictionary containing the enemy's characteristics
     :precondition: discard_pile is a list
     :precondition: hand is a list
     :precondition: action_index is a positive integer
-    :precondition: enemyIntent is a defined dictionary containing the enemies intended actions for their turn
+    :precondition: enemy_intent is a defined dictionary containing the enemies intended actions for their turn
     :precondition: player is a well-defined dictionary containing the player's stats
     :postcondition: players action is applied to itself or the enemy
     :postcondition: players action is removed from hand and appended to discard_pile
@@ -262,7 +263,7 @@ def apply_player_action(player, currentEnemy, action, hand, discard_pile, action
     """
     player["Current Energy"] -= action["energy"]
     action_type = action["type"]
-    enemyBLCK = currentEnemy["current block"]
+    enemyBLCK = current_enemy["current block"]
     damage = action["amount"]
 
     if action_type == "block":
@@ -275,10 +276,10 @@ def apply_player_action(player, currentEnemy, action, hand, discard_pile, action
             damage += 3
         calculated_damage = damage - enemyBLCK  # damage must be spillover
         if calculated_damage <= 0:
-            currentEnemy["current block"] -= damage
+            current_enemy["current block"] -= damage
         elif calculated_damage > 0:
-            currentEnemy["current block"] = 0
-            currentEnemy["current HP"] -= calculated_damage
+            current_enemy["current block"] = 0
+            current_enemy["current HP"] -= calculated_damage
         if action_type == "hybrid":
             if apply_player_relic(player, "oddly smooth stone"):
                 player["Block"] += 1
@@ -292,23 +293,23 @@ def apply_player_action(player, currentEnemy, action, hand, discard_pile, action
         end_player_turn(player, hand, discard_pile)
 
 
-def apply_enemy_action(enemyIntent, currentEnemy, player, draw_pile):
+def apply_enemy_action(enemy_intent: dict, current_enemy: dict, player: dict, draw_pile: list):
     """
     Apply the enemies action
 
-    :param enemyIntent: a dictionary of the enemies intended actions
-    :param currentEnemy: a dictionary of the current enemy
+    :param enemy_intent: a dictionary of the enemies intended actions
+    :param current_enemy: a dictionary of the current enemy
     :param player: a dictionary of the player
     :param draw_pile: a list
-    :precondition: currentEnemy is a well-defined dictionary containing the enemy's characteristics
+    :precondition: current_enemy is a well-defined dictionary containing the enemy's characteristics
     :precondition: draw_pile is a list
-    :precondition: enemyIntent is a defined dictionary containing the enemies intended actions for their turn
+    :precondition: enemy_intent is a defined dictionary containing the enemies intended actions for their turn
     :precondition: player is a well-defined dictionary containing the player's stats
     :postcondition: enemies action is applied to itself or the player
     :postcondition: the enemies action is printed
     """
-    damage = enemyIntent["damage"]
-    block = enemyIntent["block"]
+    damage = enemy_intent["damage"]
+    block = enemy_intent["block"]
     playerBLCK = player["Block"]
 
     if damage > 0:
@@ -319,18 +320,18 @@ def apply_enemy_action(enemyIntent, currentEnemy, player, draw_pile):
         elif calculated_damage > 0:  # if block is less than incoming damage, remove all block
             player["Block"] = 0
             player["Current HP"] -= calculated_damage
-            print("The " + currentEnemy["name"] + " hits you for " + col("!red", str(calculated_damage) + " DMG"))
+            print("The " + current_enemy["name"] + " hits you for " + col("!red", str(calculated_damage) + " DMG"))
         time.sleep(1)
 
     if block > 0:
-        currentEnemy["current block"] += block
-        print("The " + currentEnemy["name"] + " defends for " + col("cyan", " " + chr(10683) + str(block) + " BLCK"))
+        current_enemy["current block"] += block
+        print("The " + current_enemy["name"] + " defends for " + col("cyan", " " + chr(10683) + str(block) + " BLCK"))
         time.sleep(1)
 
-    if "debuff" in enemyIntent:  # the only enemy that debuffs is the boss!
-        debuff = enemyIntent["debuff"]
+    if "debuff" in enemy_intent:  # the only enemy that debuffs is the boss!
+        debuff = enemy_intent["debuff"]
         if debuff > 0:
-            print("The " + currentEnemy["name"] + " adds " + col("!red", str(debuff) + " burns") + " to your " + col(
+            print("The " + current_enemy["name"] + " adds " + col("!red", str(debuff) + " burns") + " to your " + col(
                 "!green", "Draw pile"))
             for counter in range(debuff):
                 debuff_card = debuff_card_list()
@@ -339,7 +340,7 @@ def apply_enemy_action(enemyIntent, currentEnemy, player, draw_pile):
     time.sleep(1)
 
 
-def check_energy(energy, card):
+def check_energy(energy: int, card: dict) -> bool:
     """
     Calculate the energy requirement of a card
 
@@ -364,7 +365,7 @@ def check_energy(energy, card):
     return requirement
 
 
-def end_player_turn(player, hand, discard_pile):
+def end_player_turn(player: dict, hand: list, discard_pile: list):
     """
     End the player's turn
 
@@ -388,12 +389,11 @@ def end_player_turn(player, hand, discard_pile):
         hand.remove(hand[0])
 
 
-def apply_player_relic(player, relic_name):
+def apply_player_relic(player: dict, relic_name: str):
     """
     Apply a relic buff to the player
 
     :param player: a dictionary of the players stats
-    :param player:
     :param relic_name: a non-empty string
     :precondition: player is a well-formed dictionary of the players stats
     :precondition: player's "relics" is a list of relics
@@ -422,7 +422,7 @@ def apply_player_relic(player, relic_name):
                 print(f"player does not have {relic_name}")
 
 
-def valid_purchase_shop(player, relics_sale, player_input):
+def valid_purchase_shop(player: dict, relics_sale: list, player_input: int):
     """
     Validate a shop purchase from the player
 
@@ -452,7 +452,7 @@ def valid_purchase_shop(player, relics_sale, player_input):
         print(col("!black", "Insufficient Gold!"))
 
 
-def spawn_shop(player):
+def spawn_shop(player: dict):
     """
     Generate a shop
 
@@ -503,7 +503,7 @@ def spawn_shop(player):
     time.sleep(1.5)
 
 
-def valid_input_fire():
+def valid_input_fire() -> tuple:
     """
     Validate player input at campfire
 
@@ -527,7 +527,7 @@ def valid_input_fire():
         return False, action
 
 
-def upgrade_card(deck):
+def upgrade_card(deck: list):
     """
     Upgrade a card in your deck
 
@@ -559,7 +559,7 @@ def upgrade_card(deck):
                 print(col("!black", "invalid input, try again"))
 
 
-def player_sleep(player):
+def player_sleep(player: dict):
     """
     Update the player's Current HP and return the new value
 
@@ -585,7 +585,7 @@ def player_sleep(player):
     time.sleep(2)
 
 
-def spawn_fire(player, deck):
+def spawn_fire(player: dict, deck: list):
     """
     Generate a campsite event for the player
 
@@ -605,6 +605,7 @@ def spawn_fire(player, deck):
                 player_sleep(player)
             elif action == "upgrade" or action == "smith":
                 upgrade_card(deck)
+
             if check_if_goal_attained(player, 5, 5):  # final campfire message
                 print(col("!black", "You gather your belongings one final time and march towards the boss... \n"))
                 time.sleep(0.5)
@@ -615,102 +616,102 @@ def spawn_fire(player, deck):
             print(col("!black", "invalid input, try again"))
 
 
-def print_enemy_intent(currentEnemy, enemyIntent):
+def print_enemy_intent(current_enemy: dict, enemy_intent: dict):
     """
     Print the enemy intent to the player
 
-    :param currentEnemy: a dictionary of the enemy
-    :param enemyIntent: a dictionary containing the enemy's intended action
-    :precondition: currentEnemy is a well-formed dictionary containing the player stats
-    :precondition: enemyIntent is a well-formed dictionary of the enemy's intended action
+    :param current_enemy: a dictionary of the enemy
+    :param enemy_intent: a dictionary containing the enemy's intended action
+    :precondition: current_enemy is a well-formed dictionary containing the player stats
+    :precondition: enemy_intent is a well-formed dictionary of the enemy's intended action
     :postcondition: the enemy's intended action is printed
     :postcondition: the enemy's stats are printed
 
-    #>>> currentEnemy = {"name": "mugger", "current HP": 6, "max HP": 36, "current block": 0, "attack pattern": False, \
+    #>>> current_enemy = {"name": "mugger", "current HP": 6, "max HP": 36, "current block": 0, "attack pattern": False,\
     "attack": [{"damage": 7, "block": 0}]} # doctest: +SKIP
-    #>>> print_enemy_intent (currentEnemy, {'damage': 7, 'block': 0})    # doctest: +SKIP
+    #>>> print_enemy_intent (current_enemy, {'damage': 7, 'block': 0})    # doctest: +SKIP
     The mugger(6/36) intends to attack for 7 DMG
-    #>>> currentEnemy = {"name": "mugger", "current HP": 27, "max HP": 36, "current block": 0, "attack pattern": False, \
+    #>>> current_enemy = {"name": "mugger", "current HP": 27, "max HP": 36, "current block": 0, "attack pattern": False,\
     "attack": [{"damage": 5, "block": 10}]} # doctest: +SKIP
-    #>>> print_enemy_intent (currentEnemy, {'damage': 7, 'block': 0})    # doctest: +SKIP
+    #>>> print_enemy_intent (current_enemy, {'damage': 7, 'block': 0})    # doctest: +SKIP
     The mugger(27/36) intends to attack for 5 DMG and defend for 10 BLCK
     """
     message = ""
     between = 0
-    block = currentEnemy["current block"]
+    block = current_enemy["current block"]
     block_icon = ""
 
     if block > 0:
         block_icon = col("cyan", "" + chr(10683) + str(block))
 
-    enemyIntentDMG = col("red", str(enemyIntent["damage"]) + " DMG")
-    enemyIntentBLCK = col("!blue", str(enemyIntent["block"]) + " BLCK")
-    enemyIntentHP = col("green", ("(" + str(currentEnemy["current HP"]) + "/" + str(currentEnemy["max HP"])) + ")")
+    enemy_intent_DMG = col("red", str(enemy_intent["damage"]) + " DMG")
+    enemy_intent_BLCK = col("!blue", str(enemy_intent["block"]) + " BLCK")
+    enemy_intent_HP = col("green", ("(" + str(current_enemy["current HP"]) + "/" + str(current_enemy["max HP"])) + ")")
 
-    if enemyIntent["block"] == 0 and enemyIntent["damage"] == 0:
+    if enemy_intent["block"] == 0 and enemy_intent["damage"] == 0:
         message += col("magenta", "UNKNOWN") + col("!black", " (not attack)")
     else:
-        if enemyIntent["damage"] != 0:
-            message += "attack for " + enemyIntentDMG
+        if enemy_intent["damage"] != 0:
+            message += "attack for " + enemy_intent_DMG
             between = 1  # adds "and" inbetween
-        if enemyIntent["block"] != 0:
+        if enemy_intent["block"] != 0:
             if between == 1:
                 message += " and "
-            message += "defend for " + enemyIntentBLCK
-        if "debuff" in enemyIntent:
-            if enemyIntent["debuff"] != 0:
+            message += "defend for " + enemy_intent_BLCK
+        if "debuff" in enemy_intent:
+            if enemy_intent["debuff"] != 0:
                 message += " and " + col("!red", "debuff you")
 
-    print("The " + currentEnemy["name"] + enemyIntentHP + block_icon + " intends to " + message + "\n")
+    print("The " + current_enemy["name"] + enemy_intent_HP + block_icon + " intends to " + message + "\n")
 
 
-def initialize_combat(enemy_chosen, deck):
+def initialize_combat(enemy_chosen: dict, deck: list) -> tuple:
     """
     Initialize the combat
 
     :param enemy_chosen: a dictionary of the enemy
     :param deck: a list of cards
     :precondition: enemy is a well-formed dictionary containing the player stats
-    :postcondition: currentEnemy is a deep copy of enemy
+    :postcondition: current_enemy is a deep copy of enemy
     :postcondition: deck is randomly shuffled
     :postcondition: draw_pile is a deep copy of deck
-    :return: a tuple consisting of player_turn, hand, discard_pile, draw_pile and currentEnemy
+    :return: a tuple consisting of player_turn, hand, discard_pile, draw_pile and current_enemy
     """
     player_turn = 1
-    currentEnemy = copy.deepcopy(enemy_chosen)
+    current_enemy = copy.deepcopy(enemy_chosen)
     random.shuffle(deck)
     discard_pile = []
     hand = []
     draw_pile = copy.deepcopy(deck)
-    return player_turn, hand, discard_pile, draw_pile, currentEnemy
+    return player_turn, hand, discard_pile, draw_pile, current_enemy
 
 
-def start_combat(player, enemy_chosen, deck):
+def start_combat(player: dict, enemy_chosen: dict, deck: list):
     """
     Drive the combat
     """
     apply_player_relic(player, "blood vial")  # check if player has specific relic
-    player_turn, hand, discard_pile, draw_pile, currentEnemy = initialize_combat(enemy_chosen, deck)
-    enemy_attacks = iter(currentEnemy["attack"])
-    while currentEnemy["current HP"] > 0 and player["Current HP"] > 0:
+    player_turn, hand, discard_pile, draw_pile, current_enemy = initialize_combat(enemy_chosen, deck)
+    enemy_attacks = iter(current_enemy["attack"])
+    while current_enemy["current HP"] > 0 and player["Current HP"] > 0:
         if player_turn == 1:  # apply turn 1 block buff from relic
             apply_player_relic(player, "prepared slug")
         else:
             player["Block"] = 0
         player["Current Energy"] = player["Max Energy"]
 
-        if currentEnemy["attack pattern"]:  # check if enemy has fixed pattern
-            enemyIntent = next(enemy_attacks)
+        if current_enemy["attack pattern"]:  # check if enemy has fixed pattern
+            enemy_intent = next(enemy_attacks)
         else:
-            enemyIntent = random.choice(currentEnemy["attack"])
+            enemy_intent = random.choice(current_enemy["attack"])
 
         draw_hand(draw_pile, hand, discard_pile, player["Max Draw"])
         print(col("!black", "Your turn begins.. "))
         time.sleep(0.75)
 
-        while player["Current Energy"] > 0 and currentEnemy["current HP"] > 0:  # begin players turn
+        while player["Current Energy"] > 0 and current_enemy["current HP"] > 0:  # begin players turn
             # checks for enemy HP again to immediately end players turn
-            print_enemy_intent(currentEnemy, enemyIntent)
+            print_enemy_intent(current_enemy, enemy_intent)
             show_cards(hand)
             print_player_stats(player)
 
@@ -719,11 +720,11 @@ def start_combat(player, enemy_chosen, deck):
             if valid_input:
                 valid_energy = check_energy(player["Current Energy"], action)
                 if valid_energy:
-                    apply_player_action(player, currentEnemy, action, hand, discard_pile, action_index)
+                    apply_player_action(player, current_enemy, action, hand, discard_pile, action_index)
 
-        if currentEnemy["current HP"] > 0:
-            currentEnemy["current block"] = 0
-            apply_enemy_action(enemyIntent, currentEnemy, player, draw_pile)
+        if current_enemy["current HP"] > 0:
+            current_enemy["current block"] = 0
+            apply_enemy_action(enemy_intent, current_enemy, player, draw_pile)
             player_turn += 1
 
 
@@ -752,7 +753,7 @@ def valid_input_reward():
         return False, action
 
 
-def reward_player(player, reward, deck):
+def reward_player(player: dict, reward: int, deck: list):
     """
     Determine the reward for the player
 
@@ -812,7 +813,7 @@ def reward_player(player, reward, deck):
     time.sleep(2)
 
 
-def check_board_location(board, player, update):
+def check_board_location(board: dict, player: dict, update: bool) -> str:
     """
     Check the player's current location
 
@@ -844,7 +845,7 @@ def check_board_location(board, player, update):
         return board[player_cords]
 
 
-def get_user_choice(player):
+def get_user_choice(player: dict):
     """
     Print the player movement options
 
@@ -891,7 +892,7 @@ def get_user_choice(player):
             print("\nINVALID MOVEMENT INPUT")
 
 
-def projected_movement(player, movement):
+def projected_movement(player: dict, movement: str) -> tuple:
     """
     Calculate the projected movement
 
@@ -922,13 +923,13 @@ def projected_movement(player, movement):
     return projected_cords
 
 
-def validate_move(board, player, movement):
+def validate_move(board: dict, player: dict, movement: str) -> bool:
     """
     Determine the validity of the player's wanted movement
 
     :param board: a dictionary of the board
     :param player: a dictionary of the player
-    :param movement: a non-empty playerstring
+    :param movement: a non-empty string
     :precondition: player is a well-formed dictionary containing the player stats
     :precondition: movement is a non-empty string containing "A" or "S" or "W" or "D"
     :return: True if move is valid, else False
@@ -949,7 +950,7 @@ def validate_move(board, player, movement):
         return True
 
 
-def move_character(player, movement):
+def move_character(player: dict, movement: str):
     """
     Update the characters position
 
@@ -970,7 +971,7 @@ def move_character(player, movement):
     return player
 
 
-def check_if_goal_attained(player, rows, columns):
+def check_if_goal_attained(player: dict, rows: int, columns: int):
     """
     Determine if the character has reached the goal
 
@@ -988,7 +989,7 @@ def check_if_goal_attained(player, rows, columns):
     return player["X-coordinate"] == (rows - 1) and player["Y-coordinate"] == (columns - 1)
 
 
-def calculate_enemy_diffuculty(event):
+def calculate_enemy_difficulty(event: str):
     """
     Determine the enemy difficulty and reward for the player
 
@@ -998,11 +999,11 @@ def calculate_enemy_diffuculty(event):
     :postcondition: a chosen enemy is randomly selected from a list
     :return: a dictionary with the stats of the chosen enemy
 
-    #>>> calculate_enemy_diffuculty("fight") # doctest: +SKIP
+    #>>> calculate_enemy_difficulty("fight") # doctest: +SKIP
     ({'name': 'mugger', 'current HP': 36, 'max HP': 36, 'current block': 0, 'attack pattern': False, 'attack': \
     [{'damage': 7, 'block': 0}, {'damage': 11, 'block': 0}, {'damage': 5, 'block': 7}, {'damage': 0, 'block': 8}]}, 1)
 
-    #>>> calculate_enemy_diffuculty("elite") # doctest: +SKIP
+    #>>> calculate_enemy_difficulty("elite") # doctest: +SKIP
     ({"name": "gremlin nob", "current HP": 53, "max HP": 53, "current block": 0, "attack pattern": True, "attack":
     [{"damage": 0, "block": 0}, {"damage": 8, "block": 0}, {"damage": 16, "block": 0}, {"damage": 20, "block": 0},
     {"damage": 20, "block": 0}, {"damage": 20, "block": 0}]}, 1.5)
@@ -1035,7 +1036,7 @@ def tutorial():
     if player_input == "yes":
         print(text.CONST_MAP_HELP)
         print(text.CONST_HELP_TEXT)
-        player_input_exit = input("\nType anything to start game")
+        input("\nType anything to start game")
 
     print(col("!black", "starting game.."))
     time.sleep(0.5)
@@ -1059,7 +1060,7 @@ def main():
             event = check_board_location(board, player, False)
 
             if event == "fight" or event == "elite":
-                enemy_chosen, reward = calculate_enemy_diffuculty(event)
+                enemy_chosen, reward = calculate_enemy_difficulty(event)
                 start_combat(player, enemy_chosen, deck)
                 if player["Current HP"] > 0:
                     reward_player(player, reward, deck)
@@ -1068,7 +1069,7 @@ def main():
             elif event == "fire":
                 spawn_fire(player, deck)
                 if check_if_goal_attained(player, 5, 5):  # final boss after fire
-                    enemy_chosen, reward = calculate_enemy_diffuculty("boss")
+                    enemy_chosen, reward = calculate_enemy_difficulty("boss")
                     start_combat(player, enemy_chosen, deck)
 
             check_board_location(board, player, True)
