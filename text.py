@@ -106,7 +106,13 @@ CONST_MAP_HELP = \
     "\n\nEvery battle, you will gain cards from your " + col("!green", "Draw pile") + " into your " + col("!yellow", "Hand") + ". After playing a card, it will go to the " + col("!red", "Discard pile") + ""\
     "\nAt the end of your turn, any remaining cards in your " + col("!yellow", "Hand") + " will go to the " + col("!red", "Discard pile") + ""\
     "\nOnce the " + col("!green", "Draw pile") + " is empty, your " + col("!red", "Discard pile") + " will be shuffled back into the " + col("!green", "Draw pile") + ""\
-    "\n" + col("!green", "Draw pile") + " --> " + col("!yellow", "Hand") + " --> " + col("!red", "Discard pile")
+    "\n" + col("!green", "Draw pile") + " --> " + col("!yellow", "Hand") + " --> " + col("!red", "Discard pile") + "" \
+    "\n\n" + col("magenta", "General tips:") + "" \
+    "\n- first prioritize normal fights to get card rewards" \
+    "\n- make sure to have a few good card rewards before fighting an " + col("red", " elite") + "" \
+    "\n- upgrade your best cards when you have health to spare (above 30HP)" \
+    "\n- visit the shop after an elite or once you have over 275 gold" \
+    "\n- you will have access to one final campfire before the boss, so choose carefully" \
 
 CONST_TUTORIAL_COMBAT = \
     "\n "
