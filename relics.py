@@ -33,7 +33,7 @@ CONST_RELIC_POOL = [
 CONST_SHOP_RELIC_POOL = [
     {"name": 'coffee dripper', "description": 'permanently gain +1 Max Energy', "effect": 1, "one-time": True,
      "rarity": "rare"},
-    {"name": 'philosophers stone', "description": 'permanently gain +1 Max Energy', "effect": 1, "one-time": True,
+    {"name": 'philosophers stone', "description": 'permanently draw 2 more cards per turn', "effect": 1, "one-time": True,
      "rarity": "rare"}]
 
 

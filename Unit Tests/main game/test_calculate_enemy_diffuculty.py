@@ -30,7 +30,7 @@ class Test(TestCase):
 
         given = ({"name": "gremlin nob", "current HP": 53, "max HP": 53, "current block": 0, "attack pattern": True,
                   "attack": [{"damage": 0, "block": 0}, {"damage": 8, "block": 0}, {"damage": 16, "block": 0},
-                             {"damage": 20, "block": 0}, {"damage": 20, "block": 0}, {"damage": 20, "block": 0}]}, 1.5)
+                             {"damage": 20, "block": 0}, {"damage": 20, "block": 0}, {"damage": 20, "block": 0}]}, 2)
         expected = calculate_enemy_difficulty(event)
         self.assertEqual(expected, given)
 
@@ -56,6 +56,6 @@ class Test(TestCase):
                         {"damage": 6, "block": 0, "debuff": 2}]
         given = ({"name": "hexaghost", "current HP": 115, "max HP": 115, "current block": 0, "attack pattern": True,
                   "attack":
-                      [{"damage": 0, "block": 0}] + (boss_attacks * 5)}, 2)
+                      [{"damage": 0, "block": 0}] + (boss_attacks * 5)}, 3)
         expected = calculate_enemy_difficulty(event)
         self.assertEqual(expected, given)

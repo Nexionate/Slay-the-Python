@@ -35,7 +35,7 @@ class Test(TestCase):
     def test_relic_one_time_buff_stone(self):
         player = {"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 50, "Max HP": 50, "Max Energy": 3, "Max Draw": 4,
                   "Current Energy": 3, "Block": 0, "Gold": 99, "Relics": []}
-        relic = {"name": 'philosophers stone', "description": 'permanently gain +1 Max Energy', "effect": 1,
+        relic = {"name": 'philosophers stone', "description": 'permanently draw 2 more cards per turn', "effect": 1,
                  "one-time": True,
                  "rarity": "rare"}
         relic_one_time_buff(relic, player)
