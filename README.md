@@ -1,6 +1,6 @@
 Ethan O'Connor - Nexionate - A01435041
 
-# **My 1510 Project**
+# **Slay the Python**
 
 This is the first terminally based game I have created! Some first-time features I have programmed include
 
@@ -34,26 +34,3 @@ automatically resets the colour after. However, this produced another side-effec
 the original string.
 This causes me to have to import colorama in unit tests and use the old method to make unit tests pass correctly.
 If you want to see an example, go to test_initialize_game_print_board
-
-F-strings were used once I realized they were required
-
-See term project requirements below
-
-| Required element                                                    |                                 File                                 | Line number |
-|:--------------------------------------------------------------------|:--------------------------------------------------------------------:|------------:|
-| a) use of immutable data structures like tuples                     |                         [enemy](./enemy.py)                          |          #1 |
-| b) use of mutable data structures like lists and dictionaries       |                         [cards](./cards.py)                          |          #6 |
-| c) thoughtful use of exceptions and exception handling              |                     [main_game](./main_game.py)                      |        #481 |
-| d) minimized scope and lifetime of all variables and objects        |                     [main_game](./main_game.py)                      |        #381 |
-| e) decomposition of your idea into small functions                  |                     [main_game](./main_game.py)                      |        #173 |
-| f) simple flat code that is easy to understand                      |                     [main_game](./main_game.py)                      |  #184, #588 |
-| g) comprehensions work though correct use of one or more list/dicts |                         [cards](./cards.py)                          |         #173|
-| h) selection using if-statements                                    |          [relics](./relics.py), [main_game](./main_game.py)          |  #147, #619 |
-| i) repetition using the for-loop                                    |           [main_game](./main_game.py), [cards](./cards.py)           |  #106, #135 |
-| j) use of the membership operator where it makes sense              | [initialize_game](./initialize_game.py), [main_game](./main_game.py) |  #110, #551 |
-| k) appropriate use of the the range function                        |                     [main_game](./main_game.py)                      |  #106, #216 |
-| l) use of one or more functions from itertools                      |                     [main_game](./main_game.py)                      |        #111 |
-| m) the random module                                                |                     [main_game](./main_game.py)                      |        #178 |
-| n) function annotations                                             |                     [main_game](./main_game.py)                      |        #816 |
-| o) doctests and/or unit tests for every single function             |          See unit test folder, [main_game](./main_game.py)           |             |
-| p) output must be formatted using f-strings                         |                     [main_game](./main_game.py)                      |        #149 |
