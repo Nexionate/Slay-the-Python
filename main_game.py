@@ -113,22 +113,30 @@ def show_cards(hand: list):
             card["description"]) + exhaust_print)
 
 
-def print_player_stats(entity: dict):
+def print_player_stats(entity: dict, draw_pile, discard_pile):
     """
     Print the players current stats
 
     :param entity: a dictionary of the player
+    :param draw_pile: a list of cards
+    :param discard_pile: a list of discarded cards
     :precondition: player is a well-defined dictionary containing the player's stats
     :postcondition: player's stats are printed
 
     >>> init(strip=True)
     >>> player = {"Current HP": 40, "Max HP": 50, "Max Energy": 3, "Current Energy": 3, "Block": 0}
-    >>> print_player_stats(player)
-    ■■■■■■■■■■  40/50 HP  □□□ 3/3 energy
+    >>> draw_pile = [{"name": "strike", "type": "attack", "amount": 6, "energy": 1, "description": "6 DMG", \
+    "exhaust": False, "upgrade": False}]
+    >>> discard_pile = []
+    >>> print_player_stats(player, draw_pile, discard_pile)
+    ■■■■■■■■■■  40/50 HP  □□□ 3/3 energy     Pile: Draw: 1 | Discard: 0
     >>> init(strip=True)
     >>> player = {"Current HP": 40, "Max HP": 50, "Max Energy": 3, "Current Energy": 1, "Block": 10}
-    >>> print_player_stats(player)
-    ■■■■■■■■■■  40/50 HP ⦻10 □ 1/3 energy
+    >>> draw_pile = []
+    >>> discard_pile = [{"name": "strike", "type": "attack", "amount": 6, "energy": 1, "description": "6 DMG", \
+    "exhaust": False, "upgrade": False}]
+    >>> print_player_stats(player, draw_pile, discard_pile)
+    ■■■■■■■■■■  40/50 HP ⦻10 □ 1/3 energy     Pile: Draw: 0 | Discard: 1
     """
     health = entity["Current HP"]
     max_health = entity["Max HP"]
@@ -148,7 +156,12 @@ def print_player_stats(entity: dict):
 
     print(f"{green_square * squares}{red_square * (10 - squares)}  {str(health)}/{str(max_health)}"
           f"{col("!green", " HP ")}{block_icon} {energy * yellow_square} {str(energy)}/{str(max_energy)}"
-          f"{col("!yellow", " energy")}")
+          f"{col("!yellow", " energy")}"
+          f"     Pile: "
+          f"{col("!green", "Draw: ")}{col("!green", str(len(draw_pile)))} | "
+          f"{col("!red", "Discard: ")}{col("!red", str(len(discard_pile)))}"
+
+          )
 
 
 def draw_hand(draw_pile: list, hand: list, discard_pile: list, amount: int) -> tuple:
@@ -173,9 +186,11 @@ def draw_hand(draw_pile: list, hand: list, discard_pile: list, amount: int) -> t
     """
     for count in range(amount):
         if not draw_pile:
+            draw_pile.clear()
             draw_pile.extend(discard_pile)
-            discard_pile = []
+            discard_pile.clear()
             random.shuffle(draw_pile)
+            print(f"{col("yellow", "Shuffling the deck...")}")
         hand.append(draw_pile.pop(0))
 
     return draw_pile, hand, discard_pile
@@ -380,13 +395,13 @@ def end_player_turn(player: dict, hand: list, discard_pile: list):
     >>> end_player_turn({"X-coordinate": 0, "Y-coordinate": 1, "Current HP": 5}, [3, 7, 8], [])     # doctest: +SKIP
     """
     for counter in range(len(hand)):
-        card_debuff = hand[0]
+        card_debuff = hand[counter]
         if str(card_debuff["name"]) == "burn":
             print(col("red", "The burn hurt you for 2 DMG..."))
             player["Current HP"] -= 2
             time.sleep(0.5)
-        discard_pile.append(hand[0])
-        hand.remove(hand[0])
+        discard_pile.append(hand[counter])
+    hand.clear()
 
 
 def apply_player_relic(player: dict, relic_name: str):
@@ -452,7 +467,7 @@ def valid_purchase_shop(player: dict, relics_sale: list, player_input: int):
         print(col("!black", "Insufficient Gold!"))
 
 
-def spawn_shop(player: dict):
+def spawn_shop(player: dict, deck: dict):
     """
     Generate a shop
 
@@ -466,6 +481,9 @@ def spawn_shop(player: dict):
     :postcondition: shop exits if all relics are purchased
     """
     print(col("!black", "You approach a small shop \n"))
+    draw_pile = deck
+    discard_pile = []
+
     time.sleep(1.5)
     print_shop_intro()
     relics_sale = shop_relic()
@@ -473,7 +491,7 @@ def spawn_shop(player: dict):
 
     player_input = 0
     accepted = range(1, 5)  # this could never go out of bounds... chants the blissfully ignorant developer
-    print_player_stats(player)
+    print_player_stats(player, draw_pile, discard_pile)
     while player_input != "exit":
         print("Current gold: " + col("yellow", str(player["Gold"])))
         player_input = input(
@@ -713,7 +731,7 @@ def start_combat(player: dict, enemy_chosen: dict, deck: list):
             # checks for enemy HP again to immediately end players turn
             print_enemy_intent(current_enemy, enemy_intent)
             show_cards(hand)
-            print_player_stats(player)
+            print_player_stats(player, draw_pile, discard_pile)
 
             action, valid_input, action_index = get_player_input(hand, player, discard_pile)
 
@@ -919,7 +937,7 @@ def projected_movement(player: dict, movement: str) -> tuple:
         projected_cords = (player["X-coordinate"] + 1, player["Y-coordinate"])
     else:
         print("something has gone very wrong here")
-        projected_cords = ("bad", "bad")        # pycharm wanted this so it always returns tuple
+        projected_cords = ("bad", "bad")  # pycharm wanted this so it always returns tuple
         return projected_cords
     return projected_cords
 
@@ -1024,20 +1042,62 @@ def calculate_enemy_difficulty(event: str):
         reward = 2
         print("nothing here")
     return enemy_chosen, reward
+# health, gold, relics, enemies_killed, elites_killed
+# def write_scores():
+#     filename = 'scores.txt'
+#     with open(filename, 'a') as output:
+#         output.write("PLAYER WON\n")
+#         output.write("PLAYER TIE\n")
+#         output.write("PLAYER LOST\n")
+#         # output.write(health + '\n')
+#         # output.write(gold + '\n')
+#         # output.write(relics + '\n')
+#         # output.write(enemies_killed + '\n')
+#         # output.write(elites_killed + '\n')
+#
+# def read_scores():
+#     filename = "scores.txt"
+#     with open(filename) as file_object:
+#         lines = file_object.readlines()
+#         counter = 0
+#         for line in lines:
+#             print(line)
+#             print(line)
+#             print(line)
+        # for line in lines:
+        #     print(line)
+
+# process each string in the list
 
 
-def tutorial():
+def opening_menu():
     """
-    Print the tutorial text to the player
+    Print the opening menu text to the player
 
-    :postcondition: tutorial text is printed
+    :postcondition: opening menu text is printed
     :postcondition: game is initialized
     """
-    player_input = input("Show the tutorial? (yes/no) ")
-    if player_input == "yes":
-        print(text.CONST_MAP_HELP)
-        print(text.CONST_HELP_TEXT)
-        input("\nType anything to start game")
+    print(col("!magenta", "=== Welcome to Slay the Python ==="))
+    print(col("magenta", "A rougelike deckbuilding game inspired by Slay the Spire!"))
+    print(col("yellow", "Developed by Nexionate"))
+
+    player_input = ""
+    print(f"\nMenu Options: {col("!black", "(Type numbers 1-2)")}\n1) Play game \n2) "
+          f"Exit")
+
+    while player_input != "1" and player_input != "2":
+        player_input = input()
+        match player_input:
+            case "1":
+                player_input_play = input(f"Show the tutorial? {col("!black", "(yes/no)")}")
+                if player_input_play == "yes":
+                    print(text.CONST_MAP_HELP)
+                    print(text.CONST_HELP_TEXT)
+                    input("\nEnter anything to start game")
+            case "2":
+                quit()
+            case _:
+                print(col("!black", "Invalid input"))
 
     print(col("!black", "starting game.."))
     time.sleep(0.5)
@@ -1047,7 +1107,7 @@ def main():
     """
     Drive the game
     """
-    tutorial()
+    opening_menu()
     rooms, deck, player, board = initialize_game_start()
 
     while not check_if_goal_attained(player, 5, 5) and player["Current HP"] > 0:
@@ -1066,8 +1126,8 @@ def main():
                 if player["Current HP"] > 0:
                     reward_player(player, reward, deck)
             elif event == "shop":
-                spawn_shop(player)
-            elif event == "fire" or event == '\x1b[41m\x1b[93mfire\x1b[0m\x1b[0m':      # last minute fix (colorama bs)
+                spawn_shop(player, deck)
+            elif event == "fire" or event == '\x1b[41m\x1b[93mfire\x1b[0m\x1b[0m':  # last minute fix (colorama bs)
                 spawn_fire(player, deck)
 
                 if check_if_goal_attained(player, 5, 5):  # final boss after fire

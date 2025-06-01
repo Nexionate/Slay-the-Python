@@ -1,6 +1,6 @@
 Ethan O'Connor - Nexionate - A01435041
 
-# **My 1510 Project**
+# **Slay the Python**
 
 This is the first terminally based game I have created! Some first-time features I have programmed include
 
@@ -16,9 +16,11 @@ This is the first terminally based game I have created! Some first-time features
 - a pool of various relics players can find to empower themselves
 Your goal is to reach the bottom right tile.
 
-## *Trust me, this took some time to make*
-
 If you get stuck, type help at the map or combat input areas.
+## *Trust me, this took some time to make*
+This game has over 50+ functions. I think documentation is extremely important so each function has unit tests, docstrings and doctests.
+
+
 
 
 
