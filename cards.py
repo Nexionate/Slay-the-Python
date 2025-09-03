@@ -37,6 +37,8 @@ def card_list(wanted):
                   "exhaust": True, "upgrade": False},
         "barricade": {"name": "barricade", "type": "block", "amount": 12, "energy": 2, "description": "12 BLCK",
                       "exhaust": False, "upgrade": False},
+        "blood letting": {"name": "blood letting", "type": "other", "amount": [{"draw": 3, "energy": 2, "HP loss": 4}], "energy": 0, "description": "3 DRAW + 2 ENERGY but -4HP",
+                      "exhaust": True, "upgrade": False}
     }
     try:
         card = card_dict.get(wanted)
@@ -74,7 +76,10 @@ def card_list_upgraded(wanted):
         "anger": {"name": "anger+", "type": "attack", "amount": 9, "energy": 0, "description": "9 DMG",
                   "exhaust": False, "upgrade": True},
         "barricade": {"name": "barricade+", "type": "block", "amount": 16, "energy": 2, "description": "16 BLCK",
-                      "exhaust": False, "upgrade": False},
+                      "exhaust": False, "upgrade": True},
+        "blood letting": {"name": "blood letting", "type": "other", "amount": [{"draw": 3, "energy": 3, "HP loss": 3}],
+                          "energy": 0, "description": "3 DRAW + 2 ENERGY but -3HP",
+                          "exhaust": True, "upgrade": True}
     }
     try:
         card = card_dict_upgraded.get(wanted)

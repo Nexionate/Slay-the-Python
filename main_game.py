@@ -152,7 +152,7 @@ def print_player_stats(entity: dict, draw_pile, discard_pile):
     yellow_square = col("!yellow", "\u25A1")
 
     if block > 0:
-        block_icon = col("!cyan", chr(10683) + str(block))
+        block_icon = col("!cyan", "+" + chr(10683) + str(block))
 
     print(f"{green_square * squares}{red_square * (10 - squares)}  {str(health)}/{str(max_health)}"
           f"{col("!green", " HP ")}{block_icon} {energy * yellow_square} {str(energy)}/{str(max_energy)}"
@@ -254,7 +254,7 @@ def get_player_input(hand: list, player: dict, discard_pile: list) -> tuple:
     return move, move_found, action_index
 
 
-def apply_player_action(player: dict, current_enemy: dict, action: dict, hand: list, discard_pile: list,
+def apply_player_action(player: dict, current_enemy: dict, action: dict, draw_pile: list, hand: list, discard_pile: list,
                         action_index: int):
     """
     Apply the players action
@@ -262,6 +262,7 @@ def apply_player_action(player: dict, current_enemy: dict, action: dict, hand: l
     :param current_enemy: a dictionary of the current enemy
     :param player: a dictionary of the player
     :param action: a dictionary of the action
+    :param draw_pile: a list of cards
     :param hand: a list of cards
     :param discard_pile: a list of cards
     :param action_index: an integer
@@ -299,6 +300,23 @@ def apply_player_action(player: dict, current_enemy: dict, action: dict, hand: l
             if apply_player_relic(player, "oddly smooth stone"):
                 player["Block"] += 1
             player["Block"] += action["amount"]
+
+    elif action_type == "other":
+
+        for sub_action in action["amount"]:
+            for key, value in sub_action.items():
+                match key:
+                    case "block":
+                        if apply_player_relic(player, "oddly smooth stone"):  # add relic bonus
+                            player["Block"] += 1
+                        player["Block"] += action["amount"]
+                    case "draw":
+                        draw_hand(draw_pile, hand, discard_pile, value)
+                    case "energy":
+                        player["Current Energy"] += value
+                    case "HP loss":
+                        player["Current HP"] -= value
+
 
     if not action["exhaust"]:  # dont add to discard pile if exhausts
         discard_pile.append(hand[action_index])
@@ -738,7 +756,7 @@ def start_combat(player: dict, enemy_chosen: dict, deck: list):
             if valid_input:
                 valid_energy = check_energy(player["Current Energy"], action)
                 if valid_energy:
-                    apply_player_action(player, current_enemy, action, hand, discard_pile, action_index)
+                    apply_player_action(player, current_enemy, action, draw_pile, hand, discard_pile, action_index)
 
         if current_enemy["current HP"] > 0:
             current_enemy["current block"] = 0
@@ -1107,7 +1125,7 @@ def main():
     """
     Drive the game
     """
-    opening_menu()
+    # opening_menu()
     rooms, deck, player, board = initialize_game_start()
 
     while not check_if_goal_attained(player, 5, 5) and player["Current HP"] > 0:

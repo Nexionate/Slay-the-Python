@@ -39,6 +39,7 @@ def create_deck():
     for i in range(3):
         deck.append(card_strike)
         deck.append(card_defend)
+    deck.append(card_list("blood letting"))
     return deck
 
 
@@ -54,7 +55,7 @@ def make_character():
     {"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 50, "Max HP": 50, "Max Energy": 3, "Max Draw": 4,
     "Current Energy": 3, "Block": 0, "Gold": 99, "Relics": []}
     """
-    return {"X-coordinate": 2, "Y-coordinate": 2, "Current HP": 50, "Max HP": 50, "Max Energy": 3, "Max Draw": 4,
+    return {"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 50, "Max HP": 50, "Max Energy": 3, "Max Draw": 4,
             "Current Energy": 3, "Block": 0, "Gold": 99, "Relics": []}
 
 
