@@ -36,10 +36,11 @@ def create_deck():
     card_strike = card_list("strike")
     card_defend = card_list("defend")
 
-    for i in range(3):
+    for i in range(2):
         deck.append(card_strike)
         deck.append(card_defend)
-    deck.append(card_list("blood letting"))
+    deck.append(card_list("bash"))
+   
     return deck
 
 
@@ -56,7 +57,7 @@ def make_character():
     "Current Energy": 3, "Block": 0, "Gold": 99, "Relics": []}
     """
     return {"X-coordinate": 0, "Y-coordinate": 0, "Current HP": 50, "Max HP": 50, "Max Energy": 3, "Max Draw": 4,
-            "Current Energy": 3, "Block": 0, "Gold": 99, "Relics": []}
+            "Current Energy": 3, "Block": 0, "Gold": 99, "Relics": [], "Stats": {"Normal enemies killed": 0, "Elite enemies killed": 0, "Relics found": 0, "Bosses defeated": 0, "Gold collected": 0}}
 
 
 def make_board(rows, cols):

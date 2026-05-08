@@ -4,6 +4,7 @@ import copy
 import cards
 import text
 import enemy
+import sys
 from text import lbl, CONST_MAP_HELP
 from relics import print_shop_relics
 from relics import relic_one_time_buff
@@ -18,6 +19,7 @@ from cards import debuff_card_list
 from cards import add_new_card
 from cards import random_card_reward
 from text import col
+from text import strike
 from text import print_campfire
 from initialize_game import initialize_game_start
 from initialize_game import print_board
@@ -84,7 +86,7 @@ def print_player_relics(player: dict):
             print_relic_description(counter)
 
 
-def show_cards(hand: list):
+def show_cards(hand: list, player: dict):
     """
     Print the player's hand
 
@@ -109,8 +111,12 @@ def show_cards(hand: list):
         if card["exhaust"]:
             exhaust_print = col("!black", " exhausts")
         yellow_square = col("!yellow", "\u25A1")
-        print(str(counter + 1) + ") " + str(card["name"]) + " " + str(card["energy"] * yellow_square) + " - " + str(
-            card["description"]) + exhaust_print)
+        card_text = str(counter + 1) + ") " + str(card["name"]) + " " + str(card["energy"] * yellow_square) + " - " + str(
+            card["description"]) + exhaust_print
+        if check_energy(player["Current Energy"], card):
+            print(card_text)
+        else:
+            print(strike(card_text))
 
 
 def print_player_stats(entity: dict, draw_pile, discard_pile):
@@ -152,7 +158,7 @@ def print_player_stats(entity: dict, draw_pile, discard_pile):
     yellow_square = col("!yellow", "\u25A1")
 
     if block > 0:
-        block_icon = col("!cyan", "+" + chr(10683) + str(block))
+        block_icon = col("!cyan", "+" + chr(10683) + " " + str(block))
 
     print(f"{green_square * squares}{red_square * (10 - squares)}  {str(health)}/{str(max_health)}"
           f"{col("!green", " HP ")}{block_icon} {energy * yellow_square} {str(energy)}/{str(max_energy)}"
@@ -186,12 +192,21 @@ def draw_hand(draw_pile: list, hand: list, discard_pile: list, amount: int) -> t
     """
     for count in range(amount):
         if not draw_pile:
+            print(f"{col("yellow", "Shuffling the deck...")}")
+            for x in range(len(discard_pile) + 1):
+                print(f"\r{col("!green", "Draw: ")}{col("!green", str(x))} | "
+                f"{col("!red", "Discard: ")}{col("!red", str(len(discard_pile) - x))}", end='', flush=True)
+
+                time.sleep(0.15)
+            print()
             draw_pile.clear()
             draw_pile.extend(discard_pile)
             discard_pile.clear()
             random.shuffle(draw_pile)
-            print(f"{col("yellow", "Shuffling the deck...")}")
-        hand.append(draw_pile.pop(0))
+            if not draw_pile:
+                return draw_pile, hand, discard_pile
+        if draw_pile:
+            hand.append(draw_pile.pop(0))
 
     return draw_pile, hand, discard_pile
 
@@ -280,43 +295,56 @@ def apply_player_action(player: dict, current_enemy: dict, action: dict, draw_pi
     player["Current Energy"] -= action["energy"]
     action_type = action["type"]
     enemyBLCK = current_enemy["current block"]
-    damage = action["amount"]
+    extra_damage = 0
 
-    if action_type == "block":
-        if apply_player_relic(player, "oddly smooth stone"):  # add relic bonus
-            player["Block"] += 1
-        player["Block"] += action["amount"]
+    # if action_type == "block":
+    #     if apply_player_relic(player, "oddly smooth stone"):  # add relic bonus
+    #         player["Block"] += 1
+    #     player["Block"] += action["amount"]
+    #
+    # elif action_type == "attack" or action_type == "hybrid":
+    #     if apply_player_relic(player, "strike dummy") and action["name"] == ("strike" or "strike+"):  # add relic bonus
+    #         damage += 3
+    #     calculated_damage = damage - enemyBLCK  # damage must be spillover
+    #     if calculated_damage <= 0:
+    #         current_enemy["current block"] -= damage
+    #     elif calculated_damage > 0:
+    #         current_enemy["current block"] = 0
+    #         current_enemy["current HP"] -= calculated_damage
+    #     if action_type == "hybrid":
+    #         if apply_player_relic(player, "oddly smooth stone"):
+    #             player["Block"] += 1
+    #         player["Block"] += action["amount"]
 
-    elif action_type == "attack" or action_type == "hybrid":
-        if apply_player_relic(player, "strike dummy") and action["name"] == ("strike" or "strike+"):  # add relic bonus
-            damage += 3
-        calculated_damage = damage - enemyBLCK  # damage must be spillover
-        if calculated_damage <= 0:
-            current_enemy["current block"] -= damage
-        elif calculated_damage > 0:
-            current_enemy["current block"] = 0
-            current_enemy["current HP"] -= calculated_damage
-        if action_type == "hybrid":
-            if apply_player_relic(player, "oddly smooth stone"):
-                player["Block"] += 1
-            player["Block"] += action["amount"]
 
-    elif action_type == "other":
+    for key, value in action["amount"].items():
+        match key:
+            case "block":
+                if apply_player_relic(player, "oddly smooth stone"):  # add relic bonus
+                    player["Block"] += 1
+                player["Block"] += value
 
-        for sub_action in action["amount"]:
-            for key, value in sub_action.items():
-                match key:
-                    case "block":
-                        if apply_player_relic(player, "oddly smooth stone"):  # add relic bonus
-                            player["Block"] += 1
-                        player["Block"] += action["amount"]
-                    case "draw":
-                        draw_hand(draw_pile, hand, discard_pile, value)
-                    case "energy":
-                        player["Current Energy"] += value
-                    case "HP loss":
-                        player["Current HP"] -= value
+            case "damage":
+                if apply_player_relic(player, "strike dummy") and action["name"] == (
+                        "strike" or "strike+"):  # add relic bonus
+                    extra_damage += 3
+                calculated_damage = (value + extra_damage) - enemyBLCK  # damage must be spillover
 
+                if calculated_damage <= 0:
+                    current_enemy["current block"] -= value
+                elif calculated_damage > 0:
+                    current_enemy["current block"] = 0
+                    current_enemy["current HP"] -= calculated_damage
+
+            case "draw":
+                print(f"{col("magenta", "Drawing " + str(value) + " cards...")}")
+                draw_hand(draw_pile, hand, discard_pile, value)
+
+            case "energy":
+                player["Current Energy"] += value
+
+            case "HP loss":
+                player["Current HP"] -= value
 
     if not action["exhaust"]:  # dont add to discard pile if exhausts
         discard_pile.append(hand[action_index])
@@ -358,7 +386,7 @@ def apply_enemy_action(enemy_intent: dict, current_enemy: dict, player: dict, dr
 
     if block > 0:
         current_enemy["current block"] += block
-        print("The " + current_enemy["name"] + " defends for " + col("cyan", " " + chr(10683) + str(block) + " BLCK"))
+        print("The " + current_enemy["name"] + " defends for " + col("cyan", " " + chr(10683) + " " + str(block) + " BLCK"))
         time.sleep(1)
 
     if "debuff" in enemy_intent:  # the only enemy that debuffs is the boss!
@@ -370,7 +398,7 @@ def apply_enemy_action(enemy_intent: dict, current_enemy: dict, player: dict, dr
                 debuff_card = debuff_card_list()
                 draw_pile.append(debuff_card)
     print(col("!black", "The enemy's turn ends.. \n"))
-    time.sleep(1)
+    time.sleep(0.5)
 
 
 def check_energy(energy: int, card: dict) -> bool:
@@ -393,8 +421,8 @@ def check_energy(energy: int, card: dict) -> bool:
     """
     energy_needed = card["energy"]
     requirement = energy >= energy_needed
-    if not requirement:
-        print(col("!black", "Insufficient Energy!"))
+    # if not requirement:
+    #     print(col("!black", "Insufficient Energy!"))
     return requirement
 
 
@@ -481,6 +509,7 @@ def valid_purchase_shop(player: dict, relics_sale: list, player_input: int):
         print(col("!magenta", "Relic Purchased!"))
         relics_sale.remove(wanted_relic)  # remove from shop after purchasing
         print_shop_relics(relics_sale)  # reprint updated shop
+        player["Stats"]["Relics found"] += 1
     else:
         print(col("!black", "Insufficient Gold!"))
 
@@ -512,27 +541,25 @@ def spawn_shop(player: dict, deck: dict):
     print_player_stats(player, draw_pile, discard_pile)
     while player_input != "exit":
         print("Current gold: " + col("yellow", str(player["Gold"])))
-        player_input = input(
-            col("!cyan", "Enter the relic number you want to purchase" + col("!black", "( type *exit* to leave): ")))
+        player_input = input(col("!cyan", "Enter the relic number you want to purchase" + col("!black", "( type *exit* to leave): ")))
         try:
             player_input = int(player_input)
-
         except ValueError:
             if player_input == "exit":
                 break
             else:
                 print(col("!black", "invalid input, try again"))
         else:
-            if player_input in accepted:
+            if player_input not in accepted:
+                print(col("!black", "invalid input, try again"))
+            else:
                 if (len(relics_sale) - 1) == 0:  # kicks player out of shop if nothing left
                     time.sleep(0.5)
                     print("\n" + col("!black", "You seem to have bought everything in the shop, impressive"))
                     time.sleep(2.5)
                     break
-
                 valid_purchase_shop(player, relics_sale, player_input)
-            else:
-                print(col("!black", "invalid input, try again"))
+              
     lbl("thaaaaaaank youuuuuuuuu come againnnnnnn", 0.02, "!cyan")
     time.sleep(0.5)
     print(col("!black", "\nTime to leave..."))
@@ -678,7 +705,7 @@ def print_enemy_intent(current_enemy: dict, enemy_intent: dict):
     block_icon = ""
 
     if block > 0:
-        block_icon = col("cyan", "" + chr(10683) + str(block))
+        block_icon = col("cyan", "" + chr(10683) + " " + str(block))
 
     enemy_intent_DMG = col("red", str(enemy_intent["damage"]) + " DMG")
     enemy_intent_BLCK = col("!blue", str(enemy_intent["block"]) + " BLCK")
@@ -743,12 +770,12 @@ def start_combat(player: dict, enemy_chosen: dict, deck: list):
 
         draw_hand(draw_pile, hand, discard_pile, player["Max Draw"])
         print(col("!black", "Your turn begins.. "))
-        time.sleep(0.75)
+        time.sleep(0.5)
 
         while player["Current Energy"] > 0 and current_enemy["current HP"] > 0:  # begin players turn
             # checks for enemy HP again to immediately end players turn
             print_enemy_intent(current_enemy, enemy_intent)
-            show_cards(hand)
+            show_cards(hand, player)
             print_player_stats(player, draw_pile, discard_pile)
 
             action, valid_input, action_index = get_player_input(hand, player, discard_pile)
@@ -825,10 +852,16 @@ def reward_player(player: dict, reward: int, deck: list):
     player["Gold"] += gold_reward
     print("Got " + col("yellow", str(player["Gold"]) + " Gold") + " " + col("!black", "+" + str(gold_reward)))
     if reward == 2:
+        player["Stats"]["Elite enemies killed"] += 1
+        player["Stats"]["Relics found"] += 1
         loot_relic = get_relic()
         print(print_relic_description(loot_relic))
         player["Relics"].append(loot_relic)
         relic_one_time_buff(loot_relic, player)
+    else:
+         player["Stats"]["Normal enemies killed"] += 1
+
+    player["Stats"]["Gold collected"] += gold_reward
 
     print(col("green", "Card reward: "))
     card_option = random_card_reward()
@@ -877,7 +910,9 @@ def check_board_location(board: dict, player: dict, update: bool) -> str:
         board[player_cords] = col("!black", "empty")
     else:
         if player_cords in board:
-            print("You are now in: " + board[player_cords] + " at co-ords" + str(player_cords) + "\n")
+            # print("You are now in: " + board[player_cords] + " at co-ords" + str(player_cords) + "\n")
+            lbl("Travelling...\n\n", 0.02, "!black")
+            time.sleep(0.6)
         return board[player_cords]
 
 
@@ -1120,13 +1155,25 @@ def opening_menu():
     print(col("!black", "starting game.."))
     time.sleep(0.5)
 
+def player_won(player):
+    player["Stats"]["Bosses defeated"] += 1
+    print("\n" + col("!green", "YOU WON"))
+    print(f"\nEnemies killed: {player['Stats']['Normal enemies killed']} x {col("!magenta", "10 points")}   --->    {col("magenta", str(player['Stats']['Normal enemies killed'] * 10))}\n"
+            f"Elites killed: {player['Stats']['Elite enemies killed']} x {col("!magenta", "30 points")}   --->    {col("magenta", str(player['Stats']['Elite enemies killed'] * 30))}\n"
+            f"Relics found: {player['Stats']['Relics found']} x {col("!magenta", "50 points")}   --->    {col("magenta", str(player['Stats']['Relics found'] * 50))}\n"
+            f"Gold earned: {player['Stats']['Gold collected']} x {col("!magenta", "0.1 points")}   --->    {col("magenta", str(player['Stats']['Gold collected'] * 0.1))}\n"
+            f"Bosses defeated: {player['Stats']['Bosses defeated']} x {col("!magenta", "100 points")}   --->    {col("magenta", str(player['Stats']['Bosses defeated'] * 100))}\n"
+            f"\nTotal Score: {col("!magenta", str((player['Stats']['Normal enemies killed'] * 10) + (player['Stats']['Elite enemies killed'] * 30) + (player['Stats']['Relics found'] * 50) + (player['Stats']['Gold collected'] * 0.1) + (player['Stats']['Bosses defeated'] * 100)))} points")
+
 
 def main():
     """
     Drive the game
     """
-    # opening_menu()
+    opening_menu()
     rooms, deck, player, board = initialize_game_start()
+    
+    
 
     while not check_if_goal_attained(player, 5, 5) and player["Current HP"] > 0:
         print_board(board, player)
@@ -1158,7 +1205,7 @@ def main():
     if not player["Current HP"] > 0:
         print("\n" + col("!red", "GAME OVER"))
     if check_if_goal_attained and player["Current HP"] > 0:
-        print("\n" + col("!green", "YOU WON"))
+        player_won(player)
 
 
 if __name__ == '__main__':
