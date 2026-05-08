@@ -5,6 +5,8 @@ Ethan O'Connor
 A01435041
 Set E
 """
+yellow_square = col("!yellow", "\u25A1")
+purple_square = col("magenta", "\u25A1")
 
 
 def card_list(wanted):
@@ -16,30 +18,36 @@ def card_list(wanted):
     :return: a dictionary of the wanted card
 
     >>> card_list("strike")
-    {'name': 'strike', 'type': 'attack', 'amount': 6, 'energy': 1, 'description': '6 DMG', \
+    {'name': 'strike', 'type': 'attack', "amount": {"damage": 6}, 'energy': 1, 'description': '6 DMG', \
 'exhaust': False, 'upgrade': False}
     >>> card_list("defend")
-    {'name': 'defend', 'type': 'block', 'amount': 5, 'energy': 1, 'description': '5 BLCK', \
+    {'name': 'defend', 'type': 'block', "amount": {"block": 5}, 'energy': 1, 'description': '5 BLCK', \
 'exhaust': False, 'upgrade': False}
     """
     card_dict = {
-        "strike": {"name": "strike", "type": "attack", "amount": 6, "energy": 1, "description": "6 DMG",
+        "strike": {"name": "strike", "type": "attack", "amount": {"damage": 6}, "energy": 1, "description": "6 DMG",
                    "exhaust": False, "upgrade": False},
-        "defend": {"name": "defend", "type": "block", "amount": 5, "energy": 1, "description": "5 BLCK",
+        "defend": {"name": "defend", "type": "block", "amount": {"block": 5}, "energy": 1, "description": "5 BLCK",
                    "exhaust": False, "upgrade": False},
-        "bash": {"name": "bash", "type": "attack", "amount": 9, "energy": 2, "description": "9 DMG", "exhaust": False,
+        "bash": {"name": "bash", "type": "attack", "amount": {"damage": 9}, "energy": 2, "description": "9 DMG", "exhaust": False,
                  "upgrade": False},
-        "bludgeon": {"name": "bludgeon", "type": "attack", "amount": 18, "energy": 2, "description": "18 DMG",
+        "bludgeon": {"name": "bludgeon", "type": "attack", "amount": {"damage": 18}, "energy": 2, "description": "18 DMG",
                      "exhaust": True, "upgrade": False},
-        "iron wave": {"name": "iron wave", "type": "hybrid", "amount": 5, "energy": 1, "description": "5 DMG, 5 BLCK",
+        "iron wave": {"name": "iron wave", "type": "hybrid", "amount": {"damage": 5, "block": 5}, "energy": 1, "description": "5 DMG, 5 BLCK",
                       "exhaust": False, "upgrade": False},
-        "anger": {"name": "anger", "type": "attack", "amount": 7, "energy": 0, "description": "7 DMG",
+        "anger": {"name": "anger", "type": "attack", "amount": {"damage": 7}, "energy": 0, "description": "7 DMG",
                   "exhaust": True, "upgrade": False},
-        "barricade": {"name": "barricade", "type": "block", "amount": 12, "energy": 2, "description": "12 BLCK",
+        "barricade": {"name": "barricade", "type": "block", "amount": {"block": 12}, "energy": 2, "description": "12 BLCK",
                       "exhaust": False, "upgrade": False},
+        "prepared": {"name": "prepared", "type": "other", "amount": {"draw": 3}, "energy": 0,
+                      "description": f"{3*purple_square} DRAW",
+                      "exhaust": False, "upgrade": False},
+        "blood letting": {"name": "blood letting", "type": "other", "amount": {"draw": 3, "energy": 2, "HP loss": 5}, "energy": 0, "description": f"{3*purple_square} DRAW {2*yellow_square} ENERGY {col("!red", "-5HP")}",
+                      "exhaust": True, "upgrade": False}
     }
     try:
         card = card_dict.get(wanted)
+
     except KeyError:
         print("card not found")
     else:
@@ -54,27 +62,33 @@ def card_list_upgraded(wanted):
     :precondition: wanted is a string of the wanted card
     :return: a dictionary of the upgraded wanted card
     >>> card_list_upgraded("strike")
-    {'name': 'strike+', 'type': 'attack', 'amount': 9, 'energy': 1, 'description': '9 DMG', \
+    {'name': 'strike+', 'type': 'attack', "amount": {"damage": 9}, 'energy': 1, 'description': '9 DMG', \
 'exhaust': False, 'upgrade': True}
     >>> card_list_upgraded("defend")
-    {'name': 'defend+', 'type': 'block', 'amount': 8, 'energy': 1, 'description': '8 BLCK', \
+    {'name': 'defend+', 'type': 'block', "amount": {"block": 8}, 'energy': 1, 'description': '8 BLCK', \
 'exhaust': False, 'upgrade': True}
     """
     card_dict_upgraded = {
-        "strike": {"name": "strike+", "type": "attack", "amount": 9, "energy": 1, "description": "9 DMG",
+        "strike": {"name": "strike+", "type": "attack", "amount": {"damage": 9}, "energy": 1, "description": "9 DMG",
                    "exhaust": False, "upgrade": True},
-        "defend": {"name": "defend+", "type": "block", "amount": 8, "energy": 1, "description": "8 BLCK",
+        "defend": {"name": "defend+", "type": "block", "amount": {"block": 8}, "energy": 1, "description": "8 BLCK",
                    "exhaust": False, "upgrade": True},
-        "bash": {"name": "bash+", "type": "attack", "amount": 13, "energy": 1, "description": "13 DMG",
+        "bash": {"name": "bash+", "type": "attack", "amount": {"damage": 13}, "energy": 1, "description": "13 DMG",
                  "exhaust": False, "upgrade": True},
-        "bludgeon": {"name": "bludgeon+", "type": "attack", "amount": 25, "energy": 2, "description": "25 DMG",
+        "bludgeon": {"name": "bludgeon+", "type": "attack", "amount": {"damage": 25}, "energy": 2, "description": "25 DMG",
                      "exhaust": True, "upgrade": True},
-        "iron wave": {"name": "iron wave+", "type": "hybrid", "amount": 7, "energy": 1, "description": "7 DMG, 7 BLCK",
+        "iron wave": {"name": "iron wave+", "type": "hybrid", "amount": {"damage": 7, "block": 7}, "energy": 1, "description": "7 DMG, 7 BLCK",
                       "exhaust": False, "upgrade": True},
-        "anger": {"name": "anger+", "type": "attack", "amount": 9, "energy": 0, "description": "9 DMG",
+        "anger": {"name": "anger+", "type": "attack", "amount": {"damage": 9}, "energy": 0, "description": "9 DMG",
                   "exhaust": False, "upgrade": True},
-        "barricade": {"name": "barricade+", "type": "block", "amount": 16, "energy": 2, "description": "16 BLCK",
-                      "exhaust": False, "upgrade": False},
+        "barricade": {"name": "barricade+", "type": "block", "amount": {"block": 17}, "energy": 2, "description": "17 BLCK",
+                      "exhaust": False, "upgrade": True},
+        "prepared": {"name": "prepared+", "type": "other", "amount": {"draw": 4}, "energy": 0,
+                     "description": f"{4 * purple_square} DRAW",
+                     "exhaust": False, "upgrade": False},
+        "blood letting": {"name": "blood letting+", "type": "other", "amount": {"draw": 3, "energy": 3, "HP loss": 3},
+                          "energy": 0, "description": f"{3*purple_square} DRAW {3*yellow_square} ENERGY {col("!red", "-3HP")}",
+                          "exhaust": True, "upgrade": True}
     }
     try:
         card = card_dict_upgraded.get(wanted)
@@ -91,7 +105,7 @@ def debuff_card_list():
 
     :return: a dictionary of the debuff cards stats
     """
-    return {"name": "burn", "type": "debuff", "amount": 2, "energy": 1,
+    return {"name": "burn", "type": "debuff", "amount": {"HP loss": 3}, "energy": 1,
             "description": col("red", "2 SELF DMG") + col("!black", "( if in hand by end of turn)"),
             "exhaust": True}
 
@@ -109,7 +123,7 @@ def random_card_reward():
     {"name": "anger", "type": "attack", "amount": 7, "energy": 0, "description": "7 DMG",
                       "exhaust": True, "upgrade": False}
     """
-    card_reward_random = ["strike", "defend", "bash", "bludgeon", "iron wave", "anger", "barricade"]
+    card_reward_random = ["strike", "defend", "bash", "bludgeon", "iron wave", "anger", "barricade", "prepared"]
 
     option = card_list(random.choice(card_reward_random))
     return option
@@ -151,6 +165,7 @@ def show_deck_upgrade(hand):
 
         normal_card_print = str(counter + 1) + ") " + str(card["name"]) + " " + str(
             card["energy"] * yellow_square) + " - " + str(card["description"]) + " " + exhaust_print
+        
         upgraded_card_print = str(upgraded_card["name"]) + " " + str(
             upgraded_card["energy"] * yellow_square) + " - " + str(
             upgraded_card["description"]) + " " + exhaust_upgrade_print

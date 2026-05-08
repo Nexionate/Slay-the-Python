@@ -255,7 +255,7 @@ def purchase_relic(relic, player):
     cost = relic[1]
     if player["Gold"] >= cost:
         player["Gold"] -= cost
-        player["Relics"].append(relic[0])
+        player["Relics"].append(relic[0]) # why am i indexing here??
         relic_one_time_buff(relic[0], player)  # check if relic is one time use after purchase
         return True
     else:

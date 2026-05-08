@@ -7,7 +7,34 @@ Ethan O'Connor
 A01435041
 Set E
 """
-
+def strike(text):
+    """
+    Apply strikethrough to text while preserving ANSI escape codes.
+    
+    :param text: a string that may contain ANSI escape codes
+    :precondition: text is a string
+    :postcondition: strikethrough is applied only to visible characters, not escape codes
+    :return: text with strikethrough applied
+    """
+    result = []
+    i = 0
+    while i < len(text):
+        # Check if we're at the start of an ANSI escape sequence
+        if text[i:i+2] == '\x1b[' or text[i:i+2] == '\033[':
+            # Find the end of the escape sequence (ends with a letter)
+            start = i
+            i += 2
+            while i < len(text) and not text[i].isalpha():
+                i += 1
+            if i < len(text):
+                i += 1  # Include the final letter
+            # Add the entire escape sequence without strikethrough
+            result.append(text[start:i])
+        else:
+            # Regular character - add with strikethrough
+            result.append(text[i] + '\u0336')
+            i += 1
+    return ''.join(result)
 
 def col(colour, word):
     """
